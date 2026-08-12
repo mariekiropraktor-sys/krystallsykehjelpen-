@@ -1,0 +1,292 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+const bookingUrl =
+  "https://psno-patient-platform-fe.svc.pasientsky.no/embedded/planner/booking?serviceProviderId=54907264-049e-11eb-8fc8-26c6f94d64b7";
+
+const consultations = [
+  {
+    title: "Klinikkonsultasjon",
+    description:
+      "Presis undersøkelse og behandling i Fetsund der vi kan gjennomføre alle tester og manøvrer i rolig miljø.",
+    icon: "M12 2a9 9 0 100 18 9 9 0 000-18zm-1 12.5h2v2h-2v-2zm0-9h2v7h-2V5.5z",
+  },
+  {
+    title: "Videokonsultasjon",
+    description:
+      "Rask faglig vurdering på skjerm når du ønsker en tidlig vurdering uten reisevei.",
+    icon: "M21 16V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2h14a2 2 0 002-2zm-3-1.5l4 3V8.5l-4 3z",
+  },
+  {
+    title: "Hjemmebesøk",
+    description:
+      "Vi kommer dit du er når svimmelheten gjør det vanskelig å pakke og reise ut av huset.",
+    icon: "M12 2l3.5 4.5L20 7l-4 5 1 6-5-3-5 3 1-6-4-5 4.5-0.5L12 2z",
+  },
+];
+---
+
+<Layout
+  title="Om Krystallsykehjelpen | Krystallsykehjelpen"
+  description="Om Krystallsykehjelpen – hvorfor vi er en spesialklinikk for krystallsyke og svimmelhet, og hvordan vi jobber."
+  activePath="/om-krystallsykehjelpen/"
+>
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <span class="eyebrow">Spesialisert på krystallsyke og BPPV</span>
+        <h1>Om Krystallsykehjelpen</h1>
+        <p class="lead">
+          Vi finnes fordi svimmelhet ikke er én slags pasientgruppe. Her er fokuset smalt,
+          behandlingen målrettet, og oppfølgingen personlig – ikke generell kiropraktikk.
+        </p>
+        <div class="btn-row">
+          <a href={bookingUrl} class="btn btn-primary">Bestill time</a>
+          <a href="/kontakt/" class="btn btn-outline">Kontakt oss</a>
+        </div>
+      </div>
+
+      <div class="hero-media">
+        <img
+          src="/hero-home.jpg"
+          alt="Klinikkrom og behandlingssituasjon for svimmelhet"
+          class="hero-photo"
+        />
+        <div class="hero-badge">
+          <span>Spesialisering</span>
+          <p>Fokus på rask utredning og effektiv behandling av krystallsyke.</p>
+        </div>
+      </div>
+    </div>
+
+    <svg class="hero-wave" viewBox="0 0 1440 60" preserveAspectRatio="none">
+      <path d="M0,32 C360,72 1080,0 1440,32 L1440,60 L0,60 Z" fill="var(--paper)" />
+    </svg>
+  </section>
+
+  <section class="section-alt">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Konseptet</span>
+        <h2>Derfor finnes Krystallsykehjelpen</h2>
+        <hr class="heading-rule" />
+        <p>
+          Vi er her fordi mange får feil eller for lite tydelig hjelp når svimmelhet behandles som
+          generell kiropraktikk. Hos oss er krystallsyke og BPPV hovedfokuset, og det gir mer
+          presis utredning og raskere bedring.
+        </p>
+      </div>
+
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h3>Smalt fagfokus</h3>
+          <p>
+            Vi arbeider utelukkende med krystallsyke og svimmelhet, så du får konsultasjon og
+            behandling fra noen som kjenner denne tilstanden godt.
+          </p>
+        </div>
+        <div class="feature-card">
+          <h3>Rask behandling</h3>
+          <p>
+            Med effektive tester og manøvrer kan de fleste oppleve bedring etter én til to
+            konsultasjoner.
+          </p>
+        </div>
+        <div class="feature-card">
+          <h3>Personlig oppfølging</h3>
+          <p>
+            Vi følger deg fra kartlegging til øvelser hjemme, og sikrer at du har trygghet rundt
+            neste steg i prosessen.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="section-head">
+        <h2>Slik jobber vi</h2>
+        <hr class="heading-rule" />
+        <p>
+          Vi tilbyr tre konsultasjonsformer som dekker behovet ditt, enten du er klar for klinikk eller
+          trenger hjelp hjemme eller på skjerm.
+        </p>
+      </div>
+
+      <div class="card-grid">
+        {consultations.map((item) => (
+          <article class="card">
+            <div class="card-body">
+              <div class="icon-circle">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d={item.icon} />
+                </svg>
+              </div>
+              <h3>{item.title}</h3>
+              <p>{item.description}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section-alt">
+    <div class="container bio-card">
+      <img src="/marie-portrait.jpg" alt="Marie, kiropraktor hos Krystallsykehjelpen" class="bio-photo" />
+      <div>
+        <span class="eyebrow">Møt Marie</span>
+        <h2>Personlig erfaring med svimmelhet</h2>
+        <p>
+          Marie er kiropraktor med spesialisering i utredning og behandling av krystallsyke.
+          Hun kombinerer faglig trygghet med varme, tydelig veiledning og praktisk oppfølging.
+        </p>
+        <a href="/om-oss/" class="card-link">Les mer om Marie og klinikken →</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-beige">
+    <div class="container cta-band">
+      <div>
+        <h2>Vil du vite om dette er riktig for deg?</h2>
+        <p>Bestill en vurdering i dag, så får du hjelp til å finne ut om svimmelheten skyldes krystallsyke.</p>
+      </div>
+      <div class="cta-actions">
+        <a href={bookingUrl} class="btn btn-primary">Bestill time</a>
+        <a href="tel:+4746384492" class="card-link">Ring +47 463 84 492</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .hero { padding: 64px 0 94px; position: relative; overflow: hidden; }
+  .hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 42px; align-items: center; }
+  .lead { font-size: 1.08rem; max-width: 46ch; color: var(--ink-soft); }
+  .btn-row { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 28px; }
+
+  .hero-media { position: relative; }
+  .hero-photo { width: 100%; border-radius: var(--radius); object-fit: cover; aspect-ratio: 4 / 3; box-shadow: 0 24px 64px rgba(22, 56, 117, 0.14); }
+  .hero-badge {
+    position: absolute;
+    bottom: -14px;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    width: min(320px, 100%);
+    background: #fff;
+    border-radius: 24px;
+    padding: 18px 20px;
+    box-shadow: 0 18px 44px rgba(22, 56, 117, 0.14);
+    display: grid;
+    gap: 8px;
+    text-align: center;
+  }
+  .hero-badge span {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--turquoise);
+  }
+  .hero-badge p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--ink);
+  }
+
+  .hero-wave { position: absolute; bottom: 0; left: 0; width: 100%; line-height: 0; }
+
+  .section-alt { background: var(--paper); padding: 64px 0; }
+  .section-beige { background: var(--beige); padding: 60px 0; }
+  section { padding: 60px 0; }
+
+  .section-head { max-width: 64ch; margin-bottom: 34px; }
+  .feature-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
+  .feature-card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 28px;
+    box-shadow: 0 18px 42px rgba(22, 56, 117, 0.08);
+  }
+  .feature-card h3 { margin-top: 0; font-size: 1.04rem; }
+
+  .card-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
+  .card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: 0 18px 36px rgba(22, 56, 117, 0.08);
+  }
+  .card-body { padding: 26px; }
+  .card-body h3 { margin: 0 0 0.8em; }
+  .card-body p { margin: 0; color: var(--ink-soft); }
+
+  .icon-circle {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: rgba(95, 193, 214, 0.16);
+    display: grid;
+    place-items: center;
+    margin-bottom: 20px;
+  }
+  .icon-circle svg { width: 28px; height: 28px; color: var(--turquoise); }
+
+  .bio-card {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 28px;
+    align-items: center;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 32px;
+    box-shadow: 0 18px 48px rgba(22, 56, 117, 0.08);
+  }
+  .bio-photo {
+    width: 100%;
+    border-radius: var(--radius);
+    object-fit: cover;
+    aspect-ratio: 4 / 5;
+  }
+  .bio-card h2 { margin-top: 0; }
+
+  .cta-band {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 28px 30px;
+    border-radius: calc(var(--radius) * 1.1);
+    box-shadow: 0 18px 42px rgba(22, 56, 117, 0.08);
+  }
+  .cta-band h2 { margin: 0 0 0.35em; }
+  .cta-band p { margin: 0; max-width: 52ch; }
+  .cta-actions { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
+
+  .card-link {
+    color: var(--navy-2);
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  @media (max-width: 980px) {
+    .hero-grid, .feature-grid, .card-grid, .bio-card, .cta-band { grid-template-columns: 1fr; }
+    .cta-band { text-align: center; justify-content: center; }
+    .hero-badge { position: static; margin-top: 20px; }
+  }
+
+  @media (max-width: 720px) {
+    .hero { padding-top: 44px; }
+    .hero-grid { gap: 26px; }
+    .feature-grid, .card-grid { grid-template-columns: 1fr; }
+    .bio-card { padding: 22px; }
+    .cta-band { padding: 24px 18px; }
+  }
+</style>
