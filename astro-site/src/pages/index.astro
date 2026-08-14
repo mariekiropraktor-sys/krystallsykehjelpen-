@@ -48,7 +48,6 @@ const steps = [
         </p>
         <div class="btn-row">
           <a href={bookingUrl} class="btn btn-primary">Bestill time →</a>
-          <a href="tel:+4746384492" class="btn btn-outline">Telefonkonsultasjon</a>
         </div>
       </div>
       <div class="hero-media">
@@ -57,13 +56,35 @@ const steps = [
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="10" /><path d="M9 12l2 2 4-4" />
           </svg>
-          Trygg og effektiv behandling med spesialkompetanse på svimmelhet
+          Trygg og effektiv hjelp med spesialkompetanse på svimmelhet
         </div>
       </div>
     </div>
     <svg class="hero-wave" viewBox="0 0 1440 60" preserveAspectRatio="none">
       <path d="M0,32 C360,72 1080,0 1440,32 L1440,60 L0,60 Z" fill="#ffffff" />
     </svg>
+  </section>
+  
+  
+
+  <section>
+    <div class="container">
+      <div class="exercises-grid">
+        <div>
+          <h2>Les mer om våre vanligste øvelser</h2>
+          <hr class="heading-rule" />
+          <p>Vi viser eksempler på trygge og effektive øvelser du kan gjøre hjemme for å håndtere restsymptomer og forebygge tilbakefall.</p>
+        </div>
+        <div class="exercise-media">
+          <div class="photo-block exercise-photo">
+            <span style="font-weight:700; color:var(--navy-2);">Øvelsesbilde</span>
+          </div>
+          <div class="exercise-action">
+            <a href="/ovelsesbibliotek/" class="btn btn-primary">Les mer</a>
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 
   <section class="section-alt no-top">
@@ -90,6 +111,22 @@ const steps = [
   </section>
 
   <section>
+    <div class="container map-search-grid">
+      <div>
+        <span class="eyebrow">Usikker?</span>
+        <h2>Usikker på hvem som har kompetanse på svimmelhet og krystallsyke der du bor?</h2>
+        <p>Finn fagfolk og klinikker i nærheten med vårt søk — prøv for å få oversikt over lokale tilbud.</p>
+        <div class="btn-row" style="margin-top:18px;">
+          <button class="btn btn-primary">Søk her</button>
+        </div>
+      </div>
+      <div class="map-placeholder">
+        <img src="/map-illustration.svg" alt="Norgeskart (illustrasjon, plassholder)" class="diagram-img" />
+      </div>
+    </div>
+  </section>
+
+  <section>
     <div class="container">
       <div class="diagram-grid">
         <div>
@@ -111,75 +148,42 @@ const steps = [
   <section class="section-alt">
     <div class="container">
       <div class="section-head">
-        <h2>Slik kan vi hjelpe deg med krystallsyke</h2>
-        <hr class="heading-rule" />
-      </div>
-      <div class="card-grid">
-        <div class="card">
-          <div class="card-body">
-            <div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg></div>
-            <h3>Grundig undersøkelse</h3>
-            <p>Vi finner ut nøyaktig hvilken buegang som er påvirket, før vi starter behandling.</p>
-            <a href="/krystallsyken/" class="card-link">Les mer →</a>
+            <h2>Slik kan vi hjelpe deg med krystallsyke</h2>
+            <hr class="heading-rule" />
           </div>
-        </div>
-        <div class="card">
-          <div class="card-body">
-            <div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.6l-1-1a5.5 5.5 0 00-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 000-7.8z" /></svg></div>
-            <h3>Presis behandling</h3>
-            <p>Behandlingen tilpasses hvilken type krystallsyke du har.</p>
-            <a href="/krystallsyken/" class="card-link">Les mer →</a>
+          <div class="card-grid">
+            <div class="card">
+              <div class="card-body">
+                <div class="photo-block card-photo">
+                  <span style="color:var(--navy-2); font-weight:700;">Bilde</span>
+                </div>
+                <h3>Undersøkelse og behandling på klinikken</h3>
+                <a href="/krystallsyken/" class="card-link">Les mer →</a>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-body">
+                <div class="photo-block card-photo">
+                  <span style="color:var(--navy-2); font-weight:700;">Bilde</span>
+                </div>
+                <h3>Hjemmebesøk</h3>
+                <a href="/kontakt/" class="card-link">Les mer →</a>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-body">
+                <div class="photo-block card-photo">
+                  <span style="color:var(--navy-2); font-weight:700;">Bilde</span>
+                </div>
+                <h3>Videokonsultasjon</h3>
+                <a href="/krystallsyken/" class="card-link">Les mer →</a>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="card">
-          <div class="card-body">
-            <div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2" /><path d="M9 22l2-9-3-2 1-5 3 2 2-1 3 3-2 2 1 5-3 5" /></svg></div>
-            <h3>Øvelser hjemme</h3>
-            <p>Trygge egenøvelser og oppfølging etter behandling.</p>
-            <a href="/ovelsesbibliotek/" class="card-link">Se øvelser →</a>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-body">
-            <div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12" /></svg></div>
-            <h3>Ikke krystallsyke?</h3>
-            <p>Hvis det viser seg å være noe annet, hjelper vi deg videre.</p>
-            <a href="/kontakt/" class="card-link">Ta kontakt →</a>
-          </div>
-        </div>
-      </div>
     </div>
   </section>
 
-  <section>
-    <div class="container">
-      <div class="section-head">
-        <h2>Slik foregår behandlingen</h2>
-        <hr class="heading-rule" />
-      </div>
-      <div class="step-row">
-        {steps.map((step, i) => (
-          <>
-            <div class="step">
-              <div class="step-icon">
-                <div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9" /></svg></div>
-                <div class="step-num">{step.n}</div>
-              </div>
-              <div class="step-text">
-                <h4>{step.title}</h4>
-                <p>{step.desc}</p>
-              </div>
-            </div>
-            {i < steps.length - 1 && (
-              <div class="step-arrow">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6" /></svg>
-              </div>
-            )}
-          </>
-        ))}
-      </div>
-    </div>
-  </section>
+  <!-- 'Slik foregår behandlingen' removed as requested -->
 
   <section class="section-alt">
     <div class="container faq-grid">
@@ -200,11 +204,11 @@ const steps = [
         <p class="mt"><a href="/krystallsyken/" class="card-link">Se alle spørsmål og svar →</a></p>
       </div>
 
-      <div class="callout">
+        <div class="callout">
         <div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" /></svg></div>
         <div>
           <h3>Viktig å vite</h3>
-          <p>Krystallsyke gir ikke svimmelhet når du går eller sitter i ro. Ved vedvarende svimmelhet bør andre årsaker vurderes.</p>
+          <p>Krystallsyke gir vanligvis ikke svimmelhet når du går eller sitter i ro. Ved vedvarende svimmelhet bør andre årsaker vurderes.</p>
         </div>
       </div>
     </div>
@@ -335,6 +339,21 @@ const steps = [
     .step:last-child { border-bottom: none; }
     .step-icon { margin: 0; flex-shrink: 0; }
     .step-arrow { display: none; }
+  }
+
+  /* New small layout helpers for inserted sections */
+  .map-search-grid { display: grid; grid-template-columns: 1fr 420px; gap: 28px; align-items: center; }
+  .map-placeholder img { width: 100%; border-radius: var(--radius); }
+  .exercises-grid { display: grid; grid-template-columns: 1fr 360px; gap: 28px; align-items: center; }
+  .exercise-media { display: flex; flex-direction: column; align-items: center; }
+  .exercise-media .exercise-photo { min-height: 120px; max-width: 320px; width: 100%; display:flex; align-items:center; justify-content:center; }
+  .exercise-action { width: 100%; display:flex; justify-content:center; margin-top:12px; }
+
+  /* card photos: make half height so cards align with surrounding content */
+  .card .card-photo { height: 70px; padding: 0; display:flex; align-items:center; justify-content:center; margin-bottom:12px; border-radius: 8px; }
+
+  @media (max-width: 980px) {
+    .map-search-grid, .exercises-grid { grid-template-columns: 1fr; }
   }
 
   .faq-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 40px; align-items: start; }
