@@ -159,7 +159,7 @@ const steps = [
                 <div class="photo-block card-photo">
                   <span style="color:var(--navy-2); font-weight:700;">Bilde</span>
                 </div>
-                <h3>Undersøkelse og behandling på klinikken</h3>
+                <h3>Undersøkelse på klinikken</h3>
                 <a href="/krystallsyken/" class="card-link">Les mer →</a>
               </div>
             </div>
@@ -311,9 +311,9 @@ const steps = [
   .diagram-img { width: 100%; max-width: 380px; margin: 0 auto; display: block; }
   .diagram-caption { font-size: 0.82rem; color: var(--ink-soft); text-align: center; margin: 14px auto 0; max-width: 380px; line-height: 1.5; }
 
-  .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; }
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; }
   .card { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
-  .card-body { padding: 16px; }
+  .card-body { padding: 10px; }
   .icon-circle {
     width: 52px; height: 52px; border-radius: 50%; background: var(--sky);
     display: flex; align-items: center; justify-content: center; margin-bottom: 14px;
@@ -352,21 +352,28 @@ const steps = [
   .exercise-action { width: 100%; display:flex; justify-content:center; margin-top:12px; }
 
   /* card photos: reduced height so cards appear more compact and balanced */
-  .card .card-photo { height: 56px; padding: 0; display:flex; align-items:center; justify-content:center; margin-bottom:10px; border-radius: 8px; }
+  .card .card-photo { height: 40px; padding: 0; display:flex; align-items:center; justify-content:center; margin-bottom:8px; border-radius: var(--radius-sm); background: var(--sky); border: 1px solid var(--line); }
 
   /* Slightly smaller card title for visual balance */
-  .card .card-body h3 { font-size: 1rem; margin: 0 0 8px; }
+  .card .card-body h3 { font-size: 0.95rem; margin: 0 0 6px; line-height: 1.18; }
 
   @media (max-width: 980px) {
     .map-search-grid, .exercises-grid { grid-template-columns: 1fr; }
   }
 
   @media (max-width: 720px) {
-    /* Tighter vertical spacing and padding on mobile */
-    .card-grid { gap: 12px; }
-    .card .card-photo { height: 48px; margin-bottom:8px; }
-    .card-body { padding: 12px; }
-    .card .card-body h3 { font-size: 0.98rem; }
+    /* Use two columns on small screens where it fits better, fall back to one column on very small devices */
+    .card-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .card .card-photo { height: 34px; margin-bottom:8px; }
+    .card-body { padding: 9px; }
+    .card .card-body h3 { font-size: 0.9rem; }
+  }
+
+  @media (max-width: 420px) {
+    .card-grid { grid-template-columns: 1fr; }
+    .card .card-photo { height: 30px; }
+    .card-body { padding: 7px; }
+    .card .card-body h3 { font-size: 0.9rem; }
   }
 
   .faq-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 40px; align-items: start; }
