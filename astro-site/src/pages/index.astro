@@ -282,12 +282,13 @@ const steps = [
   .diagram-img { width: 100%; max-width: 380px; margin: 0 auto; display: block; }
   .diagram-caption { font-size: 0.82rem; color: var(--ink-soft); text-align: center; margin: 14px auto 0; max-width: 380px; line-height: 1.5; }
 
-    .card-grid { display: grid; grid-template-columns: 1fr; gap: 12px; justify-items: center; }
-    /* Increase card width ~30% and ensure all cards have identical width; cards remain centered.
-      Note: container max-width may still limit visible width on smaller viewports. */
-    .card { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; width: 100%; max-width: 1386px; margin: 0 auto; box-sizing: border-box; }
-  .card-body { padding: 12px; display:flex; align-items:center; gap:18px; }
-  .card-text { flex: 1; }
+    .card-grid { display: grid; grid-template-columns: 1fr; gap: 6px; justify-items: center; }
+     /* Match cards width to main content container and keep them centered.
+       Remove right padding so the image can sit flush against the card's right edge.
+       Constrain text column so image sits close to text. */
+     .card { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; width: 100%; max-width: 880px; margin: 0 auto; box-sizing: border-box; }
+    .card-body { padding: 12px 0 12px 12px; display:flex; align-items:center; gap:12px; }
+    .card-text { flex: 0 1 65%; }
   .icon-circle {
     width: 52px; height: 52px; border-radius: 50%; background: var(--sky);
     display: flex; align-items: center; justify-content: center; margin-bottom: 14px;
@@ -326,7 +327,7 @@ const steps = [
   .exercise-action { width: 100%; display:flex; justify-content:center; margin-top:12px; }
 
   /* card photos: reduced height so cards appear more compact and balanced */
-  .card .card-photo { width: 96px; height: 96px; padding: 0; display:flex; align-items:center; justify-content:center; margin-bottom:0; border-radius: var(--radius-sm); background: var(--sky); border: 1px solid var(--line); flex-shrink:0; }
+  .card .card-photo { width: 120px; height: 120px; padding: 0; display:flex; align-items:center; justify-content:center; margin-bottom:0; border-radius: var(--radius-sm); background: var(--sky); border: 1px solid var(--line); flex-shrink:0; margin-left: auto; border-top-right-radius: var(--radius); border-bottom-right-radius: var(--radius); }
 
   /* Slightly smaller card title for visual balance */
   .card .card-body h3 { font-size: 0.95rem; margin: 0 0 6px; line-height: 1.18; }
@@ -337,8 +338,8 @@ const steps = [
 
   @media (max-width: 720px) {
     /* Keep single-column layout on small screens */
-    .card-grid { grid-template-columns: 1fr; gap: 10px; }
-    .card .card-photo { width: 64px; height: 64px; margin-bottom:0; }
+    .card-grid { grid-template-columns: 1fr; gap: 6px; }
+    .card .card-photo { width: 84px; height: 84px; margin-bottom:0; }
     .card-body { padding: 10px; }
     .card .card-body h3 { font-size: 0.95rem; }
   }
@@ -346,7 +347,7 @@ const steps = [
   @media (max-width: 420px) {
     .card-grid { grid-template-columns: 1fr; }
     .card-body { flex-direction: column; align-items: flex-start; }
-    .card .card-photo { width: 100%; height: 56px; border-radius: var(--radius); }
+    .card .card-photo { width: 100%; height: 80px; border-radius: var(--radius); }
     .card-body { padding: 8px; }
     .card .card-body h3 { font-size: 0.95rem; }
   }
