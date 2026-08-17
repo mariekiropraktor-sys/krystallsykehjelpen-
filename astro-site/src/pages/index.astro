@@ -276,7 +276,7 @@ const steps = [
   .diagram-img { width: 100%; max-width: 380px; margin: 0 auto; display: block; }
   .diagram-caption { font-size: 0.82rem; color: var(--ink-soft); text-align: center; margin: 14px auto 0; max-width: 380px; line-height: 1.5; }
 
-  .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; }
+  .card-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
   .card { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
   .card-body { padding: 10px; }
   .icon-circle {
@@ -327,8 +327,8 @@ const steps = [
   }
 
   @media (max-width: 720px) {
-    /* Use two columns on small screens where it fits better, fall back to one column on very small devices */
-    .card-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    /* Keep single-column layout on small screens */
+    .card-grid { grid-template-columns: 1fr; gap: 8px; }
     .card .card-photo { height: 34px; margin-bottom:8px; }
     .card-body { padding: 9px; }
     .card .card-body h3 { font-size: 0.9rem; }
