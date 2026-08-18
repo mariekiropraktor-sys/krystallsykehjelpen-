@@ -1,5 +1,143 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import MediaPlaceholder from "../../components/MediaPlaceholder.astro";
+
+const bookingUrl = "https://psno-patient-platform-fe.svc.pasientsky.no/embedded/planner/booking?serviceProviderId=54907264-049e-11eb-8fc8-26c6f94d64b7";
+---
+
+<Layout title="Krystallsyken | Hva er BPPV og hvordan behandles det" description="Informasjon om krystallsyke (BPPV): symptomer, diagnose og behandling." activePath="/krystallsyken/">
+
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <span class="eyebrow">KRYSTALLSYKEN (BPPV)</span>
+        <h1>Når verden plutselig snurrer</h1>
+        <p class="lead">De fleste som får krystallsyke husker godt den første episoden. Kanskje snudde du deg i sengen en morgen og kjente at rommet begynte å spinne. Kanskje ble du svimmel da du så opp mot en hylle, eller bøyde deg ned for å knytte skoene. Opplevelsen kan være intens og skremmende — men krystallsyke er ufarlig, og en av de tilstandene hvor riktig behandling ofte gir rask bedring.</p>
+        <div class="btn-row">
+          <a href={bookingUrl} class="btn btn-primary">Bestill time →</a>
+        </div>
+      </div>
+      <div class="hero-media">
+        <img src="/ear-diagram.jpg" alt="Illustrasjon av det indre øret" class="hero-photo" />
+      </div>
+    </div>
+    <svg class="hero-wave" viewBox="0 0 1440 60" preserveAspectRatio="none">
+      <path d="M0,32 C360,72 1080,0 1440,32 L1440,60 L0,60 Z" fill="#ffffff" />
+    </svg>
+  </section>
+
+  <section class="section-alt">
+    <div class="container two-col">
+      <div class="media-col">
+        <MediaPlaceholder label="Animasjon: krystaller som løsner og beveger seg i buegangen" />
+      </div>
+      <div class="text-col">
+        <h2>Hva er krystallsyken?</h2>
+        <p>Inne i det indre øret finnes små kalkkrystaller som normalt hjelper hjernen med å registrere hvordan hodet beveger seg. Hos noen løsner disse og havner i en av ørets tre buegang­er.</p>
+        <p>Når du beveger hodet, sender krystallene feilsignaler til hjernen om at hodet roterer mer enn det faktisk gjør — det er dette som skaper følelsen av at rommet spinner.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <h2>Hvorfor får man det?</h2>
+      <p>Krystallsyke kommer oftest uten noen åpenbar grunn, men noen faktorer gjør det mer sannsynlig: høy alder, hodeskader, andre øresykdommer, vitamin D-mangel og benskjørhet. Tilbakefall er vanlig, men de fleste har lange perioder uten plager mellom episodene.</p>
+    </div>
+  </section>
+
+  <section class="section-beige">
+    <div class="container">
+      <h2>Symptomer</h2>
+      <p class="lead">Krystallsyke gir gjerne kraftig, karusellaktig svimmelhet som kommer igjen ved bestemte bevegelser.</p>
+      <div class="symptom-grid">
+        <div class="symptom-card"><div class="sym-icon">⤴️</div><p><strong>Plutselig snurrende svimmelhet ved bevegelse</strong></p></div>
+        <div class="symptom-card"><div class="sym-icon">⏱️</div><p><strong>Varer typisk 10–30 sekunder</strong></p></div>
+        <div class="symptom-card"><div class="sym-icon">🌙</div><p><strong>Ofte verst om morgenen eller ved snuing i sengen</strong></p></div>
+        <div class="symptom-card"><div class="sym-icon">⚠️</div><p><strong>Kvalme og ubalanse i etterkant</strong></p></div>
+      </div>
+      <div class="red-flag"> <strong>Oppsøk lege umiddelbart ved:</strong> dobbeltsyn, lammelser, kraftig hodepine eller vedvarende svimmelhet som ikke avtar.</div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="two-up">
+        <div>
+          <h3>Diagnose</h3>
+          <p>Vi bruker Dix-Hallpike-testen for å avdekke nøyaktig hvilken buegang som er berørt, ved å observere øyebevegelsene dine i bestemte posisjoner.</p>
+        </div>
+        <div>
+          <h3>Behandling</h3>
+          <p>En spesifikk reponeringsmanøver geleider krystallene tilbake. De fleste opplever tydelig bedring etter én eller få behandlinger.</p>
+        </div>
+      </div>
+      <div class="wide-media">
+        <MediaPlaceholder label="Video/animasjon: demonstrasjon av reponeringsmanøver (Epley)" />
+      </div>
+    </div>
+  </section>
+
+  <section class="section-alt">
+    <div class="container two-col">
+      <div class="text-col">
+        <h2>Hvorfor Krystallsykehjelpen</h2>
+        <p>Vi er spesielt interessert i nettopp krystallsyken og svimmelhet — ikke som en av mange ting vi behandler, men som vårt hovedfokus. Klinikk-, hjemme- eller telefonkonsultasjon i Fetsund.</p>
+      </div>
+      <div class="media-col">
+        <img src="/marie-portrait.jpg" alt="Marie" class="portrait" />
+      </div>
+    </div>
+  </section>
+
+  <section class="section-cta">
+    <div class="container cta-inner">
+      <h2>Slipp svimmelheten</h2>
+      <p class="sub">Klinikk-, hjemme- og telefonkonsultasjoner i Fetsund.</p>
+      <a href={bookingUrl} class="btn btn-outline">Bestill time →</a>
+    </div>
+  </section>
+
+</Layout>
+
+<style>
+  .hero { padding: 56px 0 24px; }
+  .hero-grid { display:grid; grid-template-columns: 1fr 1fr; gap:28px; align-items:center; }
+  .eyebrow { color:var(--accent); font-weight:700; letter-spacing:0.08em; text-transform:uppercase; }
+  .lead { color:var(--ink-soft); }
+  .hero-photo { width:100%; border-radius:var(--radius); object-fit:cover; }
+  .hero-wave { margin-top:24px; }
+
+  .two-col { display:grid; grid-template-columns: 1fr 420px; gap:28px; align-items:center; }
+  .two-col .media-col { }
+  .two-col .text-col { }
+  .symptom-grid { display:grid; grid-template-columns: repeat(2, 1fr); gap:14px; margin-top:18px; }
+  .symptom-card { background: #fff; border-radius: var(--radius); padding:14px; display:flex; gap:12px; align-items:center; }
+  .sym-icon { font-size:28px; width:44px; height:44px; display:flex; align-items:center; justify-content:center; }
+  .red-flag { background: #ffe9eb; color:#7a1720; padding:12px; border-radius:8px; margin-top:14px; }
+
+  .two-up { display:grid; grid-template-columns: 1fr 1fr; gap:20px; margin-top:18px; }
+  .wide-media { margin-top:18px; }
+
+  .portrait { width:100%; border-radius:var(--radius); }
+
+  .section-cta { background: var(--navy); color:#fff; padding:36px 0; }
+  .section-cta .cta-inner { display:flex; gap:20px; align-items:center; justify-content:space-between; }
+  .section-cta h2 { margin:0; color:#fff; }
+  .section-cta .sub { color: #d9e9f6; margin:0; }
+  .btn-outline { background: var(--beige); color: var(--navy); padding:12px 20px; border-radius:999px; text-decoration:none; font-weight:700; }
+
+  @media (max-width: 900px) {
+    .hero-grid, .two-col { grid-template-columns: 1fr; }
+    .two-col { grid-template-columns: 1fr; }
+    .section-cta .cta-inner { flex-direction:column; align-items:flex-start; gap:12px; }
+    .two-up { grid-template-columns: 1fr; }
+    .symptom-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+</style>
+---
+import Layout from "../../layouts/Layout.astro";
 ---
 
 <Layout

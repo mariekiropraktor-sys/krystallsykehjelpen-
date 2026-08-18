@@ -1,0 +1,19 @@
+---
+const { label = "Media placeholder" } = Astro.props;
+---
+<div class="media-placeholder" role="img" aria-label={label}>
+  <div class="mp-inner">
+    <svg viewBox="0 0 64 48" width="80" height="60" aria-hidden="true" focusable="false">
+      <rect x="1" y="1" width="62" height="46" fill="none" stroke="var(--line)" stroke-width="2" stroke-dasharray="4 6" rx="8" ry="8"></rect>
+      <circle cx="20" cy="24" r="6" fill="var(--navy)" opacity="0.08"></circle>
+    </svg>
+    <p>{label}</p>
+  </div>
+</div>
+
+<style>
+  .media-placeholder { display:flex; align-items:center; justify-content:center; background: var(--sky); border-radius: var(--radius); padding: 18px; }
+  .mp-inner { text-align:center; color:var(--navy); display:flex; gap:12px; align-items:center; justify-content:center; flex-direction:column; }
+  .mp-inner p { margin:0; font-weight:700; color:var(--navy-2); }
+  @media (min-width:720px) { .media-placeholder { padding: 24px; } }
+</style>
