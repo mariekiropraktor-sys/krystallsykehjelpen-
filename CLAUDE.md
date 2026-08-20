@@ -77,6 +77,29 @@ opp nye stilkonvensjoner.
 - Live URL: krystallsykehjelpen-3934.vercel.app — en eldre Vercel-deploy
   (krystallsykehjelpen-i3ij.vercel.app) er utdatert og skal etter hvert slettes.
 
+## Sanity CMS (fase 1 — oppsett fullført)
+Sanity er satt opp som headless CMS, embeddet på `/admin`-ruten i Astro-
+prosjektet (ikke egen app/port). Studio kjører som en React-øy via
+`@sanity/astro` + `@astrojs/react` (låst til `@astrojs/react@3.6.2` — v4+
+krever Astro 5 og gir kompileringsfeil på denne Astro 4-versjonen).
+
+- **Prosjekt-ID / dataset:** se `astro-site/.env` (`PUBLIC_SANITY_PROJECT_ID`,
+  `PUBLIC_SANITY_DATASET=production`). Ikke hardkodet i kildekoden.
+- **Config:** `astro-site/sanity.config.ts` (schema + structure),
+  `astro-site/src/sanity/schemaTypes/` (ett skjema per fil),
+  `astro-site/src/sanity/structure.ts` (menygruppering i Studio).
+- **Skjemaer:** `siteSettings` (singleton), `pageSection`, `exerciseCategory`,
+  `exercise`, `blogPost`, `faqItem`, `practitioner`.
+- **Seed-skript:** `astro-site/scripts/seed.mjs` (kjør med `npm run seed`)
+  legger inn plassholderinnhold — brukes `SANITY_API_WRITE_TOKEN` fra `.env`
+  (kun server-side, aldri eksponert til klienten).
+- Ingen eksisterende side er koblet til Sanity-data ennå — sidene i
+  `src/pages/` viser fortsatt hardkodet tekst. Det er fase 2.
+- **Kjent problem:** `astro-site/node_modules/` er per i dag innsjekket i
+  git (9800+ filer). Det bør ryddes opp i (legg til i `.gitignore` er gjort,
+  men historiske filer må fjernes med `git rm -r --cached`) — spør Marie før
+  du gjør dette, det er en stor endring.
+
 ## Fremtidig visjon (ikke prioritert ennå)
 Terapeut-katalog med flere behandlere, AI-assistent-integrasjon, og
 flerspråklig støtte. Ikke bygg dette med mindre Marie eksplisitt ber om det —

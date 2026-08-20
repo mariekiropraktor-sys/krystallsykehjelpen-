@@ -1,0 +1,14 @@
+# Avhengigheter
+node_modules/
+
+# Miljøvariabler (inneholder API-token — skal aldri commites)
+.env
+.env.*
+!.env.example
+
+# Astro / build-output
+astro-site/dist/
+astro-site/.astro/
+
+# OS
+.DS_Store
