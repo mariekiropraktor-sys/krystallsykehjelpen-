@@ -1,5 +1,9 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import { getPageSections } from "../../lib/pageSections";
+import { inlineHtmlFromBlock } from "../../lib/portableText";
+
+const sections = await getPageSections("om-krystallsykehjelpen");
 
 const bookingUrl =
   "https://psno-patient-platform-fe.svc.pasientsky.no/embedded/planner/booking?serviceProviderId=54907264-049e-11eb-8fc8-26c6f94d64b7";
@@ -35,11 +39,10 @@ const consultations = [
     <div class="container hero-grid">
       <div>
         <span class="eyebrow">Spesialisert på krystallsyke og BPPV</span>
-        <h1>Om Krystallsykehjelpen</h1>
-        <p class="lead">
-          Vi finnes fordi svimmelhet ikke er én slags pasientgruppe. Her er fokuset smalt,
-          behandlingen målrettet, og oppfølgingen personlig – ikke generell kiropraktikk.
-        </p>
+        <h1>{sections.hero?.heading ?? "Om Krystallsykehjelpen"}</h1>
+        <p class="lead" set:html={sections.hero?.body?.[0]
+          ? inlineHtmlFromBlock(sections.hero.body[0])
+          : "Vi finnes fordi svimmelhet ikke er én slags pasientgruppe. Her er fokuset smalt, behandlingen målrettet, og oppfølgingen personlig – ikke generell kiropraktikk."} />
         <div class="btn-row">
           <a href={bookingUrl} class="btn btn-primary">Bestill time</a>
           <a href="/kontakt/" class="btn btn-outline">Kontakt oss</a>
@@ -68,13 +71,11 @@ const consultations = [
     <div class="container">
       <div class="section-head">
         <span class="eyebrow">Konseptet</span>
-        <h2>Derfor finnes Krystallsykehjelpen</h2>
+        <h2>{sections["hvorfor-oss"]?.heading ?? "Derfor finnes Krystallsykehjelpen"}</h2>
         <hr class="heading-rule" />
-        <p>
-          Vi er her fordi mange får feil eller for lite tydelig hjelp når svimmelhet behandles som
-          generell kiropraktikk. Hos oss er krystallsyke og BPPV hovedfokuset, og det gir mer
-          presis utredning og raskere bedring.
-        </p>
+        <p set:html={sections["hvorfor-oss"]?.body?.[0]
+          ? inlineHtmlFromBlock(sections["hvorfor-oss"].body[0])
+          : "Vi er her fordi mange får feil eller for lite tydelig hjelp når svimmelhet behandles som generell kiropraktikk. Hos oss er krystallsyke og BPPV hovedfokuset, og det gir mer presis utredning og raskere bedring."} />
       </div>
 
       <div class="feature-grid">
@@ -106,12 +107,11 @@ const consultations = [
   <section>
     <div class="container">
       <div class="section-head">
-        <h2>Slik jobber vi</h2>
+        <h2>{sections["slik-jobber-vi"]?.heading ?? "Slik jobber vi"}</h2>
         <hr class="heading-rule" />
-        <p>
-          Vi tilbyr tre konsultasjonsformer som dekker behovet ditt, enten du er klar for klinikk eller
-          trenger hjelp hjemme eller på skjerm.
-        </p>
+        <p set:html={sections["slik-jobber-vi"]?.body?.[0]
+          ? inlineHtmlFromBlock(sections["slik-jobber-vi"].body[0])
+          : "Vi tilbyr tre konsultasjonsformer som dekker behovet ditt, enten du er klar for klinikk eller trenger hjelp hjemme eller på skjerm."} />
       </div>
 
       <div class="card-grid">
@@ -134,14 +134,13 @@ const consultations = [
 
   <section class="section-alt">
     <div class="container bio-card">
-      <img src="/marie-portrait.jpg" alt="Marie, kiropraktor hos Krystallsykehjelpen" class="bio-photo" />
+      <img src={sections["moet-marie"]?.mediaUrl ?? "/marie-portrait.jpg"} alt="Marie, kiropraktor hos Krystallsykehjelpen" class="bio-photo" />
       <div>
         <span class="eyebrow">Møt Marie</span>
-        <h2>Personlig erfaring med svimmelhet</h2>
-        <p>
-          Marie er kiropraktor med spesialisering i utredning og behandling av krystallsyke.
-          Hun kombinerer faglig trygghet med varme, tydelig veiledning og praktisk oppfølging.
-        </p>
+        <h2>{sections["moet-marie"]?.heading ?? "Personlig erfaring med svimmelhet"}</h2>
+        <p set:html={sections["moet-marie"]?.body?.[0]
+          ? inlineHtmlFromBlock(sections["moet-marie"].body[0])
+          : "Marie er kiropraktor med spesialisering i utredning og behandling av krystallsyke. Hun kombinerer faglig trygghet med varme, tydelig veiledning og praktisk oppfølging."} />
         <a href="/om-oss/" class="card-link">Les mer om Marie og klinikken →</a>
       </div>
     </div>
@@ -150,8 +149,10 @@ const consultations = [
   <section class="section-beige">
     <div class="container cta-band">
       <div>
-        <h2>Vil du vite om dette er riktig for deg?</h2>
-        <p>Bestill en vurdering i dag, så får du hjelp til å finne ut om svimmelheten skyldes krystallsyke.</p>
+        <h2>{sections.cta?.heading ?? "Vil du vite om dette er riktig for deg?"}</h2>
+        <p set:html={sections.cta?.body?.[0]
+          ? inlineHtmlFromBlock(sections.cta.body[0])
+          : "Bestill en vurdering i dag, så får du hjelp til å finne ut om svimmelheten skyldes krystallsyke."} />
       </div>
       <div class="cta-actions">
         <a href={bookingUrl} class="btn btn-primary">Bestill time</a>

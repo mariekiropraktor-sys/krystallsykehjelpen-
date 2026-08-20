@@ -1,5 +1,9 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import { getPageSections } from "../lib/pageSections";
+import { inlineHtmlFromBlock } from "../lib/portableText";
+
+const sections = await getPageSections("hjem");
 
 const bookingUrl =
   "https://psno-patient-platform-fe.svc.pasientsky.no/embedded/planner/booking?serviceProviderId=54907264-049e-11eb-8fc8-26c6f94d64b7";
@@ -41,17 +45,16 @@ const steps = [
     <div class="container hero-grid">
       <div>
         <span class="eyebrow">Ekspertise innen krystallsyke og svimmelhet</span>
-        <h1>Svimmel når du snur deg i sengen?</h1>
-        <p class="lead">
-          Krystallsyke (BPPV) er en av de vanligste årsakene til svimmelhet. Få grundig undersøkelse
-          og målrettet behandling – i klinikken, hjemme hos deg, eller over telefon.
-        </p>
+        <h1>{sections.hero?.heading ?? "Svimmel når du snur deg i sengen?"}</h1>
+        <p class="lead" set:html={sections.hero?.body?.[0]
+          ? inlineHtmlFromBlock(sections.hero.body[0])
+          : "Krystallsyke (BPPV) er en av de vanligste årsakene til svimmelhet. Få grundig undersøkelse og målrettet behandling – i klinikken, hjemme hos deg, eller over telefon."} />
         <div class="btn-row">
           <a href={bookingUrl} class="btn btn-primary">Bestill time →</a>
         </div>
       </div>
       <div class="hero-media">
-        <img src="/hero-krystallsykehjelpen-finpusset.png" alt="Kvinne som holder seg på hodet og kjenner på svimmelhet" class="hero-photo" />
+        <img src={sections.hero?.mediaUrl ?? "/hero-krystallsykehjelpen-finpusset.png"} alt="Kvinne som holder seg på hodet og kjenner på svimmelhet" class="hero-photo" />
         <div class="hero-badge">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="10" /><path d="M9 12l2 2 4-4" />
@@ -71,7 +74,7 @@ const steps = [
   <section class="section-alt no-top">
     <div class="container">
       <div class="section-head">
-            <h2>Slik kan vi hjelpe deg med krystallsyke</h2>
+            <h2>{sections["hjelpe-deg"]?.heading ?? "Slik kan vi hjelpe deg med krystallsyke"}</h2>
             <hr class="heading-rule" />
           </div>
           <div class="card-grid">
@@ -118,14 +121,20 @@ const steps = [
       <div class="diagram-grid">
         <div>
           <span class="eyebrow">Om krystallsyke</span>
-          <h2>Hva skjer i øret?</h2>
+          <h2>{sections["hva-skjer-i-oret"]?.heading ?? "Hva skjer i øret?"}</h2>
           <hr class="heading-rule" />
-          <p>I det indre øret har vi tre bueganger som registrerer bevegelse. I buegangene finnes det små krystaller (otolitter) som normalt sitter fast i et eget område.</p>
-          <p>Når krystallene løsner og havner i en buegang, kan de gi signaler om bevegelse selv når du er i ro. Det er dette som skaper svimmelheten når du endrer stilling.</p>
+          {sections["hva-skjer-i-oret"]?.body?.length ? (
+            sections["hva-skjer-i-oret"].body.map((b) => <p set:html={inlineHtmlFromBlock(b)} />)
+          ) : (
+            <>
+              <p>I det indre øret har vi tre bueganger som registrerer bevegelse. I buegangene finnes det små krystaller (otolitter) som normalt sitter fast i et eget område.</p>
+              <p>Når krystallene løsner og havner i en buegang, kan de gi signaler om bevegelse selv når du er i ro. Det er dette som skaper svimmelheten når du endrer stilling.</p>
+            </>
+          )}
           <a href="/krystallsyken/" class="card-link">Les mer om hvordan balanseorganet fungerer →</a>
         </div>
         <div class="diagram-illustration">
-          <img src="/ear-diagram.jpg" alt="Illustrasjon av buegangene i det indre øret" class="diagram-img" />
+          <img src={sections["hva-skjer-i-oret"]?.mediaUrl ?? "/ear-diagram.jpg"} alt="Illustrasjon av buegangene i det indre øret" class="diagram-img" />
           <p class="diagram-caption">Illustrasjon av det indre ørets balanseorgan. Ved krystallsyke (BPPV) har otokonier løsnet fra utriculus og kommet inn i en av buegangene, hvor de påvirker væskebevegelsen som igjen resulterer i svimmelhet.</p>
         </div>
       </div>
@@ -136,9 +145,11 @@ const steps = [
     <div class="container">
       <div class="exercises-grid">
         <div>
-          <h2>Les mer om våre vanligste øvelser</h2>
+          <h2>{sections.ovelser?.heading ?? "Les mer om våre vanligste øvelser"}</h2>
           <hr class="heading-rule" />
-          <p>Vi viser eksempler på trygge og effektive øvelser du kan gjøre hjemme for å håndtere restsymptomer og forebygge tilbakefall.</p>
+          <p set:html={sections.ovelser?.body?.[0]
+            ? inlineHtmlFromBlock(sections.ovelser.body[0])
+            : "Vi viser eksempler på trygge og effektive øvelser du kan gjøre hjemme for å håndtere restsymptomer og forebygge tilbakefall."} />
         </div>
         <div class="exercise-media">
           <div class="photo-block exercise-photo">
@@ -162,7 +173,7 @@ const steps = [
     <div class="container faq-grid">
       <div>
         <div class="section-head">
-          <h2>Vanlige spørsmål</h2>
+          <h2>{sections.faq?.heading ?? "Vanlige spørsmål"}</h2>
           <hr class="heading-rule" />
         </div>
         {faq.map((item) => (
@@ -180,8 +191,10 @@ const steps = [
         <div class="callout">
         <div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" /></svg></div>
         <div>
-          <h3>Viktig å vite</h3>
-          <p>Krystallsyke gir vanligvis ikke svimmelhet når du går eller sitter i ro. Ved vedvarende svimmelhet bør andre årsaker vurderes.</p>
+          <h3>{sections["viktig-a-vite"]?.heading ?? "Viktig å vite"}</h3>
+          <p set:html={sections["viktig-a-vite"]?.body?.[0]
+            ? inlineHtmlFromBlock(sections["viktig-a-vite"].body[0])
+            : "Krystallsyke gir vanligvis ikke svimmelhet når du går eller sitter i ro. Ved vedvarende svimmelhet bør andre årsaker vurderes."} />
         </div>
       </div>
     </div>
@@ -190,10 +203,12 @@ const steps = [
   <section>
     <div class="container">
       <div class="bio-card">
-        <img src="/marie-portrait.jpg" alt="Marie, kiropraktor hos Krystallsykehjelpen" class="bio-photo" />
+        <img src={sections["marie-bio"]?.mediaUrl ?? "/marie-portrait.jpg"} alt="Marie, kiropraktor hos Krystallsykehjelpen" class="bio-photo" />
         <div>
-          <h3>Marie – spesialisert på svimmelhet</h3>
-          <p>Kiropraktor med spesialkompetanse på utredning og behandling av svimmelhet og krystallsyke.</p>
+          <h3>{sections["marie-bio"]?.heading ?? "Marie – spesialisert på svimmelhet"}</h3>
+          <p set:html={sections["marie-bio"]?.body?.[0]
+            ? inlineHtmlFromBlock(sections["marie-bio"].body[0])
+            : "Kiropraktor med spesialkompetanse på utredning og behandling av svimmelhet og krystallsyke."} />
           <a href="/om-oss/" class="card-link">Les mer om Krystallsykehjelpen →</a>
         </div>
       </div>
@@ -203,8 +218,10 @@ const steps = [
   <section class="section-beige">
     <div class="container cta-band">
       <div>
-        <h2>Klar til å bli kvitt svimmelheten?</h2>
-        <p>Bestill en time i dag – vi hjelper deg tilbake til en stødig hverdag.</p>
+        <h2>{sections.cta?.heading ?? "Klar til å bli kvitt svimmelheten?"}</h2>
+        <p set:html={sections.cta?.body?.[0]
+          ? inlineHtmlFromBlock(sections.cta.body[0])
+          : "Bestill en time i dag – vi hjelper deg tilbake til en stødig hverdag."} />
       </div>
       <a href={bookingUrl} class="btn btn-primary">Bestill time →</a>
     </div>

@@ -93,12 +93,46 @@ krever Astro 5 og gir kompileringsfeil på denne Astro 4-versjonen).
 - **Seed-skript:** `astro-site/scripts/seed.mjs` (kjør med `npm run seed`)
   legger inn plassholderinnhold — brukes `SANITY_API_WRITE_TOKEN` fra `.env`
   (kun server-side, aldri eksponert til klienten).
-- Ingen eksisterende side er koblet til Sanity-data ennå — sidene i
-  `src/pages/` viser fortsatt hardkodet tekst. Det er fase 2.
-- **Kjent problem:** `astro-site/node_modules/` er per i dag innsjekket i
-  git (9800+ filer). Det bør ryddes opp i (legg til i `.gitignore` er gjort,
-  men historiske filer må fjernes med `git rm -r --cached`) — spør Marie før
-  du gjør dette, det er en stor endring.
+## Sanity CMS (fase 2 — Hjem, Om Krystallsykehjelpen og Krystallsyken koblet til)
+Sidetekst (overskrift + brødtekst + hovedbilde) på **Hjem**, **Om
+Krystallsykehjelpen** og **Krystallsyken** hentes nå fra Sanity sine
+`pageSection`-dokumenter i stedet for å være hardkodet.
+
+- **Hvordan det henger sammen:** hver `.astro`-side kaller
+  `getPageSections(pageSlug)` fra `astro-site/src/lib/pageSections.ts` i
+  frontmatter. Den returnerer et objekt nøkkelet på `sectionKey`
+  (`sections["hero"]`, `sections["cta"]`, osv.). I malen brukes
+  `sections.hero?.heading ?? "fallback-tekst"` — **fallback-teksten i koden
+  er identisk med det som ligger i Sanity ved migreringen**, så hvis et
+  dokument mangler eller Sanity er utilgjengelig, vises siden akkurat som før
+  i stedet for å krasje eller vise tomt innhold.
+- Brødtekst er portable text (for å støtte fet/kursiv), rendret med
+  `inlineHtmlFromBlock()` fra `astro-site/src/lib/portableText.ts` — en liten
+  egenskrevet renderer (ingen ekstern avhengighet), som output­er inline
+  HTML uten å legge til noen ekstra wrapper-elementer i DOM-en.
+- Bilder hentes som `mediaUrl` (rå Sanity CDN-URL via GROQ
+  `mediaAsset.asset->url`) og brukes direkte som `src`, med samme fallback-
+  mønster.
+- **Nytt innhold legges til slik:** lag et nytt `pageSection`-dokument i
+  Studio med riktig `pageSlug` + `sectionKey`, så plukkes det automatisk opp
+  — ingen kodeendring nødvendig, så lenge `sectionKey` matcher det siden ser
+  etter.
+- **Bevisste avgrensninger** (ikke migrert til Sanity, fortsatt hardkodet i
+  koden — dette er components/spesialstrukturer, ikke ren sidetekst):
+  - FAQ-spørsmålene på Hjem (egen `faq`-array i `index.astro`) og
+    symptomkortene + rødt-flagg-boksen på Krystallsyken.
+  - De tre hjelpe-kortene (Undersøkelse/Hjemmebesøk/Video) på Hjem, og
+    konsultasjons­kortene på Om Krystallsykehjelpen.
+  - Hero-videoen på Krystallsyken (`/videos/krystallsyke animasjon.mp4`) —
+    bevisst IKKE koblet til Sanity, kun heading/body-teksten ved siden av.
+    Video-attributter (autoplay/muted/loop) er urørt.
+- **Kjent, ikke-relatert feil (fantes før fase 2):** Om Krystallsykehjelpen
+  sin hero-seksjon refererer til `/hero-home.jpg`, som ikke finnes i
+  `public/`. Bildet vises derfor ikke — dette er ikke noe jeg har endret,
+  bare noe jeg oppdaget. Si fra til Marie om hun vil ha et ekte bilde her.
+- **Migreringsskript** (kjørt én gang, kan kjøres på nytt — de er
+  idempotente og bruker faste dokument-ID-er):
+  `astro-site/scripts/migrate-page-sections.mjs`.
 
 ## Fremtidig visjon (ikke prioritert ennå)
 Terapeut-katalog med flere behandlere, AI-assistent-integrasjon, og
