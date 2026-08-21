@@ -9,7 +9,13 @@ const links = [
   { href: "/om-krystallsykehjelpen/", label: "Om Krystallsykehjelpen" },
   { href: "/krystallsyken/", label: "Krystallsyken" },
   { href: "/ovelsesbibliotek/", label: "Øvelsesbibliotek" },
+  { href: "/finn-behandler/", label: "Finn behandler" },
   { href: "/kontakt/", label: "Kontakt oss" },
+];
+
+const resourceLinks = [
+  { href: "/faq/", label: "FAQ" },
+  { href: "/blogg/", label: "Blogg" },
 ];
 
 const bookingUrl =
@@ -36,6 +42,19 @@ const bookingUrl =
           </a>
         </li>
       ))}
+      <li class={`has-dropdown ${resourceLinks.some((l) => l.href === activePath) ? "active-parent" : ""}`}>
+        <button class="dropdown-trigger" aria-expanded="false" aria-controls="ressurser-menu" type="button">
+          Ressurser
+          <svg class="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
+        </button>
+        <ul class="dropdown-menu" id="ressurser-menu">
+          {resourceLinks.map((link) => (
+            <li>
+              <a href={link.href} class={activePath === link.href ? "active" : ""}>{link.label}</a>
+            </li>
+          ))}
+        </ul>
+      </li>
       <li>
         <a href={bookingUrl} class="btn btn-primary btn-nav">Bestill time</a>
       </li>
@@ -48,6 +67,14 @@ const bookingUrl =
   const links = document.getElementById("nav-links");
   toggle?.addEventListener("click", () => {
     links?.classList.toggle("open");
+  });
+
+  document.querySelectorAll(".dropdown-trigger").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const li = btn.closest(".has-dropdown");
+      const isOpen = li?.classList.toggle("open");
+      btn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    });
   });
 </script>
 
@@ -111,6 +138,48 @@ const bookingUrl =
 
   .nav-links li:has(.btn-nav) { margin-left: 6px; }
 
+  .has-dropdown { position: relative; }
+  .dropdown-trigger {
+    background: none;
+    border: none;
+    font: inherit;
+    color: var(--ink-soft);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.92rem;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .dropdown-trigger:hover { color: var(--navy); background: var(--sky); }
+  .has-dropdown.active-parent .dropdown-trigger { color: var(--navy); background: var(--sky); }
+  .dropdown-trigger .chev { transition: transform 0.2s ease; }
+  .has-dropdown.open .dropdown-trigger .chev,
+  .has-dropdown:hover .dropdown-trigger .chev { transform: rotate(180deg); }
+
+  .dropdown-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    box-shadow: 0 12px 32px rgba(22, 56, 117, 0.14);
+    min-width: 160px;
+    padding: 6px;
+    display: none;
+    list-style: none;
+    margin: 0;
+    z-index: 60;
+  }
+  .dropdown-menu a { padding: 10px 12px; border-radius: 8px; display: block; }
+  .has-dropdown:hover .dropdown-menu,
+  .has-dropdown.open .dropdown-menu,
+  .has-dropdown:focus-within .dropdown-menu { display: block; }
+
   .nav-toggle {
     display: none;
     background: none;
@@ -145,5 +214,17 @@ const bookingUrl =
     .nav-links li:has(.btn-nav) { margin: 6px 4px 4px; }
     .nav-toggle { display: block; }
     .btn-nav { width: 100%; justify-content: center; }
+
+    .dropdown-trigger { width: 100%; justify-content: space-between; padding: 13px 16px; }
+    .dropdown-menu {
+      position: static;
+      box-shadow: none;
+      border: none;
+      padding-left: 14px;
+      display: none;
+    }
+    .has-dropdown.open .dropdown-menu { display: block; }
+    .has-dropdown:hover .dropdown-menu { display: none; }
+    .has-dropdown.open:hover .dropdown-menu { display: block; }
   }
 </style>

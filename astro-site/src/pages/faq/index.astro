@@ -1,0 +1,82 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { safeFetch } from "../../lib/safeFetch";
+import { inlineHtmlFromBlock } from "../../lib/portableText";
+
+// "faq" finnes ikke i pageSection sin pageSlug-liste (og skjemaet skal ikke
+// endres), så denne siden har en enkel hardkodet tittel i stedet for en
+// Sanity-drevet hero — resten av innholdet (spørsmålene) kommer fra faqItem.
+const faqItems = await safeFetch(
+  `*[_type == "faqItem"] | order(order asc){ _id, question, answer }`,
+  {},
+  [],
+);
+---
+
+<Layout
+  title="Ofte stilte spørsmål | Krystallsykehjelpen"
+  description="Svar på vanlige spørsmål om timebestilling, konsultasjoner og behandling hos Krystallsykehjelpen."
+  activePath="/faq/"
+>
+  <section class="hero hero-simple">
+    <div class="container">
+      <span class="eyebrow">Ressurser</span>
+      <h1>Ofte stilte spørsmål</h1>
+      <p class="lead">Finner du ikke svar på det du lurer på her? Ta gjerne kontakt, så hjelper vi deg videre.</p>
+    </div>
+    <svg class="hero-wave" viewBox="0 0 1440 60" preserveAspectRatio="none">
+      <path d="M0,32 C360,72 1080,0 1440,32 L1440,60 L0,60 Z" fill="#ffffff" />
+    </svg>
+  </section>
+
+  <section class="section-alt no-top">
+    <div class="container faq-container">
+      {faqItems.length ? (
+        faqItems.map((item) => (
+          <div class="accordion-item">
+            <button class="accordion-trigger">
+              {item.question}
+              <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
+            </button>
+            <div class="accordion-panel"><p set:html={inlineHtmlFromBlock(item.answer?.[0])} /></div>
+          </div>
+        ))
+      ) : (
+        <p>Ingen spørsmål lagt inn ennå.</p>
+      )}
+    </div>
+  </section>
+</Layout>
+
+<script>
+  document.querySelectorAll(".accordion-trigger").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      btn.closest(".accordion-item")?.classList.toggle("open");
+    });
+  });
+</script>
+
+<style>
+  .hero-simple { padding: 56px 0 90px; position: relative; overflow: hidden; text-align: center; }
+  .hero-simple .container { max-width: 640px; }
+  .eyebrow { font-size: 0.82rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 10px; display: inline-block; }
+  .lead { font-size: 1.05rem; }
+  .hero-wave { position: absolute; bottom: -2px; left: 0; width: 100%; line-height: 0; }
+
+  .section-alt { background: var(--paper); padding: 60px 0; }
+  .section-alt.no-top { padding-top: 0; padding-bottom: 90px; }
+  .faq-container { max-width: 760px; }
+
+  .accordion-item { border-bottom: 1px solid var(--line); }
+  .accordion-item:first-child { border-top: 1px solid var(--line); }
+  .accordion-trigger {
+    width: 100%; text-align: left; background: none; border: none; padding: 18px 4px;
+    font-family: var(--font-body); font-weight: 600; font-size: 1rem; color: var(--navy);
+    display: flex; justify-content: space-between; align-items: center; cursor: pointer;
+  }
+  .accordion-trigger .chev { transition: transform 0.2s ease; flex-shrink: 0; margin-left: 12px; }
+  .accordion-item.open .accordion-trigger .chev { transform: rotate(180deg); }
+  .accordion-panel { max-height: 0; overflow: hidden; transition: max-height 0.25s ease; }
+  .accordion-item.open .accordion-panel { max-height: 400px; }
+  .accordion-panel p { padding: 0 4px 18px; }
+</style>

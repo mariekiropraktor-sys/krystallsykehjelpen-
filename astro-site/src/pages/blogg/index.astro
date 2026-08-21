@@ -1,0 +1,96 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import MediaPlaceholder from "../../components/MediaPlaceholder.astro";
+import { getPageSections } from "../../lib/pageSections";
+import { safeFetch } from "../../lib/safeFetch";
+import { inlineHtmlFromBlock } from "../../lib/portableText";
+import { urlForImage } from "../../lib/sanityImage";
+
+const sections = await getPageSections("blogg");
+
+const posts = await safeFetch(
+  `*[_type == "blogPost"] | order(publishedDate desc){
+    _id, title, "slug": slug.current, excerpt, publishedDate, coverImage
+  }`,
+  {},
+  [],
+);
+
+function formatDate(dateString) {
+  if (!dateString) return "";
+  return new Date(dateString).toLocaleDateString("nb-NO", { year: "numeric", month: "long", day: "numeric" });
+}
+---
+
+<Layout
+  title="Blogg | Krystallsykehjelpen"
+  description="Artikler og nyheter om krystallsyke og svimmelhet fra Krystallsykehjelpen."
+  activePath="/blogg/"
+>
+  <section class="hero hero-simple">
+    <div class="container">
+      <span class="eyebrow">Ressurser</span>
+      <h1>{sections.hero?.heading ?? "Blogg"}</h1>
+      <p class="lead" set:html={sections.hero?.body?.[0]
+        ? inlineHtmlFromBlock(sections.hero.body[0])
+        : "Artikler og nyheter om krystallsyke og svimmelhet."} />
+    </div>
+    <svg class="hero-wave" viewBox="0 0 1440 60" preserveAspectRatio="none">
+      <path d="M0,32 C360,72 1080,0 1440,32 L1440,60 L0,60 Z" fill="#ffffff" />
+    </svg>
+  </section>
+
+  <section class="section-alt no-top">
+    <div class="container">
+      {posts.length ? (
+        <div class="card-grid">
+          {posts.map((post) => (
+            <a href={`/blogg/${post.slug}/`} class="card blog-card">
+              {urlForImage(post.coverImage, 640) ? (
+                <img src={urlForImage(post.coverImage, 640)} alt={post.title} class="blog-cover" />
+              ) : (
+                <MediaPlaceholder label={post.title} />
+              )}
+              <div class="card-body">
+                {post.publishedDate && <span class="post-date">{formatDate(post.publishedDate)}</span>}
+                <h3>{post.title}</h3>
+                {post.excerpt && <p>{post.excerpt}</p>}
+              </div>
+            </a>
+          ))}
+        </div>
+      ) : (
+        <p>Ingen blogginnlegg publisert ennå.</p>
+      )}
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .hero-simple { padding: 56px 0 90px; position: relative; overflow: hidden; text-align: center; }
+  .hero-simple .container { max-width: 640px; }
+  .eyebrow { font-size: 0.82rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 10px; display: inline-block; }
+  .lead { font-size: 1.05rem; }
+  .hero-wave { position: absolute; bottom: -2px; left: 0; width: 100%; line-height: 0; }
+
+  .section-alt { background: var(--paper); padding: 60px 0; }
+  .section-alt.no-top { padding-top: 0; padding-bottom: 90px; }
+
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+  .card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: 0 18px 36px rgba(22, 56, 117, 0.08);
+    text-decoration: none;
+    display: block;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .card:hover { transform: translateY(-2px); box-shadow: 0 22px 44px rgba(22, 56, 117, 0.12); }
+  .blog-cover { width: 100%; aspect-ratio: 16/10; object-fit: cover; }
+  .card-body { padding: 22px; }
+  .card-body h3 { margin: 4px 0 8px; }
+  .card-body p { margin: 0; color: var(--ink-soft); }
+  .post-date { font-size: 0.8rem; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.04em; }
+</style>

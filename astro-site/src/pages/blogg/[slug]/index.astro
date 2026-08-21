@@ -1,0 +1,98 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import MediaPlaceholder from "../../../components/MediaPlaceholder.astro";
+import { sanityClient } from "sanity:client";
+import { safeFetch } from "../../../lib/safeFetch";
+import { inlineHtmlFromBlock } from "../../../lib/portableText";
+import { urlForImage } from "../../../lib/sanityImage";
+
+export async function getStaticPaths() {
+  try {
+    const posts = await sanityClient.fetch(
+      `*[_type == "blogPost" && defined(slug.current)]{ "slug": slug.current }`,
+    );
+    return posts.map((p) => ({ params: { slug: p.slug } }));
+  } catch (error) {
+    console.warn("[blogg/[slug]] Kunne ikke hente stier fra Sanity:", error);
+    return [];
+  }
+}
+
+const { slug } = Astro.params;
+
+const post = await safeFetch(
+  `*[_type == "blogPost" && slug.current == $slug][0]{
+    title, publishedDate, excerpt, body, coverImage,
+    "author": author->{ name, title, photo }
+  }`,
+  { slug },
+  null,
+);
+
+function formatDate(dateString) {
+  if (!dateString) return "";
+  return new Date(dateString).toLocaleDateString("nb-NO", { year: "numeric", month: "long", day: "numeric" });
+}
+---
+
+<Layout
+  title={post ? `${post.title} | Krystallsykehjelpen` : "Blogginnlegg | Krystallsykehjelpen"}
+  description={post?.excerpt ?? "Blogginnlegg fra Krystallsykehjelpen."}
+  activePath="/blogg/"
+>
+  {post ? (
+    <article class="post">
+      <div class="container post-container">
+        <a href="/blogg/" class="card-link back-link">← Tilbake til blogg</a>
+        {post.publishedDate && <span class="post-date">{formatDate(post.publishedDate)}</span>}
+        <h1>{post.title}</h1>
+
+        {post.author?.name && (
+          <div class="author-row">
+            {urlForImage(post.author.photo, 80) && (
+              <img src={urlForImage(post.author.photo, 80)} alt={post.author.name} class="author-photo" />
+            )}
+            <div>
+              <strong>{post.author.name}</strong>
+              {post.author.title && <span class="author-title">{post.author.title}</span>}
+            </div>
+          </div>
+        )}
+
+        {urlForImage(post.coverImage, 1200) ? (
+          <img src={urlForImage(post.coverImage, 1200)} alt={post.title} class="cover-image" />
+        ) : (
+          <MediaPlaceholder label={post.title} />
+        )}
+
+        <div class="post-body">
+          {(post.body ?? []).map((block) => <p set:html={inlineHtmlFromBlock(block)} />)}
+        </div>
+      </div>
+    </article>
+  ) : (
+    <section class="container not-found">
+      <h1>Fant ikke blogginnlegget</h1>
+      <p>Dette innlegget finnes ikke, eller er ikke publisert.</p>
+      <a href="/blogg/" class="btn btn-primary">Til bloggoversikten</a>
+    </section>
+  )}
+</Layout>
+
+<style>
+  .post { padding: 48px 0 90px; }
+  .post-container { max-width: 720px; }
+  .back-link { display: inline-block; margin-bottom: 20px; }
+  .post-date { display: block; font-size: 0.8rem; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 8px; }
+
+  .author-row { display: flex; align-items: center; gap: 12px; margin: 18px 0 26px; }
+  .author-photo { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; }
+  .author-row strong { display: block; color: var(--navy); }
+  .author-title { font-size: 0.85rem; color: var(--ink-soft); }
+
+  .cover-image { width: 100%; border-radius: var(--radius); object-fit: cover; aspect-ratio: 16/9; margin-bottom: 30px; }
+
+  .post-body p { font-size: 1.02rem; line-height: 1.7; }
+
+  .not-found { padding: 90px 24px; text-align: center; max-width: 520px; }
+</style>
