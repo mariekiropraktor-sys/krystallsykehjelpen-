@@ -2,6 +2,7 @@
 import Layout from "../../layouts/Layout.astro";
 import { getPageSections } from "../../lib/pageSections";
 import { inlineHtmlFromBlock } from "../../lib/portableText";
+import { urlForImage } from "../../lib/sanityImage";
 
 const sections = await getPageSections("om-krystallsykehjelpen");
 
@@ -51,7 +52,7 @@ const consultations = [
 
       <div class="hero-media">
         <img
-          src="/hero-home.jpg"
+          src={urlForImage(sections.hero?.mediaAsset, 1200) ?? "/hero-home.jpg"}
           alt="Klinikkrom og behandlingssituasjon for svimmelhet"
           class="hero-photo"
         />
@@ -134,7 +135,7 @@ const consultations = [
 
   <section class="section-alt">
     <div class="container bio-card">
-      <img src={sections["moet-marie"]?.mediaUrl ?? "/marie-portrait.jpg"} alt="Marie, kiropraktor hos Krystallsykehjelpen" class="bio-photo" />
+      <img src={urlForImage(sections["moet-marie"]?.mediaAsset, 560) ?? "/marie-portrait.jpg"} alt="Marie, kiropraktor hos Krystallsykehjelpen" class="bio-photo" />
       <div>
         <span class="eyebrow">Møt Marie</span>
         <h2>{sections["moet-marie"]?.heading ?? "Personlig erfaring med svimmelhet"}</h2>

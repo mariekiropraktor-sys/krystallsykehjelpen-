@@ -5,7 +5,9 @@ export type PageSection = {
   heading?: string;
   body?: { _type: string; style?: string; children?: { text: string; marks?: string[] }[] }[];
   mediaType?: "bilde" | "video" | "ingen";
-  mediaUrl?: string;
+  // Rått Sanity image-felt — bygg faktisk URL med urlForImage() fra
+  // src/lib/sanityImage.ts, ikke bruk dette direkte som src.
+  mediaAsset?: { asset?: { _ref: string } };
 };
 
 const QUERY = `*[_type == "pageSection" && pageSlug == $pageSlug]{
@@ -13,7 +15,7 @@ const QUERY = `*[_type == "pageSection" && pageSlug == $pageSlug]{
   heading,
   body,
   mediaType,
-  "mediaUrl": mediaAsset.asset->url
+  mediaAsset
 }`;
 
 // Henter alle pageSection-dokumenter for én side, nøkkelet på sectionKey.

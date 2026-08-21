@@ -5,11 +5,14 @@ import { visionTool } from "@sanity/vision";
 import { schemaTypes } from "./src/sanity/schemaTypes";
 import { structure } from "./src/sanity/structure";
 
+// Prosjekt-ID og dataset er hardkodet (ikke hemmeligheter — de bakes uansett
+// inn i klientkoden). import.meta.env fungerer i Astro/Vite-konteksten, men
+// ikke når Sanity CLI (f.eks. `sanity deploy`) laster denne filen direkte.
 export default defineConfig({
   name: "krystallsykehjelpen",
   title: "Krystallsykehjelpen",
-  projectId: import.meta.env.PUBLIC_SANITY_PROJECT_ID,
-  dataset: import.meta.env.PUBLIC_SANITY_DATASET,
+  projectId: "b1cmdslc",
+  dataset: "production",
   plugins: [structureTool({ structure }), visionTool()],
   schema: {
     types: schemaTypes,

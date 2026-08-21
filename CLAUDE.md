@@ -83,9 +83,13 @@ prosjektet (ikke egen app/port). Studio kjører som en React-øy via
 `@sanity/astro` + `@astrojs/react` (låst til `@astrojs/react@3.6.2` — v4+
 krever Astro 5 og gir kompileringsfeil på denne Astro 4-versjonen).
 
-- **Prosjekt-ID / dataset:** se `astro-site/.env` (`PUBLIC_SANITY_PROJECT_ID`,
-  `PUBLIC_SANITY_DATASET=production`). Ikke hardkodet i kildekoden.
+- **Prosjekt-ID / dataset:** `b1cmdslc` / `production`. Ligger i
+  `astro-site/.env` (`PUBLIC_SANITY_PROJECT_ID`, `PUBLIC_SANITY_DATASET`) for
+  Astro/Vite-siden, **og** hardkodet i `astro-site/sanity.config.ts` og
+  `astro-site/sanity.cli.ts` (se fase 3-notatet under for hvorfor — dette er
+  ikke hemmeligheter, de bakes uansett inn i klientkoden).
 - **Config:** `astro-site/sanity.config.ts` (schema + structure),
+  `astro-site/sanity.cli.ts` (brukes av Sanity CLI, f.eks. `sanity deploy`),
   `astro-site/src/sanity/schemaTypes/` (ett skjema per fil),
   `astro-site/src/sanity/structure.ts` (menygruppering i Studio).
 - **Skjemaer:** `siteSettings` (singleton), `pageSection`, `exerciseCategory`,
@@ -110,9 +114,12 @@ Krystallsykehjelpen** og **Krystallsyken** hentes nå fra Sanity sine
   `inlineHtmlFromBlock()` fra `astro-site/src/lib/portableText.ts` — en liten
   egenskrevet renderer (ingen ekstern avhengighet), som output­er inline
   HTML uten å legge til noen ekstra wrapper-elementer i DOM-en.
-- Bilder hentes som `mediaUrl` (rå Sanity CDN-URL via GROQ
-  `mediaAsset.asset->url`) og brukes direkte som `src`, med samme fallback-
-  mønster.
+- **Bilder — riktig mønster (se fase 2.1-notatet under for full historikk):**
+  hent det rå `mediaAsset`-feltet fra GROQ (ikke dereferer det med `->`), og
+  bygg URL-en med `urlForImage(source, width)` fra
+  `astro-site/src/lib/sanityImage.ts` (wrapper rundt `@sanity/image-url`).
+  Gir automatisk størrelsesbegrensning + moderne bildeformat. Samme
+  fallback-mønster: `urlForImage(...) ?? "/lokalt-fallback-bilde.jpg"`.
 - **Nytt innhold legges til slik:** lag et nytt `pageSection`-dokument i
   Studio med riktig `pageSlug` + `sectionKey`, så plukkes det automatisk opp
   — ingen kodeendring nødvendig, så lenge `sectionKey` matcher det siden ser
@@ -127,12 +134,58 @@ Krystallsykehjelpen** og **Krystallsyken** hentes nå fra Sanity sine
     bevisst IKKE koblet til Sanity, kun heading/body-teksten ved siden av.
     Video-attributter (autoplay/muted/loop) er urørt.
 - **Kjent, ikke-relatert feil (fantes før fase 2):** Om Krystallsykehjelpen
-  sin hero-seksjon refererer til `/hero-home.jpg`, som ikke finnes i
-  `public/`. Bildet vises derfor ikke — dette er ikke noe jeg har endret,
-  bare noe jeg oppdaget. Si fra til Marie om hun vil ha et ekte bilde her.
+  sin hero-seksjon har ingen lokal fallback — `/hero-home.jpg` finnes ikke i
+  `public/`. Koden er nå koblet til Sanity (se fase 2.1 under), så bildet
+  vises så snart et bilde er lastet opp der i Studio. Inntil da er den ene
+  gjenværende broken image-en på siden.
 - **Migreringsskript** (kjørt én gang, kan kjøres på nytt — de er
   idempotente og bruker faste dokument-ID-er):
   `astro-site/scripts/migrate-page-sections.mjs`.
+
+## Sanity CMS (fase 2.1 — bilder fra Sanity, feilsøking og fiks)
+Etter fase 2 viste tekst seg korrekt, men bilder gjorde det ikke overalt. To
+reelle bugs ble funnet og fikset:
+
+1. **Om Krystallsykehjelpen sin hero-seksjon var aldri koblet til Sanity for
+   bilde** — `<img>`-taggen var hardkodet til `/hero-home.jpg` (en fil som
+   ikke finnes), en glipp fra fase 2 siden originalsiden ikke hadde noe gyldig
+   lokalt bilde å migrere. Nå bruker den `urlForImage(sections.hero?.mediaAsset, 1200)`
+   som resten av sidene.
+2. **`hjem`/øvelser-seksjonen** hadde et opplastet bilde i Sanity, men koden
+   rendret alltid en hardkodet plassholder-`<div>` ("Øvelsesbilde") — aldri et
+   `<img>`. Nå vises et ekte bilde når et er satt, ellers samme plassholder
+   som før.
+
+**Standard bildemønster innført** (bruk dette i fase 3 for Øvelsesbibliotek/
+Blogg også):
+- GROQ: hent `mediaAsset` rått — ikke `mediaAsset.asset->url`.
+- Rendring: `urlForImage(section?.mediaAsset, bredde) ?? "fallback"`, fra
+  `astro-site/src/lib/sanityImage.ts`. `bredde` bør matche ca. 2x den faktiske
+  CSS-visningsstørrelsen (retina). `@sanity/image-url` er en direkte
+  avhengighet nå (brukes med named export `createImageUrlBuilder`, ikke
+  default-export — default er deprecated).
+- **Studio-fallgruve å vite om:** `mediaAsset`-feltet er skjult i Studio helt
+  til `mediaType` er satt til "Bilde" (se `pageSection.ts`-skjemaet). Hvis et
+  bilde "ikke lar seg laste opp" — sjekk at Medietype er endret til "Bilde"
+  først, feltet dukker opp automatisk etter det.
+
+## Sanity Studio — to steder å redigere innhold
+Studio finnes nå to steder, med samme innhold (samme prosjekt/dataset):
+
+- **Lokalt på `/admin`** — krever at `npm run dev` kjører på Maries egen
+  maskin. Embeddet i Astro-prosjektet, se fase 1-notatet over.
+- **Hostet på https://krystallsykehjelpen.sanity.studio** — fungerer alltid,
+  uavhengig av om dev-serveren kjører. Åpnes i nettleseren og ber om innlogging
+  med samme Sanity-konto (Google) som ble brukt ved oppsett. Deployet med
+  `npx sanity deploy` fra `astro-site/`-mappen; app-ID og prosjekt-ID ligger i
+  `astro-site/sanity.cli.ts`.
+- **Hvorfor `sanity.config.ts` nå har hardkodet projectId/dataset:**
+  `sanity deploy` laster `sanity.config.ts` direkte (utenom Vite), så
+  `import.meta.env.PUBLIC_*` var `undefined` i den konteksten og feilet
+  schema-verifiseringen. Hardkoding løser det uten å påvirke `/admin`
+  (som fortsatt fungerer via Vite/Astro som før).
+- For å deploye på nytt etter skjemaendringer: `npx sanity deploy` fra
+  `astro-site/`.
 
 ## Fremtidig visjon (ikke prioritert ennå)
 Terapeut-katalog med flere behandlere, AI-assistent-integrasjon, og

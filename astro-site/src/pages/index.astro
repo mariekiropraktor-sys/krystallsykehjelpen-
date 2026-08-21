@@ -2,6 +2,7 @@
 import Layout from "../layouts/Layout.astro";
 import { getPageSections } from "../lib/pageSections";
 import { inlineHtmlFromBlock } from "../lib/portableText";
+import { urlForImage } from "../lib/sanityImage";
 
 const sections = await getPageSections("hjem");
 
@@ -54,7 +55,7 @@ const steps = [
         </div>
       </div>
       <div class="hero-media">
-        <img src={sections.hero?.mediaUrl ?? "/hero-krystallsykehjelpen-finpusset.png"} alt="Kvinne som holder seg på hodet og kjenner på svimmelhet" class="hero-photo" />
+        <img src={urlForImage(sections.hero?.mediaAsset, 1200) ?? "/hero-krystallsykehjelpen-finpusset.png"} alt="Kvinne som holder seg på hodet og kjenner på svimmelhet" class="hero-photo" />
         <div class="hero-badge">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="10" /><path d="M9 12l2 2 4-4" />
@@ -134,7 +135,7 @@ const steps = [
           <a href="/krystallsyken/" class="card-link">Les mer om hvordan balanseorganet fungerer →</a>
         </div>
         <div class="diagram-illustration">
-          <img src={sections["hva-skjer-i-oret"]?.mediaUrl ?? "/ear-diagram.jpg"} alt="Illustrasjon av buegangene i det indre øret" class="diagram-img" />
+          <img src={urlForImage(sections["hva-skjer-i-oret"]?.mediaAsset, 760) ?? "/ear-diagram.jpg"} alt="Illustrasjon av buegangene i det indre øret" class="diagram-img" />
           <p class="diagram-caption">Illustrasjon av det indre ørets balanseorgan. Ved krystallsyke (BPPV) har otokonier løsnet fra utriculus og kommet inn i en av buegangene, hvor de påvirker væskebevegelsen som igjen resulterer i svimmelhet.</p>
         </div>
       </div>
@@ -152,9 +153,13 @@ const steps = [
             : "Vi viser eksempler på trygge og effektive øvelser du kan gjøre hjemme for å håndtere restsymptomer og forebygge tilbakefall."} />
         </div>
         <div class="exercise-media">
-          <div class="photo-block exercise-photo">
-            <span style="font-weight:700; color:var(--navy-2);">Øvelsesbilde</span>
-          </div>
+          {urlForImage(sections.ovelser?.mediaAsset, 640) ? (
+            <img src={urlForImage(sections.ovelser.mediaAsset, 640)} alt="Eksempel på øvelse" class="photo-block exercise-photo" style="object-fit: cover; border: none;" />
+          ) : (
+            <div class="photo-block exercise-photo">
+              <span style="font-weight:700; color:var(--navy-2);">Øvelsesbilde</span>
+            </div>
+          )}
           <div class="exercise-action">
             <a href="/ovelsesbibliotek/" class="btn btn-primary">Les mer</a>
           </div>
@@ -203,7 +208,7 @@ const steps = [
   <section>
     <div class="container">
       <div class="bio-card">
-        <img src={sections["marie-bio"]?.mediaUrl ?? "/marie-portrait.jpg"} alt="Marie, kiropraktor hos Krystallsykehjelpen" class="bio-photo" />
+        <img src={urlForImage(sections["marie-bio"]?.mediaAsset, 240) ?? "/marie-portrait.jpg"} alt="Marie, kiropraktor hos Krystallsykehjelpen" class="bio-photo" />
         <div>
           <h3>{sections["marie-bio"]?.heading ?? "Marie – spesialisert på svimmelhet"}</h3>
           <p set:html={sections["marie-bio"]?.body?.[0]

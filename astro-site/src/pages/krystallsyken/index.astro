@@ -3,6 +3,7 @@ import Layout from "../../layouts/Layout.astro";
 import MediaPlaceholder from "../../components/MediaPlaceholder.astro";
 import { getPageSections } from "../../lib/pageSections";
 import { inlineHtmlFromBlock } from "../../lib/portableText";
+import { urlForImage } from "../../lib/sanityImage";
 
 const sections = await getPageSections("krystallsyken");
 
@@ -24,7 +25,7 @@ const bookingUrl = "https://psno-patient-platform-fe.svc.pasientsky.no/embedded/
         </div>
       </div>
       <div class="hero-media">
-        <img src={sections.hero?.mediaUrl ?? "/ear-diagram.jpg"} alt="Illustrasjon av det indre øret" class="hero-photo" />
+        <img src={urlForImage(sections.hero?.mediaAsset, 1200) ?? "/ear-diagram.jpg"} alt="Illustrasjon av det indre øret" class="hero-photo" />
       </div>
     </div>
     <svg class="hero-wave" viewBox="0 0 1440 60" preserveAspectRatio="none">
@@ -109,7 +110,7 @@ const bookingUrl = "https://psno-patient-platform-fe.svc.pasientsky.no/embedded/
           : "Vi er spesielt interessert i nettopp krystallsyken og svimmelhet — ikke som en av mange ting vi behandler, men som vårt hovedfokus. Klinikk-, hjemme- eller telefonkonsultasjon i Fetsund."} />
       </div>
       <div class="media-col">
-        <img src={sections["hvorfor-oss"]?.mediaUrl ?? "/marie-portrait.jpg"} alt="Marie" class="portrait" />
+        <img src={urlForImage(sections["hvorfor-oss"]?.mediaAsset, 840) ?? "/marie-portrait.jpg"} alt="Marie" class="portrait" />
       </div>
     </div>
   </section>
