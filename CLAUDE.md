@@ -362,6 +362,27 @@ kryss-lenker mellom de 5 nye artiklene + reelle eksisterende sider
 Disse 5 manglende sidene er en reell innholds-gap å vurdere for en senere
 runde.
 
+## Kontakt oss-siden (`/kontakt/`) bygget
+Hero + 3 kontaktkort (fra `siteSettings` — telefon/e-post/adresse, gjenbruk,
+ingen nye Sanity-felt) + to-kolonne skjema/kart + beige CTA-bånd med
+krystall-signatur-SVG. Sidetekst (hero/skjema/kart/cta) er `pageSection`-
+dokumenter på `pageSlug: "kontakt-oss"`.
+
+- **Kart:** gjenbruker samme Leaflet/OpenStreetMap-mønster som
+  `/finn-behandler/` (samme geokodede posisjon for Garderbakken 1) — bevisst
+  valgt fremfor Google Maps-embed (som prompten opprinnelig ba om), siden det
+  unngår en ny API-nøkkel-avhengighet og allerede er verifisert fungerende.
+- **Skjema:** Web3Forms, ingen egen backend. Krever
+  `PUBLIC_WEB3FORMS_KEY` i `.env` — **Marie må selv opprette gratis konto på
+  web3forms.com og legge inn nøkkelen**. Så lenge feltet er tomt viser
+  skjemaet en tydelig melding i stedet for å feile stille.
+- **`.env.example` lagt til** (fantes ikke fra før) — dokumenterer alle
+  env-variabler prosjektet bruker, uten faktiske verdier. `.gitignore` hadde
+  allerede riktig `!.env.example`-unntak fra fase 1.
+- E-post i `siteSettings` (`mariekiropraktor@gmail.com`) beholdt som den var
+  — en oppdatert kontakt-oss-prompt foreslo `admin@krystallsykehjelpen.no`,
+  men Marie bekreftet at gjeldende adresse er riktig.
+
 ## Sanity Studio — to steder å redigere innhold
 Studio finnes nå to steder, med samme innhold (samme prosjekt/dataset):
 

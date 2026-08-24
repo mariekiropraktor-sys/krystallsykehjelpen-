@@ -1,21 +1,244 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import { getPageSections } from "../../lib/pageSections";
+import { safeFetch } from "../../lib/safeFetch";
+import { inlineHtmlFromBlock } from "../../lib/portableText";
+import "leaflet/dist/leaflet.css";
+
+const sections = await getPageSections("kontakt-oss");
+
+const bookingUrl =
+  "https://psno-patient-platform-fe.svc.pasientsky.no/embedded/planner/booking?serviceProviderId=54907264-049e-11eb-8fc8-26c6f94d64b7";
+
+const siteSettings = await safeFetch(
+  `*[_id == "siteSettings"][0]{ phone, email, address }`,
+  {},
+  null,
+);
+
+const phone = siteSettings?.phone ?? "+47 46384492";
+const email = siteSettings?.email ?? "mariekiropraktor@gmail.com";
+const address = siteSettings?.address ?? "Garderbakken 1, Fetsund";
+
+// Samme geokodede posisjon som brukes på /finn-behandler/ (verifisert mot
+// OpenStreetMap Nominatim for Garderbakken 1, Fetsund).
+const mapPoint = { lat: 59.9281068, lng: 11.1614349, address };
+
+const web3formsKey = import.meta.env.PUBLIC_WEB3FORMS_KEY ?? "";
 ---
 
 <Layout
   title="Kontakt oss | Krystallsykehjelpen"
-  description="Kontakt oss – Krystallsykehjelpen, klinikk for krystallsyke og svimmelhet i Fetsund."
+  description="Kontakt Krystallsykehjelpen – klinikk for krystallsyke og svimmelhet i Fetsund. Send oss en melding eller bestill time direkte."
   activePath="/kontakt/"
 >
-  <section class="container placeholder">
-    <span class="eyebrow">Under bygging</span>
-    <h1>Kontakt oss</h1>
-    <p>Denne siden bygges videre i neste steg – innholdet fra den forrige versjonen flyttes hit med samme komponentstruktur som forsiden.</p>
-    <a href="/" class="btn btn-primary">Til forsiden</a>
+  <section class="hero hero-simple">
+    <div class="container">
+      <span class="eyebrow">Vi er her for deg</span>
+      <h1>{sections.hero?.heading ?? "Kontakt oss"}</h1>
+      <p class="lead" set:html={sections.hero?.body?.[0]
+        ? inlineHtmlFromBlock(sections.hero.body[0])
+        : "Har du spørsmål, ønsker å bestille time, eller vil vite mer om hva vi tilbyr? Ta gjerne kontakt – vi svarer så raskt vi kan."} />
+    </div>
+    <svg class="hero-wave" viewBox="0 0 1440 60" preserveAspectRatio="none">
+      <path d="M0,32 C360,72 1080,0 1440,32 L1440,60 L0,60 Z" fill="#ffffff" />
+    </svg>
+  </section>
+
+  <section class="section-alt no-top">
+    <div class="container">
+      <div class="contact-cards">
+        <div class="contact-card">
+          <div class="icon-circle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.13.96.36 1.9.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.91.34 1.85.57 2.81.7a2 2 0 011.72 2.03z" /></svg>
+          </div>
+          <h3>Telefon</h3>
+          <a href={`tel:${phone.replace(/\s/g, "")}`} class="card-link">{phone}</a>
+        </div>
+        <div class="contact-card">
+          <div class="icon-circle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2" /><path d="M22 6l-10 7L2 6" /></svg>
+          </div>
+          <h3>E-post</h3>
+          <a href={`mailto:${email}`} class="card-link">{email}</a>
+        </div>
+        <div class="contact-card">
+          <div class="icon-circle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.5-7-11a7 7 0 0114 0c0 4.5-7 11-7 11z" /><circle cx="12" cy="10" r="3" /></svg>
+          </div>
+          <h3>Adresse</h3>
+          <span class="card-link">{address}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-alt">
+    <div class="container two-col">
+      <div class="form-col">
+        <span class="eyebrow">Skriv til oss</span>
+        <h2>{sections.skjema?.heading ?? "Fyll ut skjemaet"}</h2>
+        <hr class="heading-rule" />
+        <p set:html={sections.skjema?.body?.[0]
+          ? inlineHtmlFromBlock(sections.skjema.body[0])
+          : "Så tar vi kontakt med deg så raskt som mulig – vanligvis samme dag."} />
+
+        <form id="contact-form" class="contact-form">
+          <input type="hidden" name="access_key" value={web3formsKey} />
+          <label>
+            Navn
+            <input type="text" name="name" required />
+          </label>
+          <label>
+            E-post
+            <input type="email" name="email" required />
+          </label>
+          <label>
+            Melding
+            <textarea name="message" rows="5" required></textarea>
+          </label>
+          <button type="submit" class="btn btn-primary">Send melding</button>
+          <p id="form-status" class="form-status" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+
+      <div class="map-col">
+        <span class="eyebrow">Finn frem</span>
+        <h2>{sections.kart?.heading ?? "Slik finner du oss"}</h2>
+        <hr class="heading-rule" />
+        <div id="contact-map" class="map" data-point={JSON.stringify(mapPoint)}></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-beige">
+    <div class="container cta-band">
+      <svg class="crystal" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round">
+        <path d="M24 4 L40 18 L24 44 L8 18 Z" />
+        <path d="M8 18 L40 18" />
+        <path d="M16 18 L24 4" />
+        <path d="M32 18 L24 4" />
+        <path d="M16 18 L24 44" />
+        <path d="M32 18 L24 44" />
+      </svg>
+      <div>
+        <h2>{sections.cta?.heading ?? "Klar for å bestille time?"}</h2>
+        <p set:html={sections.cta?.body?.[0]
+          ? inlineHtmlFromBlock(sections.cta.body[0])
+          : "Book enkelt online, og møt oss for en trygg og skånsom behandling."} />
+      </div>
+      <a href={bookingUrl} class="btn btn-primary">Bestill time →</a>
+    </div>
   </section>
 </Layout>
 
+<script>
+  import L from "leaflet";
+
+  const mapEl = document.getElementById("contact-map");
+  const point = JSON.parse(mapEl?.dataset.point ?? "null");
+
+  if (mapEl && point) {
+    const markerSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="34" height="44" viewBox="0 0 34 44"><path d="M17 0C7.6 0 0 7.6 0 17c0 12.7 17 27 17 27s17-14.3 17-27C34 7.6 26.4 0 17 0z" fill="#163875"/><circle cx="17" cy="17" r="7" fill="#5fc1d6"/></svg>`;
+    const icon = L.icon({
+      iconUrl: `data:image/svg+xml;base64,${btoa(markerSvg)}`,
+      iconSize: [34, 44],
+      iconAnchor: [17, 44],
+      popupAnchor: [0, -40],
+    });
+
+    const map = L.map(mapEl, { scrollWheelZoom: false }).setView([point.lat, point.lng], 15);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: "&copy; OpenStreetMap-bidragsytere",
+      maxZoom: 19,
+    }).addTo(map);
+    L.marker([point.lat, point.lng], { icon }).addTo(map).bindPopup(point.address);
+  }
+
+  const form = document.getElementById("contact-form");
+  const status = document.getElementById("form-status");
+  const accessKey = form?.querySelector('input[name="access_key"]')?.value;
+
+  form?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!status) return;
+
+    if (!accessKey) {
+      status.textContent = "Skjemaet er ikke koblet til ennå — kontakt oss på telefon eller e-post i mellomtiden.";
+      status.className = "form-status error";
+      return;
+    }
+
+    status.textContent = "Sender...";
+    status.className = "form-status";
+
+    try {
+      const res = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: { Accept: "application/json" },
+        body: new FormData(form),
+      });
+      const result = await res.json();
+      if (result.success) {
+        status.textContent = "Takk, meldingen er sendt!";
+        status.className = "form-status success";
+        form.reset();
+      } else {
+        status.textContent = "Noe gikk galt. Prøv igjen, eller kontakt oss direkte.";
+        status.className = "form-status error";
+      }
+    } catch {
+      status.textContent = "Noe gikk galt. Prøv igjen, eller kontakt oss direkte.";
+      status.className = "form-status error";
+    }
+  });
+</script>
+
 <style>
-  .placeholder { padding: 70px 24px 100px; max-width: 640px; }
-  .eyebrow { font-size: 0.82rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); font-weight: 700; }
+  .hero-simple { padding: 56px 0 90px; position: relative; overflow: hidden; text-align: center; }
+  .hero-simple .container { max-width: 640px; }
+  .eyebrow { font-size: 0.82rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 10px; display: inline-block; }
+  .lead { font-size: 1.05rem; }
+  .hero-wave { position: absolute; bottom: -2px; left: 0; width: 100%; line-height: 0; }
+
+  .section-alt { background: var(--paper); padding: 60px 0; }
+  .section-alt.no-top { padding-top: 0; padding-bottom: 50px; }
+  .section-beige { background: var(--beige); padding: 60px 0; }
+
+  .contact-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
+  @media (max-width: 800px) { .contact-cards { grid-template-columns: 1fr; } }
+  .contact-card {
+    background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 24px; text-align: center; box-shadow: 0 12px 28px rgba(22, 56, 117, 0.06);
+  }
+  .icon-circle {
+    width: 52px; height: 52px; border-radius: 50%; background: var(--sky);
+    display: flex; align-items: center; justify-content: center; margin: 0 auto 14px;
+  }
+  .icon-circle svg { width: 24px; height: 24px; color: var(--navy-2); }
+  .contact-card h3 { font-size: 0.95rem; margin: 0 0 6px; }
+  .card-link { display: inline-block; font-weight: 700; font-size: 0.92rem; text-decoration: none; color: var(--navy-2); }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+  @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
+
+  .contact-form { display: flex; flex-direction: column; gap: 16px; margin-top: 22px; max-width: 440px; }
+  .contact-form label { display: flex; flex-direction: column; gap: 6px; font-size: 0.88rem; font-weight: 600; color: var(--navy); }
+  .contact-form input, .contact-form textarea {
+    font-family: var(--font-body); font-size: 0.95rem; padding: 12px 14px;
+    border: 1px solid var(--line); border-radius: var(--radius-sm); resize: vertical;
+  }
+  .contact-form button { align-self: flex-start; }
+  .form-status { font-size: 0.88rem; margin: 4px 0 0; min-height: 1.2em; }
+  .form-status.success { color: #1a7a4c; }
+  .form-status.error { color: #a12b2b; }
+
+  .map { height: 360px; border-radius: var(--radius); overflow: hidden; margin-top: 22px; background: #fff; }
+
+  .cta-band { border-radius: var(--radius); padding: 36px; display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+  .cta-band > div { flex: 1 1 auto; }
+  .cta-band h2 { margin-bottom: 6px; }
+  .cta-band p { margin: 0; }
+  .crystal { width: 44px; height: 44px; color: var(--accent); flex-shrink: 0; }
+  @media (max-width: 700px) { .cta-band { flex-direction: column; align-items: flex-start; } }
 </style>
