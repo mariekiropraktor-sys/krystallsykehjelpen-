@@ -3,6 +3,7 @@ import Layout from "../../layouts/Layout.astro";
 import MediaPlaceholder from "../../components/MediaPlaceholder.astro";
 import { getPageSections } from "../../lib/pageSections";
 import { safeFetch } from "../../lib/safeFetch";
+import { blogPreviewClient, isPreviewingDrafts } from "../../lib/blogPreviewClient";
 import { inlineHtmlFromBlock } from "../../lib/portableText";
 import { urlForImage } from "../../lib/sanityImage";
 
@@ -10,10 +11,11 @@ const sections = await getPageSections("blogg");
 
 const posts = await safeFetch(
   `*[_type == "blogPost"] | order(publishedDate desc){
-    _id, title, "slug": slug.current, excerpt, publishedDate, coverImage
+    _id, title, "slug": slug.current, excerpt, category, publishedDate, coverImage
   }`,
   {},
   [],
+  blogPreviewClient,
 );
 
 function formatDate(dateString) {
@@ -27,6 +29,10 @@ function formatDate(dateString) {
   description="Artikler og nyheter om krystallsyke og svimmelhet fra Krystallsykehjelpen."
   activePath="/blogg/"
 >
+  {isPreviewingDrafts && (
+    <div class="preview-banner">Forhåndsvisning (upubliserte utkast er synlige — kun lokalt)</div>
+  )}
+
   <section class="hero hero-simple">
     <div class="container">
       <span class="eyebrow">Ressurser</span>
@@ -52,6 +58,7 @@ function formatDate(dateString) {
                 <MediaPlaceholder label={post.title} />
               )}
               <div class="card-body">
+                {post.category && <span class="category-badge">{post.category}</span>}
                 {post.publishedDate && <span class="post-date">{formatDate(post.publishedDate)}</span>}
                 <h3>{post.title}</h3>
                 {post.excerpt && <p>{post.excerpt}</p>}
@@ -93,4 +100,12 @@ function formatDate(dateString) {
   .card-body h3 { margin: 4px 0 8px; }
   .card-body p { margin: 0; color: var(--ink-soft); }
   .post-date { font-size: 0.8rem; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.04em; }
+  .category-badge {
+    display: inline-block; font-size: 0.72rem; font-weight: 700; padding: 3px 10px;
+    border-radius: 999px; background: var(--sky); color: var(--navy-2); margin-bottom: 6px;
+  }
+  .preview-banner {
+    background: #fff3cd; color: #7a5c00; text-align: center; padding: 8px;
+    font-size: 0.82rem; font-weight: 700;
+  }
 </style>

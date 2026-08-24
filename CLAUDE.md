@@ -299,6 +299,69 @@ referansene — nødvendig fordi Sanity håndhever referanseintegritet, og
 søsken-dokumenter som refererer til hverandre ikke kan opprettes i én
 sekvensiell omgang.
 
+## Sanity CMS (fase 3.2 — rike fagartikler + draft-forhåndsvisning)
+**VIKTIG: Sanity→Vercel-deploywebhook finnes.** Å opprette et *publisert*
+Sanity-dokument trigger automatisk en live Vercel-deploy — ikke bare
+`git push`. Dette prosjektet har derfor en egen mekanisme for å bygge og
+forhåndsvise innhold LOKALT før noe blir publisert/live.
+
+**`blogPost`-skjemaet utvidet** med felt som trengs for fagartikler:
+`category` (fritekst-badge), `shortSummary` ("Kort fortalt"-boks, adskilt
+fra `excerpt`), `warningBox` (rød faresignalboks, samme stil som
+`.red-flag` på Krystallsyken-siden), `faq` (array av spørsmål/svar —
+per-artikkel, ikke det globale `faqItem`), `sources` (kildeliste med
+URL), `relatedLinks` (array av `{title, url}` — **kun manuelt kuraterte,
+reelle interne URL-er**, ikke Sanity-referanser, siden mål kan være enten
+andre `blogPost`-er eller helt andre sidetyper som `/ovelsesbibliotek/...`),
+`metaTitle`/`metaDescription` (SEO-overstyring, faller tilbake til
+`title`/`excerpt` hvis tomme).
+
+**Draft-forhåndsvisning** (`astro-site/src/lib/blogPreviewClient.ts`):
+- Upublisert innhold opprettes som Sanity **drafts** (`_id` prefikset
+  `"drafts."`, via `client.createOrReplace`) — usynlige for det vanlige
+  offentlige API-et (`sanity:client`, ingen auth-token) og trigger derfor
+  IKKE deploy-webhooken.
+- `blogPreviewClient` er en egen, autentisert klient med
+  `perspective: "drafts"`, som **kun aktiveres når `import.meta.env.DEV`
+  er sann OG `SANITY_API_WRITE_TOKEN` finnes lokalt** — ellers faller den
+  tilbake til den vanlige offentlige klienten. Siden skrivetokenet kun
+  finnes i `.env` (aldri committet, aldri satt på Vercel), ser en faktisk
+  build/deploy alltid kun publiserte dokumenter — verifisert direkte med
+  `npm run build` (drafts genererte ingen sider).
+- **Kjent fallgruve løst:** tokenet må leses med Vite sin `loadEnv()`
+  (samme mønster som i `astro.config.mjs`), IKKE `process.env` direkte —
+  Vite populerer *ikke* `process.env` fra `.env` automatisk for
+  SSR-moduler, kun `import.meta.env` for `PUBLIC_`-prefikserte variabler.
+- Både `blogg/index.astro` og `blogg/[slug]/index.astro` bruker
+  `blogPreviewClient` (også i `getStaticPaths()`, ellers får ikke
+  draft-artiklene noen rute i det hele tatt) og viser et gult
+  "Forhåndsvisning"-bånd øverst når drafts vises.
+- **Slik publiserer du en artikkel:** i Sanity Studio, åpne dokumentet og
+  trykk "Publish" — det flytter det fra `drafts.xxx` til `xxx` og gjør det
+  synlig for det offentlige API-et (trigger webhooken/deploy). Ikke gjør
+  dette før artikkelen er godkjent i lokal forhåndsvisning.
+
+**Nye `portableText.ts`-hjelpere:** `blocksToHtml()` setter nå `id`
+(slugifisert) på h2/h3 for ankerlenker; `extractHeadings()` bygger en
+innholdsfortegnelse fra body sine h2-er (driver den sticky TOC-en på
+desktop); `estimateReadingTime()` regner ut lesetid fra ordantall
+(~200 ord/min) — lagres ikke som eget felt.
+
+**5 fagartikler importert som drafts**
+(`astro-site/scripts/import-blogg-5-artikler-drafts.mjs`), fra
+`Krystallsykehjelpen-blogg-prompt-KLAR.md`. **Bilder mangler** — den
+lovede assets-mappen fantes ikke i overføringen, `coverImage` står tomt
+og `MediaPlaceholder` vises. Koble på ekte bilder når Marie ettersender
+dem. **Ca. halvparten av kildepromptens "Relaterte artikler"-lenker pekte
+til sider som ikke finnes** (Restsvimmelhet, VNG-undersøkelse, egen
+PPPD-/vestibulær migrene-forklaringsside, "Hvorfor blir man svimmel?") —
+disse ble bevisst droppet (ikke gjettet URL-er), og erstattet med
+kryss-lenker mellom de 5 nye artiklene + reelle eksisterende sider
+(`/krystallsyken/`, `/ovelsesbibliotek/bakre-buegang/`,
+`/ovelsesbibliotek/horisontale-buegang/`, `/ovelsesbibliotek/vestibular-rehab/`).
+Disse 5 manglende sidene er en reell innholds-gap å vurdere for en senere
+runde.
+
 ## Sanity Studio — to steder å redigere innhold
 Studio finnes nå to steder, med samme innhold (samme prosjekt/dataset):
 

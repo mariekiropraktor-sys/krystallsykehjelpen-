@@ -1,6 +1,8 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import MediaPlaceholder from "../components/MediaPlaceholder.astro";
 import { getPageSections } from "../lib/pageSections";
+import { safeFetch } from "../lib/safeFetch";
 import { inlineHtmlFromBlock } from "../lib/portableText";
 import { urlForImage } from "../lib/sanityImage";
 
@@ -9,31 +11,51 @@ const sections = await getPageSections("hjem");
 const bookingUrl =
   "https://psno-patient-platform-fe.svc.pasientsky.no/embedded/planner/booking?serviceProviderId=54907264-049e-11eb-8fc8-26c6f94d64b7";
 
-const faq = [
-  {
-    q: "Hvordan vet jeg om jeg har krystallsyke?",
-    a: "Det vanligste tegnet er korte, kraftige svimmelhetsanfall som utløses av bestemte hodebevegelser. En undersøkelse hos oss avklarer om det faktisk er krystallsyke eller noe annet.",
-  },
-  {
-    q: "Hvor lenge varer et anfall?",
-    a: "Selve svimmelheten varer som regel kun sekunder til et par minutter per anfall, men den kan komme tilbake flere ganger i løpet av dagen.",
-  },
-  {
-    q: "Kan krystallsyke gå over av seg selv?",
-    a: "Hos noen forsvinner symptomene av seg selv, men det kan ta uker, og plagene kan komme tilbake. De fleste blir merkbart bedre etter én eller noen få behandlinger.",
-  },
-  {
-    q: "Tilbyr dere hjemmebesøk?",
-    a: "Ja, vi kommer gjerne hjem til deg dersom svimmelheten gjør det vanskelig å ta seg til klinikken.",
-  },
-];
+// "Siste artikler" — henter dynamisk fra Sanity (blogPost), viser de 3
+// nyeste. Bruker den vanlige offentlige klienten (ikke blogPreviewClient) —
+// forsiden skal aldri vise upubliserte utkast.
+const latestPosts = await safeFetch(
+  `*[_type == "blogPost"] | order(publishedDate desc)[0...3]{
+    title, "slug": slug.current, excerpt, category, publishedDate, coverImage
+  }`,
+  {},
+  [],
+);
 
-const steps = [
-  { n: 1, title: "Undersøkelse", desc: "Vi kartlegger symptomene dine og hvilke bevegelser som utløser svimmelheten." },
-  { n: 2, title: "Diagnose", desc: "Gjennom tester finner vi ut hvilken buegang som er påvirket." },
-  { n: 3, title: "Behandling", desc: "Vi utfører et behandlingsmanøver som flytter krystallene tilbake dit de hører hjemme." },
-  { n: 4, title: "Hjemmeøvelser", desc: "Enkle øvelser hjemme kan hjelpe på restsymptomer og forebygge nye episoder." },
-  { n: 5, title: "Bedring", desc: "De fleste blir betydelig bedre etter én til to behandlinger." },
+function formatDate(dateString) {
+  if (!dateString) return "";
+  return new Date(dateString).toLocaleDateString("nb-NO", { year: "numeric", month: "long", day: "numeric" });
+}
+
+// Kort 2 og 4 peker til artikler som ikke finnes ennå (forstå-diagnosen og
+// restsvimmelhet-etter-krystallsyke) — avklart med Marie: bygg kortene med
+// "#" midlertidig, tydelig merket, i stedet for å gjette en URL eller peke
+// til en unøyaktig erstatningsside.
+const journeyCards = [
+  {
+    title: "Jeg tror jeg har krystallsyke",
+    desc: "Kjenn igjen de typiske tegnene og finn ut om det du opplever passer med krystallsyke.",
+    href: "/blogg/er-dette-krystallsyke/",
+    comingSoon: false,
+  },
+  {
+    title: "Jeg har fått diagnosen",
+    desc: "Forstå hva som skjer i det indre øret og hvordan behandlingen fungerer.",
+    href: "#",
+    comingSoon: true,
+  },
+  {
+    title: "Jeg trenger en øvelse",
+    desc: "Finn riktig manøver eller øvelse for din buegang i øvelsesbiblioteket.",
+    href: "/ovelsesbibliotek/",
+    comingSoon: false,
+  },
+  {
+    title: "Jeg er fortsatt svimmel",
+    desc: "Restsymptomer etter krystallsyke er vanlig — les hva som kan hjelpe.",
+    href: "#",
+    comingSoon: true,
+  },
 ];
 ---
 
@@ -42,81 +64,56 @@ const steps = [
   description="Sliter du med svimmelhet eller krystallsyke (BPPV)? Vi tilbyr klinikk-, hjemme- og telefonkonsultasjoner i Fetsund. Bestill time i dag."
   activePath="/"
 >
+  <!-- 1. Hero -->
   <section class="hero">
     <div class="container hero-grid">
       <div>
         <span class="eyebrow">Ekspertise innen krystallsyke og svimmelhet</span>
-        <h1>{sections.hero?.heading ?? "Svimmel når du snur deg i sengen?"}</h1>
+        <h1>{sections.hero?.heading ?? (<>Trygg kunnskap når verden <em>plutselig snurrer</em></>)}</h1>
         <p class="lead" set:html={sections.hero?.body?.[0]
           ? inlineHtmlFromBlock(sections.hero.body[0])
-          : "Krystallsyke (BPPV) er en av de vanligste årsakene til svimmelhet. Få grundig undersøkelse og målrettet behandling – i klinikken, hjemme hos deg, eller over telefon."} />
+          : "Krystallsyke (BPPV) er den vanligste årsaken til plutselig, kortvarig svimmelhet. Her finner du pålitelig kunnskap, øvelser og veien til rask hjelp – i klinikken, hjemme hos deg, eller over telefon."} />
         <div class="btn-row">
           <a href={bookingUrl} class="btn btn-primary">Bestill time →</a>
+          <a href="/krystallsyken/" class="btn btn-outline">Les om krystallsyke →</a>
         </div>
+        <ul class="trust-row">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><path d="M9 12l2 2 4-4" /></svg> Faglig forankret</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><path d="M9 12l2 2 4-4" /></svg> Enkelt forklart</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><path d="M9 12l2 2 4-4" /></svg> Gratis kunnskap</li>
+        </ul>
       </div>
       <div class="hero-media">
         <img src={urlForImage(sections.hero?.mediaAsset, 1200) ?? "/hero-krystallsykehjelpen-finpusset.png"} alt="Kvinne som holder seg på hodet og kjenner på svimmelhet" class="hero-photo" />
-        <div class="hero-badge">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10" /><path d="M9 12l2 2 4-4" />
-          </svg>
-          Trygg og effektiv hjelp med spesialkompetanse på svimmelhet
-        </div>
       </div>
     </div>
     <svg class="hero-wave" viewBox="0 0 1440 60" preserveAspectRatio="none">
       <path d="M0,32 C360,72 1080,0 1440,32 L1440,60 L0,60 Z" fill="#ffffff" />
     </svg>
   </section>
-  
-  
 
-  
+  <!-- 2. Hvor er du i forløpet? -->
   <section class="section-alt no-top">
     <div class="container">
       <div class="section-head">
-            <h2>{sections["hjelpe-deg"]?.heading ?? "Slik kan vi hjelpe deg med krystallsyke"}</h2>
-            <hr class="heading-rule" />
-          </div>
-          <div class="card-grid">
-            <div class="card">
-              <div class="card-body">
-                <div class="card-text">
-                  <h3>Undersøkelse på klinikken</h3>
-                  <a href="/krystallsyken/" class="card-link">Les mer →</a>
-                </div>
-                <div class="photo-block card-photo">
-                  <span style="color:var(--navy-2); font-weight:700;">Bilde</span>
-                </div>
-              </div>
+        <h2>Hvor er du i forløpet?</h2>
+        <hr class="heading-rule" />
+      </div>
+      <div class="journey-grid">
+        {journeyCards.map((card) => (
+          <a href={card.href} class={`card journey-card ${card.comingSoon ? "coming-soon" : ""}`} title={card.comingSoon ? "Kommer snart" : undefined}>
+            <div class="card-body">
+              <h3>{card.title}</h3>
+              <p>{card.desc}</p>
+              <span class="card-link">{card.comingSoon ? "Kommer snart" : "Les mer →"}</span>
             </div>
-            <div class="card">
-              <div class="card-body">
-                <div class="card-text">
-                  <h3>Hjemmebesøk</h3>
-                  <a href="/kontakt/" class="card-link">Les mer →</a>
-                </div>
-                <div class="photo-block card-photo">
-                  <span style="color:var(--navy-2); font-weight:700;">Bilde</span>
-                </div>
-              </div>
-            </div>
-            <div class="card">
-              <div class="card-body">
-                <div class="card-text">
-                  <h3>Videokonsultasjon</h3>
-                  <a href="/krystallsyken/" class="card-link">Les mer →</a>
-                </div>
-                <div class="photo-block card-photo">
-                  <span style="color:var(--navy-2); font-weight:700;">Bilde</span>
-                </div>
-              </div>
-            </div>
-          </div>
+          </a>
+        ))}
+      </div>
     </div>
   </section>
 
-  
+  <!-- 3. Forklaringsseksjon om det indre øret -->
   <section>
     <div class="container">
       <div class="diagram-grid">
@@ -142,104 +139,94 @@ const steps = [
     </div>
   </section>
 
-  <section style="background: #ffffff;">
-    <div class="container">
-      <div class="exercises-grid">
-        <div>
-          <h2>{sections.ovelser?.heading ?? "Les mer om våre vanligste øvelser"}</h2>
-          <hr class="heading-rule" />
-          <p set:html={sections.ovelser?.body?.[0]
-            ? inlineHtmlFromBlock(sections.ovelser.body[0])
-            : "Vi viser eksempler på trygge og effektive øvelser du kan gjøre hjemme for å håndtere restsymptomer og forebygge tilbakefall."} />
-        </div>
-        <div class="exercise-media">
-          {urlForImage(sections.ovelser?.mediaAsset, 640) ? (
-            <img src={urlForImage(sections.ovelser.mediaAsset, 640)} alt="Eksempel på øvelse" class="photo-block exercise-photo" style="object-fit: cover; border: none;" />
-          ) : (
-            <div class="photo-block exercise-photo">
-              <span style="font-weight:700; color:var(--navy-2);">Øvelsesbilde</span>
-            </div>
-          )}
-          <div class="exercise-action">
-            <a href="/ovelsesbibliotek/" class="btn btn-primary">Les mer</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Removed 'Usikker...' map/search section as requested -->
-
-  
-
-  <!-- 'Slik foregår behandlingen' removed as requested -->
-
-  <section class="section-alt">
-    <div class="container faq-grid">
+  <!-- 4. Øvelser-CTA-bånd -->
+  <section class="section-cta">
+    <div class="container cta-inner">
       <div>
-        <div class="section-head">
-          <h2>{sections.faq?.heading ?? "Vanlige spørsmål"}</h2>
-          <hr class="heading-rule" />
-        </div>
-        {faq.map((item) => (
-          <div class="accordion-item">
-            <button class="accordion-trigger">
-              {item.q}
-              <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
-            </button>
-            <div class="accordion-panel"><p>{item.a}</p></div>
-          </div>
-        ))}
-        <p class="mt"><a href="/krystallsyken/" class="card-link">Se alle spørsmål og svar →</a></p>
+        <h2>{sections.ovelser?.heading ?? "Øv riktig — trygt hjemmefra"}</h2>
+        <p class="sub" set:html={sections.ovelser?.body?.[0]
+          ? inlineHtmlFromBlock(sections.ovelser.body[0])
+          : "Se øvelsesbiblioteket med manøvre og habitueringsøvelser organisert etter buegang og behov."} />
       </div>
-
-        <div class="callout">
-        <div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" /></svg></div>
-        <div>
-          <h3>{sections["viktig-a-vite"]?.heading ?? "Viktig å vite"}</h3>
-          <p set:html={sections["viktig-a-vite"]?.body?.[0]
-            ? inlineHtmlFromBlock(sections["viktig-a-vite"].body[0])
-            : "Krystallsyke gir vanligvis ikke svimmelhet når du går eller sitter i ro. Ved vedvarende svimmelhet bør andre årsaker vurderes."} />
-        </div>
-      </div>
+      <a href="/ovelsesbibliotek/" class="btn btn-outline">Til øvelsesbiblioteket →</a>
     </div>
   </section>
 
+  <!-- 5. Siste artikler -->
+  <section class="section-alt">
+    <div class="container">
+      <div class="section-head">
+        <h2>Siste artikler</h2>
+        <hr class="heading-rule" />
+      </div>
+      {latestPosts.length ? (
+        <div class="card-grid articles-grid">
+          {latestPosts.map((post) => (
+            <a href={`/blogg/${post.slug}/`} class="card article-card">
+              {urlForImage(post.coverImage, 640) ? (
+                <img src={urlForImage(post.coverImage, 640)} alt={post.title} class="article-cover" />
+              ) : (
+                <MediaPlaceholder label={post.title} />
+              )}
+              <div class="card-body">
+                {post.category && <span class="category-badge">{post.category}</span>}
+                {post.publishedDate && <span class="post-date">{formatDate(post.publishedDate)}</span>}
+                <h3>{post.title}</h3>
+                {post.excerpt && <p>{post.excerpt}</p>}
+              </div>
+            </a>
+          ))}
+        </div>
+      ) : (
+        <p>Ingen artikler publisert ennå.</p>
+      )}
+      <p class="mt"><a href="/blogg/" class="card-link">Se alle artikler →</a></p>
+    </div>
+  </section>
+
+  <!-- 6. Finn behandler-bånd -->
+  <section class="section-beige">
+    <div class="container cta-band">
+      <div>
+        <h2>Trenger du en behandler nær deg?</h2>
+        <p>Se kontaktinfo, adresse og kart til Krystallsykehjelpen.</p>
+      </div>
+      <a href="/finn-behandler/" class="btn btn-primary">Finn behandler →</a>
+    </div>
+  </section>
+
+  <!-- 7. Faglig ansvar / Marie -->
   <section>
     <div class="container">
       <div class="bio-card">
         <img src={urlForImage(sections["marie-bio"]?.mediaAsset, 240) ?? "/marie-portrait.jpg"} alt="Marie, kiropraktor hos Krystallsykehjelpen" class="bio-photo" />
         <div>
           <h3>{sections["marie-bio"]?.heading ?? "Marie – spesialisert på svimmelhet"}</h3>
+          <blockquote class="pull-quote">«Krystallsyke er ufarlig, men skremmende når man ikke vet hva det er. Målet mitt er at du skal forstå hva som skjer — og få hjelp raskt.»</blockquote>
           <p set:html={sections["marie-bio"]?.body?.[0]
             ? inlineHtmlFromBlock(sections["marie-bio"].body[0])
             : "Kiropraktor med spesialkompetanse på utredning og behandling av svimmelhet og krystallsyke."} />
-          <a href="/om-oss/" class="card-link">Les mer om Krystallsykehjelpen →</a>
+          <a href="/om-krystallsykehjelpen/" class="card-link">Les mer om Krystallsykehjelpen →</a>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="section-beige">
-    <div class="container cta-band">
-      <div>
-        <h2>{sections.cta?.heading ?? "Klar til å bli kvitt svimmelheten?"}</h2>
-        <p set:html={sections.cta?.body?.[0]
-          ? inlineHtmlFromBlock(sections.cta.body[0])
-          : "Bestill en time i dag – vi hjelper deg tilbake til en stødig hverdag."} />
-      </div>
-      <a href={bookingUrl} class="btn btn-primary">Bestill time →</a>
+  <!-- 8. Nyhetsbrev — ingen backend finnes ennå (verken Web3Forms eller
+       annet skjemaoppsett i prosjektet). Rent frontend-skjema uten
+       innsendingslogikk, flagget i implementasjonsrapporten. -->
+  <section class="section-alt">
+    <div class="container newsletter">
+      <h2>Hold deg oppdatert</h2>
+      <p>Få nye artikler om krystallsyke og svimmelhet rett i innboksen.</p>
+      <form class="newsletter-form" onsubmit="event.preventDefault();">
+        <input type="email" name="email" placeholder="Din e-postadresse" required />
+        <button type="submit" class="btn btn-primary">Meld meg på</button>
+      </form>
+      <p class="newsletter-note">Ingen innsendingslogikk er koblet til ennå — se implementasjonsrapporten.</p>
     </div>
   </section>
 </Layout>
-
-<script>
-  document.querySelectorAll(".accordion-trigger").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      btn.closest(".accordion-item")?.classList.toggle("open");
-    });
-  });
-</script>
 
 <style>
   .hero { padding: 56px 0 90px; position: relative; overflow: hidden; }
@@ -251,32 +238,11 @@ const steps = [
   @media (max-width: 800px) { .hero-grid { grid-template-columns: 1fr; } }
 
   .hero-media { position: relative; }
-  .hero-photo {
-    width: 100%;
-    border-radius: var(--radius);
-    aspect-ratio: 4/3;
-    object-fit: cover;
-    box-shadow: 0 20px 50px rgba(22,56,117,0.12);
-  }
+  .hero-photo { width: 100%; border-radius: var(--radius); aspect-ratio: 4/3; object-fit: cover; box-shadow: 0 20px 50px rgba(22,56,117,0.12); }
 
-  .photo-block {
-    aspect-ratio: 4/3; border-radius: var(--radius);
-    background: linear-gradient(135deg, #d7e6fa, #f4eee3);
-    display: flex; align-items: center; justify-content: center;
-    color: var(--navy); text-align: center; padding: 20px;
-    border: 1px dashed #b9cbe6;
-  }
-  .photo-block span { font-size: 0.82rem; font-weight: 600; color: var(--navy-2); }
-  .photo-block svg { width: 56px; height: 56px; margin-bottom: 10px; }
-
-  .hero-badge {
-    position: absolute; bottom: -22px; left: -14px; background: #fff;
-    border-radius: 12px; box-shadow: 0 10px 28px rgba(22,56,117,0.16);
-    padding: 14px 16px; display: flex; align-items: center; gap: 10px;
-    max-width: 230px; font-size: 0.82rem; font-weight: 700; color: var(--navy);
-  }
-  .hero-badge svg { width: 22px; height: 22px; color: #2fbf7a; flex-shrink: 0; }
-  @media (max-width: 800px) { .hero-badge { position: static; margin-top: 16px; max-width: none; } }
+  .trust-row { list-style: none; display: flex; gap: 20px; flex-wrap: wrap; margin: 24px 0 0; padding: 0; }
+  .trust-row li { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; font-weight: 600; color: var(--navy); }
+  .trust-row svg { width: 18px; height: 18px; color: #2fbf7a; flex-shrink: 0; }
 
   .section-alt { background: var(--paper); padding: 60px 0; }
   .section-alt.no-top { padding-top: 0; padding-bottom: 70px; }
@@ -284,23 +250,23 @@ const steps = [
   section { padding: 60px 0; }
 
   .section-head { max-width: 62ch; margin-bottom: 36px; }
-
-  /* Center the heading for the help-cards section */
   .section-alt.no-top .section-head { text-align: center; margin-left: auto; margin-right: auto; }
   .section-alt.no-top .section-head .heading-rule { margin-left: auto; margin-right: auto; }
 
-  .stat-strip {
-    background: #fff; border: 1px solid var(--line); border-radius: var(--radius);
-    box-shadow: 0 10px 30px rgba(22,56,117,0.06); padding: 26px; position: relative;
-    z-index: 2; margin-top: -54px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px;
+  .journey-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; }
+  @media (max-width: 980px) { .journey-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 560px) { .journey-grid { grid-template-columns: 1fr; } }
+  .journey-card {
+    background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius);
+    text-decoration: none; display: block; transition: transform 0.15s ease, box-shadow 0.15s ease;
+    box-shadow: 0 12px 28px rgba(22, 56, 117, 0.06);
   }
-  @media (max-width: 900px) { .stat-strip { grid-template-columns: 1fr 1fr; margin-top: -40px; } }
-  @media (max-width: 520px) { .stat-strip { grid-template-columns: 1fr; } }
-  .stat-item { display: flex; gap: 12px; align-items: flex-start; }
-  .stat-item .icon-circle { width: 40px; height: 40px; margin-bottom: 0; flex-shrink: 0; }
-  .stat-item .icon-circle svg { width: 20px; height: 20px; }
-  .stat-item h4 { font-family: var(--font-display); color: var(--navy); font-size: 0.98rem; margin: 0 0 3px; }
-  .stat-item p { font-size: 0.85rem; margin: 0; }
+  .journey-card:hover { transform: translateY(-2px); box-shadow: 0 18px 36px rgba(22, 56, 117, 0.1); }
+  .journey-card .card-body { padding: 24px; }
+  .journey-card h3 { font-size: 1rem; margin: 0 0 8px; }
+  .journey-card p { font-size: 0.88rem; margin: 0 0 12px; color: var(--ink-soft); }
+  .journey-card.coming-soon { opacity: 0.7; cursor: default; }
+  .journey-card.coming-soon .card-link { color: var(--ink-soft); }
 
   .diagram-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
   @media (max-width: 800px) { .diagram-grid { grid-template-columns: 1fr; } }
@@ -308,111 +274,60 @@ const steps = [
   .diagram-img { width: 100%; max-width: 380px; margin: 0 auto; display: block; }
   .diagram-caption { font-size: 0.82rem; color: var(--ink-soft); text-align: center; margin: 14px auto 0; max-width: 380px; line-height: 1.5; }
 
-    .card-grid { display: grid; grid-template-columns: 1fr; gap: 4px; justify-items: center; }
-     /* Match cards width to main content container and keep them centered.
-       Remove right padding so the image can sit flush against the card's right edge.
-       Constrain text column so image sits close to text. */
-     .card { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; width: 100%; max-width: 880px; margin: 0 auto; box-sizing: border-box; }
-    .card-body { padding: 12px 0 12px 12px; display:flex; align-items:center; gap:12px; }
-    .card-text { flex: 0 1 65%; }
   .icon-circle {
     width: 52px; height: 52px; border-radius: 50%; background: var(--sky);
     display: flex; align-items: center; justify-content: center; margin-bottom: 14px;
   }
   .icon-circle svg { width: 26px; height: 26px; color: var(--navy-2); }
   .card-link { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: 0.9rem; text-decoration: none; color: var(--navy-2); margin-top: 4px; }
-
-  .step-row { display: flex; align-items: flex-start; gap: 0; overflow-x: auto; padding-bottom: 8px; }
-  .step { flex: 1 1 0; min-width: 140px; text-align: center; padding: 0 10px; }
-  .step-icon { position: relative; display: inline-block; margin: 0 auto 10px; }
-  .step-num {
-    width: 24px; height: 24px; border-radius: 50%; background: var(--navy-2); color: #fff;
-    font-weight: 700; font-size: 0.72rem; display: flex; align-items: center; justify-content: center;
-    position: absolute; top: -6px; right: -6px; border: 2px solid #fff;
-  }
-  .step .icon-circle { margin: 0; width: 44px; height: 44px; }
-  .step .icon-circle svg { width: 22px; height: 22px; }
-  .step h4 { font-size: 0.92rem; color: var(--navy); margin: 0 0 6px; font-family: var(--font-body); font-weight: 700; }
-  .step p { font-size: 0.8rem; margin: 0; }
-  .step-arrow { display: flex; align-items: center; color: var(--line); flex: 0 0 auto; padding-top: 22px; }
-  .step-arrow svg { width: 20px; height: 20px; }
-  @media (max-width: 800px) {
-    .step-row { flex-direction: column; align-items: stretch; }
-    .step { text-align: left; display: flex; gap: 16px; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--line); }
-    .step:last-child { border-bottom: none; }
-    .step-icon { margin: 0; flex-shrink: 0; }
-    .step-arrow { display: none; }
-  }
-
-  /* New small layout helpers for inserted sections */
-  .map-search-grid { display: grid; grid-template-columns: 1fr 420px; gap: 28px; align-items: center; }
-  .map-placeholder img { width: 100%; border-radius: var(--radius); }
-  .exercises-grid { display: grid; grid-template-columns: 1fr 360px; gap: 28px; align-items: center; }
-  .exercise-media { display: flex; flex-direction: column; align-items: center; }
-  .exercise-media .exercise-photo { min-height: 120px; max-width: 320px; width: 100%; display:flex; align-items:center; justify-content:center; }
-  .exercise-action { width: 100%; display:flex; justify-content:center; margin-top:12px; }
-
-  /* card photos: reduced height so cards appear more compact and balanced */
-  .card .card-photo { width: 120px; height: 120px; padding: 0; display:flex; align-items:center; justify-content:center; margin-bottom:0; border-radius: var(--radius-sm); background: var(--sky); border: 1px solid var(--line); flex-shrink:0; margin-left: auto; border-top-right-radius: var(--radius); border-bottom-right-radius: var(--radius); }
-
-  /* Slightly smaller card title for visual balance */
-  .card .card-body h3 { font-size: 0.95rem; margin: 0 0 6px; line-height: 1.18; }
-
-  @media (max-width: 980px) {
-    .map-search-grid, .exercises-grid { grid-template-columns: 1fr; }
-  }
-
-  @media (max-width: 720px) {
-    /* Keep single-column layout on small screens */
-    .card-grid { grid-template-columns: 1fr; gap: 4px; }
-    .card .card-photo { width: 84px; height: 84px; margin-bottom:0; }
-    .card-body { padding: 10px; }
-    .card .card-body h3 { font-size: 0.95rem; }
-  }
-
-  @media (max-width: 420px) {
-    .card-grid { grid-template-columns: 1fr; }
-    .card-body { flex-direction: column; align-items: flex-start; }
-    .card .card-photo { width: 100%; height: 80px; border-radius: var(--radius); }
-    .card-body { padding: 8px; }
-    .card .card-body h3 { font-size: 0.95rem; }
-  }
-
-  .faq-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 40px; align-items: start; }
-  @media (max-width: 860px) { .faq-grid { grid-template-columns: 1fr; } }
-  .accordion-item { border-bottom: 1px solid var(--line); }
-  .accordion-item:first-child { border-top: 1px solid var(--line); }
-  .accordion-trigger {
-    width: 100%; text-align: left; background: none; border: none; padding: 18px 4px;
-    font-family: var(--font-body); font-weight: 600; font-size: 1rem; color: var(--navy);
-    display: flex; justify-content: space-between; align-items: center; cursor: pointer;
-  }
-  .accordion-trigger .chev { transition: transform 0.2s ease; flex-shrink: 0; margin-left: 12px; }
-  .accordion-item.open .accordion-trigger .chev { transform: rotate(180deg); }
-  .accordion-panel { max-height: 0; overflow: hidden; transition: max-height 0.25s ease; }
-  .accordion-item.open .accordion-panel { max-height: 400px; }
-  .accordion-panel p { padding: 0 4px 18px; }
   .mt { margin-top: 20px; }
 
-  .callout { background: var(--sky); border-radius: var(--radius); padding: 24px; display: flex; gap: 14px; align-items: flex-start; }
-  .callout .icon-circle { flex-shrink: 0; margin-bottom: 0; background: #fff; }
-  .callout h3 { margin-bottom: 6px; }
-  .callout p { margin: 0; }
+  .section-cta { background: var(--navy); color: #fff; padding: 48px 0; }
+  .section-cta .cta-inner { display: flex; gap: 24px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+  .section-cta h2 { color: #fff; margin-bottom: 8px; }
+  .section-cta .sub { color: #d9e9f6; margin: 0; max-width: 52ch; }
+  .btn-outline { background: var(--beige); color: var(--navy); }
+  @media (max-width: 700px) { .section-cta .cta-inner { flex-direction: column; align-items: flex-start; } }
 
-  .bio-card { background: var(--sky); border-radius: var(--radius); padding: 26px; display: flex; gap: 22px; align-items: center; }
-  .bio-photo {
-    width: 84px; height: 84px; border-radius: 50%;
-    object-fit: cover;
-    flex-shrink: 0;
+  .card-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
+  @media (max-width: 860px) { .card-grid { grid-template-columns: 1fr; } }
+  .card {
+    background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius);
+    overflow: hidden; box-shadow: 0 18px 36px rgba(22, 56, 117, 0.08);
+    text-decoration: none; display: block; transition: transform 0.15s ease, box-shadow 0.15s ease;
   }
-  .bio-card h3 { margin-bottom: 4px; }
-  .bio-card p { margin-bottom: 6px; }
-  @media (max-width: 600px) { .bio-card { flex-direction: column; text-align: center; } }
+  .card:hover { transform: translateY(-2px); box-shadow: 0 22px 44px rgba(22, 56, 117, 0.12); }
+  .article-cover { width: 100%; aspect-ratio: 16/10; object-fit: cover; }
+  .card-body { padding: 22px; }
+  .card-body h3 { margin: 4px 0 8px; }
+  .card-body p { margin: 0; color: var(--ink-soft); }
+  .post-date { font-size: 0.8rem; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.04em; }
+  .category-badge {
+    display: inline-block; font-size: 0.72rem; font-weight: 700; padding: 3px 10px;
+    border-radius: 999px; background: var(--sky); color: var(--navy-2); margin-bottom: 6px; margin-right: 6px;
+  }
 
   .cta-band { border-radius: var(--radius); padding: 36px; display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; }
   .cta-band h2 { margin-bottom: 6px; }
   .cta-band p { margin: 0; }
   @media (max-width: 700px) { .cta-band { flex-direction: column; align-items: flex-start; } }
 
-  .chip-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+  .bio-card { background: var(--sky); border-radius: var(--radius); padding: 26px; display: flex; gap: 22px; align-items: center; }
+  .bio-photo { width: 84px; height: 84px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+  .bio-card h3 { margin-bottom: 4px; }
+  .bio-card p { margin-bottom: 6px; }
+  .pull-quote {
+    margin: 0 0 14px; padding-left: 16px; border-left: 3px solid var(--turquoise);
+    font-family: var(--font-display); font-style: italic; color: var(--navy); font-size: 1.02rem;
+  }
+  @media (max-width: 600px) { .bio-card { flex-direction: column; text-align: center; } .pull-quote { border-left: none; padding-left: 0; } }
+
+  .newsletter { max-width: 560px; text-align: center; }
+  .newsletter h2 { margin-bottom: 8px; }
+  .newsletter-form { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; justify-content: center; }
+  .newsletter-form input {
+    flex: 1 1 240px; padding: 12px 16px; border-radius: 999px; border: 1px solid var(--line);
+    font-family: var(--font-body); font-size: 0.94rem;
+  }
+  .newsletter-note { font-size: 0.76rem; color: var(--ink-soft); margin-top: 10px; }
 </style>
