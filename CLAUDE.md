@@ -33,8 +33,10 @@ astro-site/
 ```
 
 Eksisterende sider: Hjem, Om oss (Marie personlig), Om Krystallsykehjelpen
-(konseptet — ny side), Krystallsyken (med FAQ-accordion), Øvelsesbibliotek,
-Kontakt, Behandlere/Finn behandler (med Leaflet-kart og terapeutprofiler).
+(konseptet), Krystallsyken (med FAQ-accordion), Kontakt, Øvelsesbibliotek
+(oversikt + kategori- + øvelsesside, Sanity-drevet), Blogg (oversikt +
+enkeltinnlegg, Sanity-drevet), FAQ (egen side på `/faq/`, Sanity-drevet),
+Finn behandler (med Leaflet-kart og terapeutprofiler, Sanity-drevet).
 
 ## Designsystem — "helsenettside-blå"
 Navy/turkis-palett. IKKE bruk mørkegrønn/minimalistisk stil — det ble forkastet
@@ -168,6 +170,69 @@ Blogg også):
   til `mediaType` er satt til "Bilde" (se `pageSection.ts`-skjemaet). Hvis et
   bilde "ikke lar seg laste opp" — sjekk at Medietype er endret til "Bilde"
   først, feltet dukker opp automatisk etter det.
+
+## Sanity CMS (fase 3 — Øvelsesbibliotek, Blogg, FAQ, Finn behandler bygget)
+De fire gjenstående sidene er bygget og koblet til Sanity-innholdet fra
+fase 1 (`exerciseCategory`, `exercise`, `blogPost`, `faqItem`, `practitioner`).
+
+**Nye ruter:**
+- `/ovelsesbibliotek/` → `/ovelsesbibliotek/[kategori-slug]/` →
+  `/ovelsesbibliotek/[kategori-slug]/[øvelse-slug]/` (to nivåer nøstet
+  dynamisk routing via `getStaticPaths()`).
+- `/blogg/` → `/blogg/[slug]/`.
+- `/faq/` — egen side (se under for hvorfor).
+- `/finn-behandler/` — behandlerkort + Leaflet-kart.
+
+**Gjenbrukte mønstre** (samme som fase 2 — se over): `getPageSections()` for
+hero-seksjoner (gyldig for `ovelsesbibliotek`, `blogg`, `finn-behandler` —
+disse pageSlug-verdiene fantes allerede i skjemaet), `inlineHtmlFromBlock()`
+for portable text, `urlForImage()` for bilder. Ny delt hjelper:
+`astro-site/src/lib/safeFetch.ts` — samme try/catch-fallback-mønster som
+`getPageSections()`, brukt av alle nye siders egne GROQ-spørringer.
+
+**FAQ er et unntak fra hero-mønsteret:** `pageSection` sin `pageSlug`-liste
+har ingen `"faq"`-verdi (og skjemaet skal ikke utvides), så `/faq/` har en
+enkel hardkodet `<h1>` — selve spørsmålene kommer fortsatt fra `faqItem`.
+
+**Ny render-mønster: fil-type media med MIME-sjekk** (kun `exercise.videoOrImage`,
+siden det er en generisk `file`-type, ikke `image`) — hent
+`videoOrImage{ asset->{ url, mimeType } }` i GROQ (ikke `urlForImage()`, den
+virker bare på `image`-typede felt), og grener i malen på
+`mimeType?.startsWith("video/")` for å vise `<video>` vs. `<img>`. Ingen av
+de 3 øvelsene har media satt ennå — `MediaPlaceholder`-fallback vises da.
+
+**Ny navigasjon:** "Ressurser"-dropdown i Header.astro (FAQ + Blogg, hover +
+klikk + `:focus-within` på desktop, kun klikk under 860px) — nøstet inni
+eksisterende `#nav-links`, rører ikke hamburger-toggle-logikken. Footer.astro
+har 4 kolonner nå (ny "Ressurser"-kolonne). Finn behandler har egen topplenke
+i begge.
+
+**Leaflet-kartet på Finn behandler** (`npm install leaflet`, vanlig JS — ikke
+`react-leaflet`, matcher kodebasens vanilla-JS-konvensjon):
+- CSS importeres i frontmatter: `import "leaflet/dist/leaflet.css"`.
+- JS-import (`import L from "leaflet"`) må ligge i en ekte `<script>`-tag,
+  IKKE i en `define:vars`-script — da bundler ikke Vite `import`-setningen.
+- Behandler-koordinater sendes til scriptet via en `data-points`-attributt
+  (JSON, `JSON.parse`'es i scriptet) — ikke via `define:vars`.
+- Egendefinert SVG-markørikon (data-URL, navy/turkis) i stedet for Leaflets
+  standardikon — unngår et kjent bundler-stiproblem med standardikonet.
+- `.map`-containeren MÅ ha eksplisitt CSS-høyde, ellers renders ingenting.
+- Bruker `tile.openstreetmap.org` (gratis demo-lag) — fint for lav trafikk nå,
+  men bør byttes til en ordentlig tile-leverandør (f.eks. MapTiler/Stadia
+  Maps) hvis trafikken vokser.
+
+**Seed-skript:** `astro-site/scripts/seed-faq-og-behandler.mjs` — la inn 6
+`faqItem`-plassholdere (pris og henvisningskrav er bevisst ikke fylt inn,
+disse faktaene finnes ikke noe sted i prosjektet ennå) og ett
+`practitioner`-dokument for Marie (gjenbruker godkjent bio-tekst fra
+`pageSection-om-krystallsykehjelpen-moet-marie` og det allerede opplastede
+`marie-portrait.jpg`-bildet — ingen ny tekst/bilde diktet opp).
+
+**Viktig å sjekke:** `practitioner`-dokumentets `latitude`/`longitude`
+(59.9281068, 11.1614349) er geokodet for "Garderbakken 1, Fetsund" via
+OpenStreetMap Nominatim og uavhengig verifisert under bygging (husnivå-
+presisjon) — men se selv på kartet på `/finn-behandler/` og bekreft at nålen
+treffer riktig bygg.
 
 ## Sanity Studio — to steder å redigere innhold
 Studio finnes nå to steder, med samme innhold (samme prosjekt/dataset):

@@ -1,0 +1,108 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import { sanityClient } from "sanity:client";
+import { safeFetch } from "../../../lib/safeFetch";
+import { inlineHtmlFromBlock } from "../../../lib/portableText";
+
+export async function getStaticPaths() {
+  try {
+    const categories = await sanityClient.fetch(
+      `*[_type == "exerciseCategory" && defined(slug.current)]{ "slug": slug.current }`,
+    );
+    return categories.map((c) => ({ params: { categorySlug: c.slug } }));
+  } catch (error) {
+    console.warn("[ovelsesbibliotek/[categorySlug]] Kunne ikke hente stier fra Sanity:", error);
+    return [];
+  }
+}
+
+const { categorySlug } = Astro.params;
+
+const category = await safeFetch(
+  `*[_type == "exerciseCategory" && slug.current == $categorySlug][0]{
+    title, description,
+    "exercises": *[_type == "exercise" && references(^._id)] | order(order asc){
+      title, "slug": slug.current, difficultyLevel, order
+    }
+  }`,
+  { categorySlug },
+  null,
+);
+---
+
+<Layout
+  title={category ? `${category.title} | Øvelsesbibliotek | Krystallsykehjelpen` : "Øvelsesbibliotek | Krystallsykehjelpen"}
+  description={category ? `Øvelser for ${category.title.toLowerCase()}.` : "Øvelsesbibliotek – Krystallsykehjelpen."}
+  activePath="/ovelsesbibliotek/"
+>
+  {category ? (
+    <section class="category-hero">
+      <div class="container">
+        <a href="/ovelsesbibliotek/" class="card-link back-link">← Tilbake til øvelsesbibliotek</a>
+        <h1>{category.title}</h1>
+        {category.description?.[0] && (
+          <p class="lead" set:html={inlineHtmlFromBlock(category.description[0])} />
+        )}
+      </div>
+    </section>
+
+    <section class="section-alt">
+      <div class="container">
+        {category.exercises?.length ? (
+          <div class="card-grid">
+            {category.exercises.map((exercise) => (
+              <a href={`/ovelsesbibliotek/${categorySlug}/${exercise.slug}/`} class="card">
+                <div class="card-body">
+                  <h3>{exercise.title}</h3>
+                  {exercise.difficultyLevel && <span class="badge">{exercise.difficultyLevel}</span>}
+                  <span class="card-link">Se øvelsen →</span>
+                </div>
+              </a>
+            ))}
+          </div>
+        ) : (
+          <p>Ingen øvelser lagt inn i denne kategorien ennå.</p>
+        )}
+      </div>
+    </section>
+  ) : (
+    <section class="container not-found">
+      <h1>Fant ikke kategorien</h1>
+      <p>Denne øvelseskategorien finnes ikke.</p>
+      <a href="/ovelsesbibliotek/" class="btn btn-primary">Til øvelsesbibliotek</a>
+    </section>
+  )}
+</Layout>
+
+<style>
+  .category-hero { padding: 56px 0 40px; }
+  .category-hero .container { max-width: 700px; }
+  .back-link { display: inline-block; margin-bottom: 16px; }
+  .lead { font-size: 1.05rem; }
+
+  .section-alt { background: var(--paper); padding: 50px 0 90px; }
+
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 22px; }
+  .card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: 0 18px 36px rgba(22, 56, 117, 0.08);
+    text-decoration: none;
+    display: block;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .card:hover { transform: translateY(-2px); box-shadow: 0 22px 44px rgba(22, 56, 117, 0.12); }
+  .card-body { padding: 24px; }
+  .card-body h3 { margin: 0 0 8px; }
+  .card-link { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: 0.9rem; color: var(--navy-2); margin-top: 6px; }
+
+  .badge {
+    display: inline-block; font-size: 0.76rem; font-weight: 700; letter-spacing: 0.02em;
+    padding: 3px 10px; border-radius: 999px; background: var(--sky); color: var(--navy-2);
+    text-transform: capitalize;
+  }
+
+  .not-found { padding: 90px 24px; text-align: center; max-width: 520px; }
+</style>

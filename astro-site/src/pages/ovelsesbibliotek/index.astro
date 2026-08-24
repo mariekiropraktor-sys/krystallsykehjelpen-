@@ -1,21 +1,102 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import { getPageSections } from "../../lib/pageSections";
+import { safeFetch } from "../../lib/safeFetch";
+import { inlineHtmlFromBlock } from "../../lib/portableText";
+import { urlForImage } from "../../lib/sanityImage";
+
+const sections = await getPageSections("ovelsesbibliotek");
+
+const categories = await safeFetch(
+  `*[_type == "exerciseCategory"] | order(order asc){
+    _id, title, "slug": slug.current, description, icon
+  }`,
+  {},
+  [],
+);
 ---
 
 <Layout
   title="Øvelsesbibliotek | Krystallsykehjelpen"
-  description="Øvelsesbibliotek – Krystallsykehjelpen, klinikk for krystallsyke og svimmelhet i Fetsund."
+  description="Øvelsesbibliotek – øvelser og manøvre for krystallsyke, organisert etter buegang."
   activePath="/ovelsesbibliotek/"
 >
-  <section class="container placeholder">
-    <span class="eyebrow">Under bygging</span>
-    <h1>Øvelsesbibliotek</h1>
-    <p>Denne siden bygges videre i neste steg – innholdet fra den forrige versjonen flyttes hit med samme komponentstruktur som forsiden.</p>
-    <a href="/" class="btn btn-primary">Til forsiden</a>
+  <section class="hero hero-simple">
+    <div class="container">
+      <span class="eyebrow">Øvelser og manøvre</span>
+      <h1>{sections.hero?.heading ?? "Øvelsesbibliotek"}</h1>
+      <p class="lead" set:html={sections.hero?.body?.[0]
+        ? inlineHtmlFromBlock(sections.hero.body[0])
+        : "Øvelser organisert etter hvilken buegang som er berørt."} />
+    </div>
+    <svg class="hero-wave" viewBox="0 0 1440 60" preserveAspectRatio="none">
+      <path d="M0,32 C360,72 1080,0 1440,32 L1440,60 L0,60 Z" fill="#ffffff" />
+    </svg>
+  </section>
+
+  <section class="section-alt no-top">
+    <div class="container">
+      {categories.length ? (
+        <div class="card-grid">
+          {categories.map((category) => (
+            <a href={`/ovelsesbibliotek/${category.slug}/`} class="card">
+              <div class="card-body">
+                <div class="icon-circle">
+                  {urlForImage(category.icon, 56) ? (
+                    <img src={urlForImage(category.icon, 56)} alt="" />
+                  ) : (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" /><path d="M8 12h8M12 8v8" /></svg>
+                  )}
+                </div>
+                <h3>{category.title}</h3>
+                {category.description?.[0] && <p set:html={inlineHtmlFromBlock(category.description[0])} />}
+                <span class="card-link">Les mer →</span>
+              </div>
+            </a>
+          ))}
+        </div>
+      ) : (
+        <p>Ingen øvelseskategorier lagt inn ennå.</p>
+      )}
+    </div>
   </section>
 </Layout>
 
 <style>
-  .placeholder { padding: 70px 24px 100px; max-width: 640px; }
-  .eyebrow { font-size: 0.82rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); font-weight: 700; }
+  .hero-simple { padding: 56px 0 90px; position: relative; overflow: hidden; text-align: center; }
+  .hero-simple .container { max-width: 640px; }
+  .eyebrow { font-size: 0.82rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 10px; display: inline-block; }
+  .lead { font-size: 1.05rem; }
+  .hero-wave { position: absolute; bottom: -2px; left: 0; width: 100%; line-height: 0; }
+
+  .section-alt { background: var(--paper); padding: 60px 0; }
+  .section-alt.no-top { padding-top: 0; padding-bottom: 90px; }
+
+  .card-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
+  @media (max-width: 860px) { .card-grid { grid-template-columns: 1fr; } }
+  .card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: 0 18px 36px rgba(22, 56, 117, 0.08);
+    text-decoration: none;
+    display: block;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .card:hover { transform: translateY(-2px); box-shadow: 0 22px 44px rgba(22, 56, 117, 0.12); }
+  .card-body { padding: 26px; }
+  .card-body h3 { margin: 0 0 0.6em; }
+  .card-body p { margin: 0 0 12px; color: var(--ink-soft); }
+
+  .icon-circle {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: rgba(95, 193, 214, 0.16);
+    display: grid; place-items: center; margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .icon-circle svg { width: 28px; height: 28px; color: var(--turquoise); }
+  .icon-circle img { width: 100%; height: 100%; object-fit: cover; }
+
+  .card-link { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: 0.9rem; color: var(--navy-2); }
 </style>

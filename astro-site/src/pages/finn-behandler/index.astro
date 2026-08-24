@@ -1,0 +1,152 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getPageSections } from "../../lib/pageSections";
+import { safeFetch } from "../../lib/safeFetch";
+import { inlineHtmlFromBlock } from "../../lib/portableText";
+import { urlForImage } from "../../lib/sanityImage";
+import "leaflet/dist/leaflet.css";
+
+const sections = await getPageSections("finn-behandler");
+
+const practitioners = await safeFetch(
+  `*[_type == "practitioner"]{
+    _id, name, title, clinicName, address, phone, bookingUrl, photo, latitude, longitude
+  }`,
+  {},
+  [],
+);
+
+const mapPoints = practitioners
+  .filter((p) => p.latitude != null && p.longitude != null)
+  .map((p) => ({
+    name: p.name,
+    clinicName: p.clinicName,
+    address: p.address,
+    lat: p.latitude,
+    lng: p.longitude,
+  }));
+---
+
+<Layout
+  title="Finn behandler | Krystallsykehjelpen"
+  description="Behandlere hos Krystallsykehjelpen — kontaktinfo og adresse."
+  activePath="/finn-behandler/"
+>
+  <section class="hero hero-simple">
+    <div class="container">
+      <span class="eyebrow">Behandlere</span>
+      <h1>{sections.hero?.heading ?? "Finn behandler"}</h1>
+      <p class="lead" set:html={sections.hero?.body?.[0]
+        ? inlineHtmlFromBlock(sections.hero.body[0])
+        : "Møt behandlerne hos Krystallsykehjelpen."} />
+    </div>
+    <svg class="hero-wave" viewBox="0 0 1440 60" preserveAspectRatio="none">
+      <path d="M0,32 C360,72 1080,0 1440,32 L1440,60 L0,60 Z" fill="#ffffff" />
+    </svg>
+  </section>
+
+  <section class="section-alt no-top">
+    <div class="container">
+      {practitioners.length ? (
+        <div class="practitioner-grid">
+          {practitioners.map((p) => (
+            <div class="bio-card">
+              <img src={urlForImage(p.photo, 320) ?? "/marie-portrait.jpg"} alt={p.name} class="bio-photo" />
+              <div>
+                <h3>{p.name}</h3>
+                {p.title && <p class="p-title">{p.title}</p>}
+                {p.clinicName && <p class="p-clinic">{p.clinicName}</p>}
+                {p.address && <p class="p-address">{p.address}</p>}
+                <div class="p-links">
+                  {p.phone && <a href={`tel:${p.phone.replace(/\s/g, "")}`} class="card-link">{p.phone}</a>}
+                  {p.bookingUrl && <a href={p.bookingUrl} class="btn btn-primary btn-sm">Bestill time</a>}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p>Ingen behandlere lagt inn ennå.</p>
+      )}
+    </div>
+  </section>
+
+  <section class="section-beige">
+    <div class="container">
+      <h2>Kart</h2>
+      <hr class="heading-rule" />
+      <div id="practitioner-map" class="map" data-points={JSON.stringify(mapPoints)}>
+        {!mapPoints.length && <p class="map-empty">Kart vises når adresse er registrert.</p>}
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  import L from "leaflet";
+
+  const el = document.getElementById("practitioner-map");
+  const points = JSON.parse(el?.dataset.points ?? "[]");
+
+  if (el && points.length) {
+    const markerSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="34" height="44" viewBox="0 0 34 44"><path d="M17 0C7.6 0 0 7.6 0 17c0 12.7 17 27 17 27s17-14.3 17-27C34 7.6 26.4 0 17 0z" fill="#163875"/><circle cx="17" cy="17" r="7" fill="#5fc1d6"/></svg>`;
+    const icon = L.icon({
+      iconUrl: `data:image/svg+xml;base64,${btoa(markerSvg)}`,
+      iconSize: [34, 44],
+      iconAnchor: [17, 44],
+      popupAnchor: [0, -40],
+    });
+
+    const map = L.map(el, { scrollWheelZoom: false }).setView([points[0].lat, points[0].lng], 14);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: "&copy; OpenStreetMap-bidragsytere",
+      maxZoom: 19,
+    }).addTo(map);
+
+    points.forEach((p) => {
+      L.marker([p.lat, p.lng], { icon })
+        .addTo(map)
+        .bindPopup(`<strong>${p.name}</strong><br>${p.clinicName ?? ""}<br>${p.address ?? ""}`);
+    });
+  }
+</script>
+
+<style>
+  .hero-simple { padding: 56px 0 90px; position: relative; overflow: hidden; text-align: center; }
+  .hero-simple .container { max-width: 640px; }
+  .eyebrow { font-size: 0.82rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 10px; display: inline-block; }
+  .lead { font-size: 1.05rem; }
+  .hero-wave { position: absolute; bottom: -2px; left: 0; width: 100%; line-height: 0; }
+
+  .section-alt { background: var(--paper); padding: 60px 0; }
+  .section-alt.no-top { padding-top: 0; padding-bottom: 60px; }
+  .section-beige { background: var(--beige); padding: 60px 0; }
+
+  .practitioner-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
+  .bio-card {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 20px;
+    align-items: center;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 24px;
+    box-shadow: 0 18px 42px rgba(22, 56, 117, 0.08);
+  }
+  .bio-photo { width: 100%; border-radius: var(--radius-sm); object-fit: cover; aspect-ratio: 4/5; }
+  .bio-card h3 { margin: 0 0 4px; }
+  .p-title { color: var(--turquoise); font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.04em; margin: 0 0 6px; }
+  .p-clinic { margin: 0 0 2px; color: var(--ink); font-weight: 600; }
+  .p-address { margin: 0 0 12px; color: var(--ink-soft); font-size: 0.9rem; }
+  .p-links { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+  .btn-sm { padding: 9px 18px; font-size: 0.86rem; }
+
+  @media (max-width: 520px) {
+    .bio-card { grid-template-columns: 1fr; text-align: center; }
+    .p-links { align-items: center; }
+  }
+
+  .map { height: 420px; border-radius: var(--radius); overflow: hidden; margin-top: 20px; background: #fff; }
+  .map-empty { padding: 24px; text-align: center; color: var(--ink-soft); }
+</style>
