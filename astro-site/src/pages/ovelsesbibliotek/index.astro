@@ -4,6 +4,7 @@ import { getPageSections } from "../../lib/pageSections";
 import { safeFetch } from "../../lib/safeFetch";
 import { inlineHtmlFromBlock } from "../../lib/portableText";
 import { urlForImage } from "../../lib/sanityImage";
+import { HABITUERING_SECTIONS } from "../../lib/habitueringSections";
 
 const sections = await getPageSections("ovelsesbibliotek");
 
@@ -14,11 +15,16 @@ const categories = await safeFetch(
   {},
   [],
 );
+
+const habitueringSections = Object.entries(HABITUERING_SECTIONS).map(([slug, section]) => ({
+  slug,
+  ...section,
+}));
 ---
 
 <Layout
   title="Øvelsesbibliotek | Krystallsykehjelpen"
-  description="Øvelsesbibliotek – øvelser og manøvre for krystallsyke, organisert etter buegang."
+  description="Øvelsesbibliotek – reponeringsmanøvre og habitueringsøvelser for krystallsyke og svimmelhet."
   activePath="/ovelsesbibliotek/"
 >
   <section class="hero hero-simple">
@@ -27,7 +33,7 @@ const categories = await safeFetch(
       <h1>{sections.hero?.heading ?? "Øvelsesbibliotek"}</h1>
       <p class="lead" set:html={sections.hero?.body?.[0]
         ? inlineHtmlFromBlock(sections.hero.body[0])
-        : "Øvelser organisert etter hvilken buegang som er berørt."} />
+        : "Reponeringsmanøvre organisert etter buegang, og habitueringsøvelser for balanse og forebygging."} />
     </div>
     <svg class="hero-wave" viewBox="0 0 1440 60" preserveAspectRatio="none">
       <path d="M0,32 C360,72 1080,0 1440,32 L1440,60 L0,60 Z" fill="#ffffff" />
@@ -36,6 +42,11 @@ const categories = await safeFetch(
 
   <section class="section-alt no-top">
     <div class="container">
+      <div class="branch-head">
+        <h2>Reponeringsmanøvre</h2>
+        <hr class="heading-rule" />
+        <p>Manøvre som flytter løse krystaller tilbake til der de hører hjemme, organisert etter hvilken buegang som er berørt.</p>
+      </div>
       {categories.length ? (
         <div class="card-grid">
           {categories.map((category) => (
@@ -60,6 +71,30 @@ const categories = await safeFetch(
       )}
     </div>
   </section>
+
+  <section class="section-beige">
+    <div class="container">
+      <div class="branch-head">
+        <h2>Habitueringsøvelser</h2>
+        <hr class="heading-rule" />
+        <p>Øvelser og vaner som trener opp balansesystemet og reduserer risiko for tilbakefall — uavhengig av hvilken buegang som var berørt.</p>
+      </div>
+      <div class="card-grid two-col">
+        {habitueringSections.map((section) => (
+          <a href={`/ovelsesbibliotek/${section.slug}/`} class="card">
+            <div class="card-body">
+              <div class="icon-circle">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h4l2-8 4 16 2-8h4" /></svg>
+              </div>
+              <h3>{section.title}</h3>
+              <p>{section.description}</p>
+              <span class="card-link">Les mer →</span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
 </Layout>
 
 <style>
@@ -70,10 +105,14 @@ const categories = await safeFetch(
   .hero-wave { position: absolute; bottom: -2px; left: 0; width: 100%; line-height: 0; }
 
   .section-alt { background: var(--paper); padding: 60px 0; }
-  .section-alt.no-top { padding-top: 0; padding-bottom: 90px; }
+  .section-alt.no-top { padding-top: 0; padding-bottom: 60px; }
+  .section-beige { background: var(--beige); padding: 60px 0; }
+
+  .branch-head { max-width: 62ch; margin-bottom: 30px; }
 
   .card-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
-  @media (max-width: 860px) { .card-grid { grid-template-columns: 1fr; } }
+  .card-grid.two-col { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 760px; }
+  @media (max-width: 860px) { .card-grid, .card-grid.two-col { grid-template-columns: 1fr; } }
   .card {
     background: var(--paper);
     border: 1px solid var(--line);

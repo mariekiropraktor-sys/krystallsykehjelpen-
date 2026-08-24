@@ -3,13 +3,15 @@ import Layout from "../../../layouts/Layout.astro";
 import { sanityClient } from "sanity:client";
 import { safeFetch } from "../../../lib/safeFetch";
 import { inlineHtmlFromBlock } from "../../../lib/portableText";
+import { HABITUERING_SECTIONS } from "../../../lib/habitueringSections";
 
 export async function getStaticPaths() {
   try {
     const categories = await sanityClient.fetch(
       `*[_type == "exerciseCategory" && defined(slug.current)]{ "slug": slug.current }`,
     );
-    return categories.map((c) => ({ params: { categorySlug: c.slug } }));
+    const habitueringSlugs = Object.keys(HABITUERING_SECTIONS).map((slug) => ({ slug }));
+    return [...categories, ...habitueringSlugs].map((c) => ({ params: { categorySlug: c.slug } }));
   } catch (error) {
     console.warn("[ovelsesbibliotek/[categorySlug]] Kunne ikke hente stier fra Sanity:", error);
     return [];
@@ -17,51 +19,78 @@ export async function getStaticPaths() {
 }
 
 const { categorySlug } = Astro.params;
+const habitueringSection = HABITUERING_SECTIONS[categorySlug];
 
-const category = await safeFetch(
-  `*[_type == "exerciseCategory" && slug.current == $categorySlug][0]{
-    title, description,
-    "exercises": *[_type == "exercise" && references(^._id)] | order(order asc){
-      title, "slug": slug.current, difficultyLevel, order
-    }
-  }`,
-  { categorySlug },
-  null,
-);
+let group = null;
+if (habitueringSection) {
+  const exercises = await safeFetch(
+    `*[_type == "exercise" && habitueringSeksjon == $categorySlug] | order(order asc){
+      title, "slug": slug.current, format, duration, stepCount
+    }`,
+    { categorySlug },
+    [],
+  );
+  group = { title: habitueringSection.title, description: habitueringSection.description, exercises, isHabituering: true };
+} else {
+  const category = await safeFetch(
+    `*[_type == "exerciseCategory" && slug.current == $categorySlug][0]{
+      title, description,
+      "exercises": *[_type == "exercise" && references(^._id)] | order(order asc){
+        title, "slug": slug.current, format, duration, stepCount, difficultyLevel
+      }
+    }`,
+    { categorySlug },
+    null,
+  );
+  if (category) {
+    group = {
+      title: category.title,
+      descriptionBlock: category.description?.[0],
+      exercises: category.exercises,
+      isHabituering: false,
+    };
+  }
+}
 ---
 
 <Layout
-  title={category ? `${category.title} | Øvelsesbibliotek | Krystallsykehjelpen` : "Øvelsesbibliotek | Krystallsykehjelpen"}
-  description={category ? `Øvelser for ${category.title.toLowerCase()}.` : "Øvelsesbibliotek – Krystallsykehjelpen."}
+  title={group ? `${group.title} | Øvelsesbibliotek | Krystallsykehjelpen` : "Øvelsesbibliotek | Krystallsykehjelpen"}
+  description={group ? `Øvelser: ${group.title}.` : "Øvelsesbibliotek – Krystallsykehjelpen."}
   activePath="/ovelsesbibliotek/"
 >
-  {category ? (
+  {group ? (
     <section class="category-hero">
       <div class="container">
         <a href="/ovelsesbibliotek/" class="card-link back-link">← Tilbake til øvelsesbibliotek</a>
-        <h1>{category.title}</h1>
-        {category.description?.[0] && (
-          <p class="lead" set:html={inlineHtmlFromBlock(category.description[0])} />
-        )}
+        <h1>{group.title}</h1>
+        {group.descriptionBlock ? (
+          <p class="lead" set:html={inlineHtmlFromBlock(group.descriptionBlock)} />
+        ) : group.description ? (
+          <p class="lead">{group.description}</p>
+        ) : null}
       </div>
     </section>
 
     <section class="section-alt">
       <div class="container">
-        {category.exercises?.length ? (
+        {group.exercises?.length ? (
           <div class="card-grid">
-            {category.exercises.map((exercise) => (
+            {group.exercises.map((exercise) => (
               <a href={`/ovelsesbibliotek/${categorySlug}/${exercise.slug}/`} class="card">
                 <div class="card-body">
                   <h3>{exercise.title}</h3>
-                  {exercise.difficultyLevel && <span class="badge">{exercise.difficultyLevel}</span>}
-                  <span class="card-link">Se øvelsen →</span>
+                  <div class="badge-row">
+                    {exercise.duration && <span class="badge">{exercise.duration}</span>}
+                    {exercise.stepCount && <span class="badge">{exercise.stepCount}</span>}
+                    {exercise.difficultyLevel && <span class="badge">{exercise.difficultyLevel}</span>}
+                  </div>
+                  <span class="card-link">{exercise.format === "read" ? "Les mer →" : "Se øvelsen →"}</span>
                 </div>
               </a>
             ))}
           </div>
         ) : (
-          <p>Ingen øvelser lagt inn i denne kategorien ennå.</p>
+          <p>Ingen øvelser lagt inn i denne seksjonen ennå.</p>
         )}
       </div>
     </section>
@@ -95,9 +124,10 @@ const category = await safeFetch(
   }
   .card:hover { transform: translateY(-2px); box-shadow: 0 22px 44px rgba(22, 56, 117, 0.12); }
   .card-body { padding: 24px; }
-  .card-body h3 { margin: 0 0 8px; }
-  .card-link { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: 0.9rem; color: var(--navy-2); margin-top: 6px; }
+  .card-body h3 { margin: 0 0 10px; }
+  .card-link { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: 0.9rem; color: var(--navy-2); margin-top: 10px; }
 
+  .badge-row { display: flex; flex-wrap: wrap; gap: 6px; }
   .badge {
     display: inline-block; font-size: 0.76rem; font-weight: 700; letter-spacing: 0.02em;
     padding: 3px 10px; border-radius: 999px; background: var(--sky); color: var(--navy-2);

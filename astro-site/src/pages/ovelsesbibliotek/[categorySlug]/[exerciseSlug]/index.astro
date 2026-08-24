@@ -4,12 +4,15 @@ import MediaPlaceholder from "../../../../components/MediaPlaceholder.astro";
 import { sanityClient } from "sanity:client";
 import { safeFetch } from "../../../../lib/safeFetch";
 import { inlineHtmlFromBlock } from "../../../../lib/portableText";
+import { urlForImage } from "../../../../lib/sanityImage";
+import { HABITUERING_SECTIONS } from "../../../../lib/habitueringSections";
 
 export async function getStaticPaths() {
   try {
     const exercises = await sanityClient.fetch(
       `*[_type == "exercise" && defined(slug.current)]{
-        "exerciseSlug": slug.current, "categorySlug": category->slug.current
+        "exerciseSlug": slug.current,
+        "categorySlug": coalesce(category->slug.current, habitueringSeksjon)
       }`,
     );
     return exercises
@@ -24,54 +27,229 @@ export async function getStaticPaths() {
 const { categorySlug, exerciseSlug } = Astro.params;
 
 const exercise = await safeFetch(
-  `*[_type == "exercise" && slug.current == $exerciseSlug && category->slug.current == $categorySlug][0]{
-    title, description, steps, difficultyLevel,
+  `*[_type == "exercise" && slug.current == $exerciseSlug
+      && (category->slug.current == $categorySlug || habitueringSeksjon == $categorySlug)][0]{
+    title, exerciseType, format, canal, side, habitueringSeksjon, duration, stepCount, mediaType,
+    lead, safetyNote, steps, aftercare, content, adviceList, tip, difficultyLevel,
     "category": category->{ title, "slug": slug.current },
-    videoOrImage{ asset->{ url, mimeType } }
+    mediaFile{ asset->{ url, mimeType } },
+    "relatedExercises": relatedExercises[]->{
+      title, format, "slug": slug.current,
+      "groupSlug": coalesce(category->slug.current, habitueringSeksjon),
+      "groupTitle": coalesce(category->title, habitueringSeksjon)
+    }
   }`,
   { exerciseSlug, categorySlug },
   null,
 );
+
+const CANAL_TITLES = {
+  bakre: "Bakre buegang",
+  horisontal: "Horisontal buegang",
+  fremre: "Fremre buegang",
+};
+
+function groupTitleFor(value) {
+  return HABITUERING_SECTIONS[value]?.title ?? value;
+}
+
+let groupTitle, badges, metaItems;
+if (exercise) {
+  groupTitle = exercise.category?.title ?? groupTitleFor(exercise.habitueringSeksjon);
+
+  const typeBadge = exercise.format === "read"
+    ? "Råd"
+    : exercise.exerciseType === "reponering"
+      ? "Reponeringsmanøver"
+      : "Habitueringsøvelse";
+
+  badges = [typeBadge, groupTitle];
+  if (exercise.side) badges.push(exercise.side === "hoyre" ? "Høyre side" : "Venstre side");
+
+  metaItems = [];
+  if (exercise.mediaType) {
+    metaItems.push({
+      icon: exercise.mediaType === "leseguide" ? "book" : "media",
+      label: exercise.mediaType === "leseguide" ? "Leseguide" : exercise.mediaType === "video" ? "Video" : "Bilder",
+    });
+  }
+  if (exercise.duration) metaItems.push({ icon: "clock", label: exercise.duration });
+  if (exercise.stepCount) metaItems.push({ icon: "list", label: exercise.stepCount });
+}
+
+const mediaUrl = exercise?.mediaFile?.asset?.url;
+const isVideo = exercise?.mediaFile?.asset?.mimeType?.startsWith("video/");
 ---
 
 <Layout
   title={exercise ? `${exercise.title} | Øvelsesbibliotek | Krystallsykehjelpen` : "Øvelsesbibliotek | Krystallsykehjelpen"}
-  description={exercise ? `Steg-for-steg-instruksjon for ${exercise.title}.` : "Øvelsesbibliotek – Krystallsykehjelpen."}
+  description={exercise?.lead ?? "Øvelsesbibliotek – Krystallsykehjelpen."}
   activePath="/ovelsesbibliotek/"
 >
   {exercise ? (
-    <section class="exercise">
-      <div class="container exercise-container">
-        <a href={`/ovelsesbibliotek/${categorySlug}/`} class="card-link back-link">← Tilbake til {exercise.category?.title ?? "kategorien"}</a>
-
-        <div class="exercise-head">
-          <h1>{exercise.title}</h1>
-          {exercise.difficultyLevel && <span class="badge">{exercise.difficultyLevel}</span>}
+    <>
+      <div class="breadcrumb">
+        <div class="container">
+          <a href="/ovelsesbibliotek/">Øvelsesbibliotek</a> / <a href={`/ovelsesbibliotek/${categorySlug}/`}>{groupTitle}</a> / {exercise.title}
         </div>
+      </div>
 
-        {exercise.description?.length ? (
-          exercise.description.map((block) => <p set:html={inlineHtmlFromBlock(block)} />)
-        ) : null}
+      <section class="hero">
+        <div class="container">
+          <div class="badge-row">
+            {badges.map((label, i) => <span class={`badge ${i === 0 ? "badge-type" : "badge-outline"}`}>{label}</span>)}
+          </div>
+          <h1>{exercise.title}</h1>
+          {exercise.lead && <p class="lead">{exercise.lead}</p>}
+          {metaItems.length > 0 && (
+            <div class="meta-row">
+              {metaItems.map((item) => (
+                <span class="meta-item">
+                  {item.icon === "clock" && <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 3" /></svg>}
+                  {item.icon === "list" && <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" /></svg>}
+                  {item.icon === "media" && <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M9 9l6 3-6 3V9z" /></svg>}
+                  {item.icon === "book" && <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 016.5 3H12v18H6.5A2.5 2.5 0 014 18.5v-13z" /><path d="M20 5.5A2.5 2.5 0 0017.5 3H12v18h5.5a2.5 2.5 0 002.5-2.5v-13z" /></svg>}
+                  {item.label}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+        <svg class="hero-wave" viewBox="0 0 1440 60" preserveAspectRatio="none">
+          <path d="M0,32 C360,72 1080,0 1440,32 L1440,60 L0,60 Z" fill="#ffffff" />
+        </svg>
+      </section>
 
-        {exercise.videoOrImage?.asset?.url ? (
-          exercise.videoOrImage.asset.mimeType?.startsWith("video/") ? (
-            <video src={exercise.videoOrImage.asset.url} controls class="exercise-media" />
+      <div class="container article-container">
+        {exercise.format === "steps" ? (
+          mediaUrl ? (
+            isVideo ? (
+              <video src={mediaUrl} controls class="media-block" />
+            ) : (
+              <img src={mediaUrl} alt={exercise.title} class="media-block" />
+            )
           ) : (
-            <img src={exercise.videoOrImage.asset.url} alt={exercise.title} class="exercise-media" />
+            <MediaPlaceholder label={`Video/bilde: ${exercise.title}`} />
           )
         ) : (
-          <MediaPlaceholder label={`Video/bilde: ${exercise.title}`} />
+          mediaUrl && (
+            isVideo ? (
+              <video src={mediaUrl} controls class="media-block media-block-light" />
+            ) : (
+              <img src={mediaUrl} alt={exercise.title} class="media-block media-block-light" />
+            )
+          )
         )}
 
-        {exercise.steps?.length ? (
-          <ol class="steps">
-            {exercise.steps.map((step) => <li>{step}</li>)}
-          </ol>
+        {exercise.format === "steps" ? (
+          <>
+            {exercise.safetyNote && (
+              <div class="callout callout-warning">
+                <div class="callout-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" /></svg>
+                </div>
+                <p>{exercise.safetyNote}</p>
+              </div>
+            )}
+
+            {exercise.steps?.length ? (
+              <ol class="steps">
+                {exercise.steps.map((step, i) => (
+                  <li>
+                    <div class="step-num">{i + 1}</div>
+                    <div class="step-body">
+                      <h3>{step.title}</h3>
+                      {step.description && <p>{step.description}</p>}
+                      {step.holdTime && <span class="hold-time">{step.holdTime}</span>}
+                      {urlForImage(step.image, 480) && (
+                        <img src={urlForImage(step.image, 480)} alt={step.title} class="step-image" />
+                      )}
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            ) : (
+              <p>Ingen trinn lagt inn ennå.</p>
+            )}
+
+            {exercise.aftercare?.length ? (
+              <div class="callout callout-care">
+                <div class="callout-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><path d="M9 12l2 2 4-4" /></svg>
+                </div>
+                <div>
+                  <h3>Etter øvelsen</h3>
+                  <ul>
+                    {exercise.aftercare.map((item) => <li>{item}</li>)}
+                  </ul>
+                </div>
+              </div>
+            ) : null}
+          </>
         ) : (
-          <p>Ingen steg lagt inn ennå.</p>
+          <>
+            {exercise.content?.length ? (
+              <div class="read-content">
+                {exercise.content.map((block) => (
+                  <>
+                    {block.heading && <h2>{block.heading}</h2>}
+                    {block.text && <p>{block.text}</p>}
+                  </>
+                ))}
+              </div>
+            ) : null}
+
+            {exercise.adviceList?.length ? (
+              <div class="advice-list">
+                {exercise.adviceList.map((item) => (
+                  <div class="advice-item">
+                    <div class="advice-icon">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><path d="M9 12l2 2 4-4" /></svg>
+                    </div>
+                    <div>
+                      <h3>{item.title}</h3>
+                      {item.description && <p>{item.description}</p>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : null}
+
+            {exercise.tip && (
+              <div class="callout callout-tip">
+                <div class="callout-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 00-4 12.7c.6.5 1 1.3 1 2.3h6c0-1 .4-1.8 1-2.3A7 7 0 0012 2z" /></svg>
+                </div>
+                <p><strong>Tips:</strong> {exercise.tip}</p>
+              </div>
+            )}
+          </>
         )}
+
+        {exercise.relatedExercises?.length ? (
+          <div class="related">
+            <h2>Relatert</h2>
+            <div class="related-grid">
+              {exercise.relatedExercises.map((rel) => (
+                <a href={`/ovelsesbibliotek/${rel.groupSlug}/${rel.slug}/`} class="related-card">
+                  <span class="rel-tag">{groupTitleFor(rel.groupTitle)}</span>
+                  <h3>{rel.title}</h3>
+                  <span class="rel-arrow">{rel.format === "read" ? "Les mer →" : "Se øvelse →"}</span>
+                </a>
+              ))}
+            </div>
+          </div>
+        ) : null}
+
+        <div class="cta-band">
+          <h2>Usikker på om dette er riktig øvelse for deg?</h2>
+          <p>Vi hjelper deg å finne riktig buegang og manøver.</p>
+          <a href="/kontakt/" class="btn cta-btn">Bestill time →</a>
+        </div>
+
+        <a href={`/ovelsesbibliotek/${categorySlug}/`} class="card-link back-link">← Tilbake til {groupTitle}</a>
       </div>
-    </section>
+    </>
   ) : (
     <section class="container not-found">
       <h1>Fant ikke øvelsen</h1>
@@ -82,23 +260,88 @@ const exercise = await safeFetch(
 </Layout>
 
 <style>
-  .exercise { padding: 56px 0 90px; }
-  .exercise-container { max-width: 720px; }
-  .back-link { display: inline-block; margin-bottom: 20px; }
+  .breadcrumb { background: var(--sky); padding: 14px 0; font-size: 0.85rem; color: var(--ink-soft); }
+  .breadcrumb a { color: var(--accent); text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
 
-  .exercise-head { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
-  .exercise-head h1 { margin-bottom: 0; }
+  .hero { background: var(--sky); padding: 32px 0 40px; position: relative; overflow: hidden; }
+  .badge-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+  .badge { font-size: 0.72rem; font-weight: 700; padding: 5px 12px; border-radius: 20px; letter-spacing: 0.02em; }
+  .badge-type { background: var(--navy); color: #fff; }
+  .badge-outline { background: #fff; color: var(--navy); border: 1px solid var(--line); }
+  .hero h1 { font-size: 1.9rem; margin-bottom: 10px; }
+  .hero .lead { color: var(--ink-soft); font-size: 1.02rem; max-width: 560px; margin: 0; }
+  .meta-row { display: flex; gap: 22px; margin-top: 18px; flex-wrap: wrap; }
+  .meta-item { font-size: 0.88rem; color: var(--navy); font-weight: 600; display: flex; align-items: center; gap: 6px; }
+  .meta-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+  .hero-wave { position: absolute; bottom: -2px; left: 0; width: 100%; line-height: 0; }
 
-  .badge {
-    display: inline-block; font-size: 0.76rem; font-weight: 700; letter-spacing: 0.02em;
-    padding: 4px 12px; border-radius: 999px; background: var(--sky); color: var(--navy-2);
-    text-transform: capitalize;
+  .article-container { max-width: 720px; padding-top: 32px; padding-bottom: 60px; }
+
+  .media-block { width: 100%; border-radius: var(--radius); object-fit: cover; aspect-ratio: 16/9; margin-bottom: 28px; }
+  .media-block-light { aspect-ratio: 21/9; }
+
+  .callout {
+    background: var(--sky); border-radius: var(--radius); padding: 20px 22px;
+    display: flex; gap: 14px; align-items: flex-start; margin: 24px 0;
   }
+  .callout-icon { width: 40px; height: 40px; border-radius: 10px; background: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .callout-icon svg { width: 20px; height: 20px; color: var(--navy-2); }
+  .callout p { margin: 0; color: var(--ink); font-size: 0.94rem; }
+  .callout h3 { font-size: 1rem; margin: 0 0 8px; }
+  .callout ul { margin: 0; padding-left: 18px; }
+  .callout li { margin-bottom: 6px; color: var(--ink); font-size: 0.94rem; }
+  .callout-warning .callout-icon svg { color: #b8542f; }
 
-  .exercise-media { width: 100%; border-radius: var(--radius); margin: 24px 0; object-fit: cover; aspect-ratio: 16/9; }
+  .steps { list-style: none; padding: 0; margin: 28px 0; counter-reset: step; }
+  .steps li { display: flex; gap: 16px; padding: 20px 0; border-bottom: 1px solid var(--line); }
+  .steps li:first-child { border-top: 1px solid var(--line); }
+  .step-num {
+    flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%; background: var(--navy-2); color: #fff;
+    display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem;
+  }
+  .step-body h3 { font-size: 1rem; margin: 0 0 6px; }
+  .step-body p { margin: 0 0 8px; color: var(--ink-soft); font-size: 0.94rem; }
+  .hold-time {
+    display: inline-block; font-size: 0.78rem; font-weight: 700; color: var(--accent);
+    background: var(--sky); padding: 3px 10px; border-radius: 999px;
+  }
+  .step-image { width: 100%; max-width: 320px; border-radius: var(--radius-sm); margin-top: 10px; object-fit: cover; }
 
-  .steps { padding-left: 22px; margin: 24px 0; }
-  .steps li { margin-bottom: 14px; font-size: 1.02rem; line-height: 1.6; color: var(--ink); }
+  .read-content h2 { font-size: 1.25rem; margin: 32px 0 12px; }
+  .read-content h2:first-child { margin-top: 0; }
+  .read-content p { color: var(--ink); font-size: 0.98rem; }
+
+  .advice-list { margin: 20px 0; }
+  .advice-item { display: flex; gap: 16px; padding: 18px 0; border-bottom: 1px solid var(--line); }
+  .advice-item:last-child { border-bottom: none; }
+  .advice-icon {
+    flex-shrink: 0; width: 40px; height: 40px; border-radius: 10px; background: var(--sky);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .advice-icon svg { width: 20px; height: 20px; color: var(--turquoise); }
+  .advice-item h3 { font-size: 1.02rem; margin: 0 0 4px; }
+  .advice-item p { color: var(--ink-soft); font-size: 0.92rem; margin: 0; }
+
+  .related { margin: 40px 0; }
+  .related h2 { font-size: 1.15rem; margin-bottom: 16px; }
+  .related-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 560px) { .related-grid { grid-template-columns: 1fr; } }
+  .related-card { border: 1px solid var(--line); border-radius: 12px; padding: 16px; text-decoration: none; display: block; }
+  .related-card:hover { border-color: var(--navy-2); }
+  .related-card .rel-tag { font-size: 0.72rem; color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em; }
+  .related-card h3 { font-size: 0.96rem; color: var(--navy); margin: 4px 0; }
+  .related-card .rel-arrow { font-size: 0.85rem; color: var(--ink-soft); font-weight: 600; }
+
+  .cta-band {
+    background: var(--navy); color: #fff; text-align: center; padding: 40px 20px;
+    border-radius: 16px; margin: 44px 0 32px;
+  }
+  .cta-band h2 { color: #fff; font-size: 1.3rem; margin-bottom: 10px; }
+  .cta-band p { color: rgba(255,255,255,0.8); margin-bottom: 20px; font-size: 0.94rem; }
+  .cta-btn { background: var(--beige); color: var(--navy); }
+
+  .back-link { display: inline-block; }
 
   .not-found { padding: 90px 24px; text-align: center; max-width: 520px; }
 </style>

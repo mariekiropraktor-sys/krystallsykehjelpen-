@@ -194,12 +194,14 @@ for portable text, `urlForImage()` for bilder. Ny delt hjelper:
 har ingen `"faq"`-verdi (og skjemaet skal ikke utvides), så `/faq/` har en
 enkel hardkodet `<h1>` — selve spørsmålene kommer fortsatt fra `faqItem`.
 
-**Ny render-mønster: fil-type media med MIME-sjekk** (kun `exercise.videoOrImage`,
-siden det er en generisk `file`-type, ikke `image`) — hent
-`videoOrImage{ asset->{ url, mimeType } }` i GROQ (ikke `urlForImage()`, den
-virker bare på `image`-typede felt), og grener i malen på
-`mimeType?.startsWith("video/")` for å vise `<video>` vs. `<img>`. Ingen av
-de 3 øvelsene har media satt ennå — `MediaPlaceholder`-fallback vises da.
+**Ny render-mønster: fil-type media med MIME-sjekk** (kun `exercise.mediaFile`
+— omdøpt fra `videoOrImage` i fase 3.1, se under — siden det er en generisk
+`file`-type, ikke `image`) — hent `mediaFile{ asset->{ url, mimeType } }` i
+GROQ (ikke `urlForImage()`, den virker bare på `image`-typede felt), og
+grener i malen på `mimeType?.startsWith("video/")` for å vise `<video>` vs.
+`<img>`. **Denne noten gjelder fortsatt fase 3.1 sitt reviderte skjema —
+øvelsesinnholdet beskrevet i resten av dette fase 3-avsnittet (3 enkle
+plassholderøvelser) er erstattet, se fase 3.1.**
 
 **Ny navigasjon:** "Ressurser"-dropdown i Header.astro (FAQ + Blogg, hover +
 klikk + `:focus-within` på desktop, kun klikk under 860px) — nøstet inni
@@ -233,6 +235,69 @@ disse faktaene finnes ikke noe sted i prosjektet ennå) og ett
 OpenStreetMap Nominatim og uavhengig verifisert under bygging (husnivå-
 presisjon) — men se selv på kartet på `/finn-behandler/` og bekreft at nålen
 treffer riktig bygg.
+
+## Sanity CMS (fase 3.1 — øvelsesdetaljsider: reponering vs. habituering)
+Øvelsesbiblioteket fikk en betydelig større datamodell og to distinkte
+sidemaler, basert på ekte øvelsesinnhold Marie selv har forfattet (16
+øvelser, ikke plassholdere) og to godkjente HTML-mockuper.
+
+**Strukturen er to hovedgrener, ikke tre-kategorier-pluss-en-fjerde:**
+- **Reponeringsøvelser** — de tre buegang-kategoriene som før
+  (`exerciseCategory`-referanse: Bakre/Horisontale/Øvre buegang — merk:
+  JSON-kildedataen kaller den tredje "fremre", samme buegang som "Øvre" i
+  skjemaet, bevisst forskjellig terminologi, samme anatomiske struktur).
+- **Habitueringsøvelser** — buegang-uavhengige (`canal`/`category` er tomme
+  for disse), delt i to seksjoner: "Vestibulær rehabilitering" (Brandt-
+  Daroff, Cawthorne-Cooksey, Blikkstabilisering) og "Balansetrening og råd"
+  (Balansetrening stående, Gradvis eksponering, Gode vaner, Fallforebygging).
+  Seksjonene er **ikke egne Sanity-dokumenter** — kun en fast verdiliste
+  (`habitueringSeksjon`-feltet), definert ett sted:
+  `astro-site/src/lib/habitueringSections.ts`, importert av alle tre
+  Øvelsesbibliotek-sidene (unngår tre kopier av samme data).
+
+**`exercise`-skjemaet er betydelig utvidet** (`astro-site/src/sanity/schemaTypes/exercise.ts`):
+`exerciseType` (reponering/habituering), `format` (steps/read — styrer hvilken
+mal siden rendres med), `category` + `canal` (nå **betinget påkrevd**, kun for
+`exerciseType: "reponering"`, via `Rule.custom` — ikke `Rule.required()`,
+siden habitueringsøvelser bevisst skal stå uten), `side`, `habitueringSeksjon`
+(motsatt betinget krav), `duration`, `stepCount`, `mediaType` (beskrivende,
+styrer ikke selve filen), `lead`, `safetyNote`, `steps` (**nå objekter** —
+`{title, description, holdTime, image}` — ikke lenger rene strings), `aftercare`,
+`content` (heading+text-par, for les-format), `adviceList` (title+description,
+for les-format), `tip`, `relatedExercises` (referanser til andre `exercise`-
+dokumenter), `mediaFile` (omdøpt fra `videoOrImage`). Feltene er gruppert i
+Studio (Grunnleggende/Steg-innhold/Lesestoff) siden dokumentet har mange felt.
+
+**To sidemaler i samme fil** (`[categorySlug]/[exerciseSlug]/index.astro`),
+grenet på `exercise.format`:
+- **`"steps"`** (reponeringsmanøvre + noen habitueringsøvelser): sikkerhets-
+  boks → nummererte trinn (holdetid-badge + valgfritt per-trinn-bilde) →
+  "etter øvelsen"-boks.
+- **`"read"`** (rene råd-artikler): innholdsblokker (overskrift+tekst) →
+  rådliste (ikon+tittel+beskrivelse) → tips-boks.
+
+Begge deler: brødsmulesti, hero med badges (type/gruppe/side, SVG-ikoner —
+**ikke emoji**, bevisst avklart med Marie siden emoji ikke passer tonen på et
+helsenettsted) + meta-rad, relatert-grid, og en **konturert/avrundet CTA-boks
+begrenset til lesebredden** (680–760px) — **bevisst IKKE full bredde** som
+CTA-seksjonene ellers på siten, siden disse er artikkelsider, ikke
+landingsside-seksjoner. Media-fallback: steg-format viser alltid
+`MediaPlaceholder` hvis `mediaFile` mangler; les-format viser ingenting
+(bildeboksen der er valgfri, ikke et fast element).
+
+**Kjent Astro-fallgruve:** `getStaticPaths()` kan ikke pålitelig lukke over
+en top-level `const` deklarert i samme `.astro`-fil (kjøres isolert fra
+resten av modulen). Løsning: flytt delt statisk data til en egen `.ts`-modul
+og importer den — se `habitueringSections.ts`-mønsteret over.
+
+**Importskript:** `astro-site/scripts/import-ovelser.mjs` — leser
+`/Users/marie/Downloads/ovelse-detaljsider-seed-data.json`, sletter de 3
+tynne fase-1-plassholderne (gamle Epley/Lempert/Yacovino-ID-er) og oppretter
+alle 16 nye dokumenter. **To runder** for `relatedExercises`: første runde
+oppretter alle dokumenter UTEN relasjoner, andre runde patcher inn
+referansene — nødvendig fordi Sanity håndhever referanseintegritet, og
+søsken-dokumenter som refererer til hverandre ikke kan opprettes i én
+sekvensiell omgang.
 
 ## Sanity Studio — to steder å redigere innhold
 Studio finnes nå to steder, med samme innhold (samme prosjekt/dataset):
