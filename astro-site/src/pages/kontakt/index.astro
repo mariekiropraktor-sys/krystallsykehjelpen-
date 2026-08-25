@@ -85,6 +85,7 @@ const web3formsKey = import.meta.env.PUBLIC_WEB3FORMS_KEY ?? "";
 
         <form id="contact-form" class="contact-form">
           <input type="hidden" name="access_key" value={web3formsKey} />
+          <input type="hidden" name="subject" id="contact-subject" value="Ny henvendelse fra kontaktskjema" />
           <label>
             Navn
             <input type="text" name="name" required />
@@ -95,7 +96,7 @@ const web3formsKey = import.meta.env.PUBLIC_WEB3FORMS_KEY ?? "";
           </label>
           <label>
             Melding
-            <textarea name="message" rows="5" required></textarea>
+            <textarea name="message" id="contact-message" rows="5" required></textarea>
           </label>
           <button type="submit" class="btn btn-primary">Send melding</button>
           <p id="form-status" class="form-status" role="status" aria-live="polite"></p>
@@ -153,6 +154,17 @@ const web3formsKey = import.meta.env.PUBLIC_WEB3FORMS_KEY ?? "";
       maxZoom: 19,
     }).addTo(map);
     L.marker([point.lat, point.lng], { icon }).addTo(map).bindPopup(point.address);
+  }
+
+  // Forhåndsutfylling fra ?emne=hjemmebesok (lenket fra /fa-hjelp/) — leses
+  // client-side siden siden er statisk generert (ingen ?-parametere ved
+  // build-tid).
+  const emne = new URLSearchParams(window.location.search).get("emne");
+  if (emne === "hjemmebesok") {
+    const subjectField = document.getElementById("contact-subject");
+    const messageField = document.getElementById("contact-message");
+    if (subjectField) subjectField.value = "Forespørsel om hjemmebesøk";
+    if (messageField) messageField.value = "Jeg ønsker å forespørre hjemmebesøk. ";
   }
 
   const form = document.getElementById("contact-form");

@@ -383,6 +383,37 @@ dokumenter på `pageSlug: "kontakt-oss"`.
   — en oppdatert kontakt-oss-prompt foreslo `admin@krystallsykehjelpen.no`,
   men Marie bekreftet at gjeldende adresse er riktig.
 
+## Søkefelt (header + hero) + Få hjelp-side + Søkeside
+Hero-CTA-ene på forsiden er endret: primærknapp er nå «Jeg tror jeg har
+krystallsyke →» (til artikkelen), sekundærknapp er «Bestill time» og peker
+til `/fa-hjelp/` (ikke lenger direkte til Pasientsky — brukeren velger
+konsultasjonstype først). Søkefelt lagt til i både header (`Header.astro`,
+en enkel lenke til `/sok/`, skjult under 860px) og hero (ekte GET-skjema til
+`/sok/?q=...`).
+
+**`/fa-hjelp/`** — 4 kort (Søk / Klinikk-booking / Video-booking / Forespør
+hjemmebesøk). Videobooking-kortet peker **midlertidig til samme
+Pasientsky-URL som klinikk-booking**, tydelig `TODO`-merket i koden — Marie
+må lage en egen Pasientsky-lenke for video og bytte den inn. Hjemmebesøk-
+kortet lenker til `/kontakt/?emne=hjemmebesok`, som forhåndsutfyller emne +
+en åpningssetning i meldingsfeltet.
+
+**`/sok/`** — viktig arkitekturdetalj: siden er **statisk** (`output:
+"static"`), så `?q=`-parameteren kan ikke leses server-side (siden
+pre-rendres én gang uten spørrestreng). Søket kjører derfor **client-side**:
+et script leser `?q=` fra `window.location`, spør Sanitys offentlige
+query-API direkte via `fetch()` (samme GROQ-mønster som ellers i prosjektet,
+men uten `sanity:client`-modulen som kun virker server-side), og rendrer
+resultatkort i ren JS. Grupperer treff i `exercise` og `blogPost` under
+egne overskrifter. Filterknapper (Alle/Øvelser/Artikler) er bevisst utsatt
+— `TODO` i koden, ikke bygget som ikke-funksjonelle knapper.
+
+**Kjent fallgruve:** literal teksten `<script>` inni en frontmatter-
+kommentar fikk Astro-kompilatoren til å feile (`Expected ";" but found ")"`)
+— tydeligvis forveksler den enkel tekstsøk-basert script-tag-gjenkjenning
+med faktisk parsing. Unngå å skrive `<script>` som ren tekst i kommentarer;
+omskriv til f.eks. «scriptet nederst i filen».
+
 ## Sanity Studio — to steder å redigere innhold
 Studio finnes nå to steder, med samme innhold (samme prosjekt/dataset):
 

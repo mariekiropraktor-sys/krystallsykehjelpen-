@@ -1,0 +1,128 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+const bookingUrl =
+  "https://psno-patient-platform-fe.svc.pasientsky.no/embedded/planner/booking?serviceProviderId=54907264-049e-11eb-8fc8-26c6f94d64b7";
+
+// TODO: Marie skal lage egen Pasientsky-lenke for videobooking - bytt ut
+// videoBookingUrl når den er klar (peker til samme URL som klinikk-booking
+// foreløpig, se kort 3 under).
+const videoBookingUrl = bookingUrl;
+---
+
+<Layout
+  title="Få hjelp | Krystallsykehjelpen"
+  description="Velg riktig vei videre — søk i kunnskapsbasen, bestill konsultasjon på klinikken, video, eller forespør hjemmebesøk."
+  activePath="/fa-hjelp/"
+>
+  <section class="hero hero-simple">
+    <div class="container">
+      <span class="eyebrow">Få hjelp</span>
+      <h1>Hva trenger du hjelp med akkurat nå?</h1>
+      <p class="lead">Velg alternativet som passer best — enten du vil finne svar selv, eller booke time direkte hos Marie.</p>
+    </div>
+    <svg class="hero-wave" viewBox="0 0 1440 60" preserveAspectRatio="none">
+      <path d="M0,32 C360,72 1080,0 1440,32 L1440,60 L0,60 Z" fill="#ffffff" />
+    </svg>
+  </section>
+
+  <section class="section-alt no-top">
+    <div class="container">
+      <div class="help-grid">
+        <a href="/sok/" class="card help-card">
+          <span class="help-tag">Finn svar selv</span>
+          <div class="icon-circle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
+          </div>
+          <h3>Søk deg frem til øvelse eller informasjon</h3>
+          <p>Usikker på om du trenger å bestille time? Søk på symptomer, diagnoser eller øvelser og finn svar med en gang.</p>
+          <span class="card-link">Gå til søk →</span>
+        </a>
+
+        <a href={bookingUrl} class="card help-card featured">
+          <span class="help-tag">Mest booket</span>
+          <div class="icon-circle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 9h1M9 13h1M14 9h1M14 13h1" /></svg>
+          </div>
+          <h3>Bestill konsultasjon på klinikken</h3>
+          <p>Grundig undersøkelse og behandling hos Marie på Fetsund Kiropraktorsenter. Anbefales ved første gangs undersøkelse.</p>
+          <span class="card-link">Bestill time →</span>
+        </a>
+
+        {/* TODO: Marie skal lage egen Pasientsky-lenke for videobooking - bytt ut når den er klar (bruker samme lenke som klinikk-booking foreløpig) */}
+        <a href={videoBookingUrl} class="card help-card">
+          <span class="help-tag">Hjemmefra</span>
+          <div class="icon-circle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7l-7 5 7 5V7z" /><rect x="1" y="5" width="15" height="14" rx="2" /></svg>
+          </div>
+          <h3>Bestill videokonsultasjon</h3>
+          <p>Vurdering og veiledning digitalt, uten å måtte reise. Passer godt for oppfølging eller innledende vurdering.</p>
+          <span class="card-link">Bestill time →</span>
+        </a>
+
+        <a href="/kontakt/?emne=hjemmebesok" class="card help-card">
+          <span class="help-tag">Kommer til deg</span>
+          <div class="icon-circle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l9-9 9 9M5 10v10h14V10" /></svg>
+          </div>
+          <h3>Forespør hjemmebesøk</h3>
+          <p>Ved sterk svimmelhet kan det være vanskelig å reise. Send en forespørsel, så vurderer vi hjemmebesøk sammen.</p>
+          <span class="card-link">Send forespørsel →</span>
+        </a>
+      </div>
+
+      <div class="help-note">
+        Er du usikker på hva du trenger? <strong>Søk-alternativet</strong> er alltid et trygt sted å starte — det koster ingenting og gir deg en pekepinn før du eventuelt bestiller time.
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .hero-simple { padding: 56px 0 90px; position: relative; overflow: hidden; text-align: center; }
+  .hero-simple .container { max-width: 640px; }
+  .eyebrow { font-size: 0.82rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 10px; display: inline-block; }
+  .lead { font-size: 1.05rem; }
+  .hero-wave { position: absolute; bottom: -2px; left: 0; width: 100%; line-height: 0; }
+
+  .section-alt { background: var(--paper); padding: 60px 0; }
+  .section-alt.no-top { padding-top: 0; padding-bottom: 90px; }
+
+  .help-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
+  @media (max-width: 800px) { .help-grid { grid-template-columns: 1fr; } }
+
+  .help-card {
+    background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 32px 28px; box-shadow: 0 16px 36px rgba(22, 56, 117, 0.08);
+    display: flex; flex-direction: column; text-decoration: none;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .help-card:hover { transform: translateY(-3px); box-shadow: 0 20px 44px rgba(22, 56, 117, 0.12); }
+
+  .help-tag {
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+    color: var(--turquoise); margin-bottom: 10px;
+  }
+  .icon-circle {
+    width: 52px; height: 52px; border-radius: 50%; background: var(--sky);
+    display: flex; align-items: center; justify-content: center; margin-bottom: 18px;
+  }
+  .icon-circle svg { width: 24px; height: 24px; color: var(--navy-2); }
+  .help-card h3 { font-size: 1.1rem; margin-bottom: 10px; }
+  .help-card p { font-size: 0.9rem; color: var(--ink-soft); margin-bottom: 18px; flex: 1; }
+  .card-link { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: 0.88rem; color: var(--navy-2); }
+
+  .help-card.featured { background: var(--navy); border: none; }
+  .help-card.featured h3, .help-card.featured p { color: #fff; }
+  .help-card.featured p { color: #c9d6ea; }
+  .help-card.featured .icon-circle { background: rgba(255, 255, 255, 0.14); }
+  .help-card.featured .icon-circle svg { color: #fff; }
+  .help-card.featured .card-link { color: var(--turquoise); }
+  .help-card.featured .help-tag { color: var(--turquoise); }
+
+  .help-note {
+    max-width: 640px; margin: 48px auto 0; text-align: center;
+    background: var(--beige); border-radius: var(--radius); padding: 22px 28px; font-size: 0.9rem; color: #5a4a30;
+  }
+  .help-note strong { color: var(--navy); }
+</style>

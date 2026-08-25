@@ -8,9 +8,6 @@ import { urlForImage } from "../lib/sanityImage";
 
 const sections = await getPageSections("hjem");
 
-const bookingUrl =
-  "https://psno-patient-platform-fe.svc.pasientsky.no/embedded/planner/booking?serviceProviderId=54907264-049e-11eb-8fc8-26c6f94d64b7";
-
 // "Siste artikler" — henter dynamisk fra Sanity (blogPost), viser de 3
 // nyeste. Bruker den vanlige offentlige klienten (ikke blogPreviewClient) —
 // forsiden skal aldri vise upubliserte utkast.
@@ -74,8 +71,16 @@ const journeyCards = [
           ? inlineHtmlFromBlock(sections.hero.body[0])
           : "Krystallsyke (BPPV) er den vanligste årsaken til plutselig, kortvarig svimmelhet. Her finner du pålitelig kunnskap, øvelser og veien til rask hjelp – i klinikken, hjemme hos deg, eller over telefon."} />
         <div class="btn-row">
-          <a href={bookingUrl} class="btn btn-primary">Bestill time →</a>
-          <a href="/krystallsyken/" class="btn btn-outline">Les om krystallsyke →</a>
+          <a href="/blogg/er-dette-krystallsyke/" class="btn btn-primary">Jeg tror jeg har krystallsyke →</a>
+          <a href="/fa-hjelp/" class="btn btn-outline">Bestill time</a>
+        </div>
+        <div class="hero-search-row">
+          <span class="hero-search-divider">eller søk direkte</span>
+          <form class="search-box" action="/sok/" method="get">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
+            <input type="text" name="q" placeholder="Søk på symptom, diagnose eller øvelse..." />
+            <button type="submit" class="search-btn">Søk</button>
+          </form>
         </div>
         <ul class="trust-row">
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><path d="M9 12l2 2 4-4" /></svg> Faglig forankret</li>
@@ -239,6 +244,30 @@ const journeyCards = [
 
   .hero-media { position: relative; }
   .hero-photo { width: 100%; border-radius: var(--radius); aspect-ratio: 4/3; object-fit: cover; box-shadow: 0 20px 50px rgba(22,56,117,0.12); }
+
+  .hero-search-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 22px; }
+  .hero-search-divider {
+    display: flex; align-items: center; gap: 10px; color: var(--ink-soft);
+    font-size: 0.78rem; font-weight: 600; width: 100%; max-width: 480px;
+  }
+  .hero-search-divider::before, .hero-search-divider::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+  .search-box {
+    display: flex; align-items: center; gap: 10px; background: #fff;
+    border: 1.5px solid var(--line); border-radius: 999px; padding: 6px 6px 6px 18px;
+    box-shadow: 0 8px 24px rgba(22, 56, 117, 0.08); max-width: 480px; width: 100%;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .search-box:focus-within { border-color: var(--accent); box-shadow: 0 8px 28px rgba(47, 121, 201, 0.18); }
+  .search-box svg { flex-shrink: 0; color: var(--ink-soft); }
+  .search-box input {
+    border: none; outline: none; flex: 1; font-family: var(--font-body);
+    font-size: 0.92rem; color: var(--navy); background: transparent; padding: 8px 0; min-width: 0;
+  }
+  .search-btn {
+    background: var(--navy); color: #fff; border: none; border-radius: 999px;
+    padding: 10px 18px; font-family: var(--font-body); font-weight: 600; font-size: 0.86rem;
+    cursor: pointer; flex-shrink: 0;
+  }
 
   .trust-row { list-style: none; display: flex; gap: 20px; flex-wrap: wrap; margin: 24px 0 0; padding: 0; }
   .trust-row li { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; font-weight: 600; color: var(--navy); }

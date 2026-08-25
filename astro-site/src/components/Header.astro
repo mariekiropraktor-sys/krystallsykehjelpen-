@@ -55,6 +55,12 @@ const bookingUrl =
           ))}
         </ul>
       </li>
+      <li class="nav-search-item">
+        <a href="/sok/" class="nav-search" aria-label="Søk">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
+          Søk...
+        </a>
+      </li>
       <li>
         <a href={bookingUrl} class="btn btn-primary btn-nav">Bestill time</a>
       </li>
@@ -138,6 +144,22 @@ const bookingUrl =
 
   .nav-links li:has(.btn-nav) { margin-left: 6px; }
 
+  .nav-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--sky);
+    border-radius: 999px;
+    padding: 8px 14px;
+    color: var(--ink-soft);
+    font-size: 0.86rem;
+    font-weight: 500;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .nav-search:hover { color: var(--navy); }
+  .nav-search svg { flex-shrink: 0; }
+
   .has-dropdown { position: relative; }
   .dropdown-trigger {
     background: none;
@@ -214,6 +236,7 @@ const bookingUrl =
     .nav-links li:has(.btn-nav) { margin: 6px 4px 4px; }
     .nav-toggle { display: block; }
     .btn-nav { width: 100%; justify-content: center; }
+    .nav-search-item { display: none; }
 
     .dropdown-trigger { width: 100%; justify-content: space-between; padding: 13px 16px; }
     .dropdown-menu {
