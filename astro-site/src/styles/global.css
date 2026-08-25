@@ -85,6 +85,9 @@ a { color: var(--navy); }
 .btn-outline { background: #fff; border: 1.5px solid var(--line); color: var(--navy); }
 .btn-outline:hover { border-color: var(--navy-2); }
 
+.btn-beige { background: var(--beige); color: var(--navy); border: 1.5px solid transparent; }
+.btn-beige:hover { background: #ece2d0; }
+
 a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible {
   outline: 3px solid var(--accent);
   outline-offset: 2px;
