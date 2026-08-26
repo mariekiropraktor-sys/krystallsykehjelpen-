@@ -76,8 +76,9 @@ export function blocksToHtml(blocks?: PortableBlock[]): string {
       html += `<ul>${items}</ul>`;
       continue;
     }
-    const tag = block.style === "h2" || block.style === "h3" ? block.style : "p";
-    const idAttr = tag !== "p" ? ` id="${slugify(plainTextFromBlock(block))}"` : "";
+    const isHeading = block.style === "h2" || block.style === "h3";
+    const tag = isHeading ? block.style : block.style === "blockquote" ? "blockquote" : "p";
+    const idAttr = isHeading ? ` id="${slugify(plainTextFromBlock(block))}"` : "";
     html += `<${tag}${idAttr}>${inlineHtmlFromBlock(block)}</${tag}>`;
     i++;
   }
