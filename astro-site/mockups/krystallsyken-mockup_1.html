@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Krystallsyken (BPPV) — mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    color-scheme: light;
+    --navy: #163875;
+    --navy-2: #1e4c96;
+    --sky: #eff4fb;
+    --accent: #2f79c9;
+    --beige: #f4eee3;
+    --turkis: #5fc1d6;
+    --white: #ffffff;
+    --ink-soft: #4a5568;
+    --radius-lg: 28px;
+    --radius-md: 20px;
+    --radius-sm: 14px;
+    --shadow-soft: 0 12px 32px rgba(22,56,117,0.08);
+    --shadow-card: 0 8px 24px rgba(22,56,117,0.06);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;color-scheme:light;}
+  body{
+    font-family:'Public Sans', sans-serif;
+    color: var(--navy);
+    background:var(--white);
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    color:var(--navy);
+    line-height:1.15;
+    margin:0;
+  }
+  h1{font-size:clamp(2.1rem, 4vw, 3.4rem); font-weight:600;}
+  h2{font-size:clamp(1.6rem, 2.6vw, 2.4rem);}
+  h3{font-size:clamp(1.15rem, 1.6vw, 1.5rem);}
+  p{margin:0 0 1rem 0; color:var(--ink-soft); font-size:1.05rem;}
+  a{color:var(--accent); text-decoration:none;}
+  .eyebrow{
+    font-family:'Public Sans', sans-serif;
+    font-size:0.8rem;
+    font-weight:700;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--accent);
+    display:block;
+    margin-bottom:1rem;
+  }
+  .wrap{max-width:1120px; margin:0 auto; padding:0 24px;}
+  section{padding:88px 0;}
+  @media (max-width:640px){ section{padding:56px 0;} }
+
+  /* wave divider */
+  .wave{position:relative; height:64px; overflow:hidden; margin-top:-1px;}
+  .wave svg{position:absolute; width:100%; height:100%; display:block;}
+
+  /* buttons */
+  .btn-primary{
+    display:inline-flex; align-items:center; gap:10px;
+    background:var(--navy);
+    color:var(--white);
+    font-weight:600;
+    font-size:1rem;
+    padding:16px 30px;
+    border-radius:999px;
+    min-height:44px;
+    box-shadow: var(--shadow-card);
+    transition:background .2s ease, transform .2s ease;
+  }
+  .btn-primary:hover{background:var(--navy-2); transform:translateY(-1px);}
+  .btn-outline{
+    display:inline-flex; align-items:center; gap:10px;
+    border:1.5px solid var(--navy);
+    color:var(--navy);
+    font-weight:600;
+    padding:14px 28px;
+    border-radius:999px;
+    min-height:44px;
+  }
+  .link-arrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-weight:600;
+    color:var(--navy);
+    border-bottom:1.5px solid var(--turkis);
+    padding-bottom:2px;
+  }
+  .link-arrow:hover{color:var(--accent);}
+
+  /* HERO */
+  .hero{
+    background:linear-gradient(180deg, var(--beige) 0%, var(--sky) 100%);
+    padding:96px 0 0 0;
+  }
+  .hero-grid{
+    display:grid; grid-template-columns: 1.1fr 0.9fr; gap:56px; align-items:center;
+  }
+  @media (max-width:900px){ .hero-grid{grid-template-columns:1fr; gap:36px;} }
+  .hero-media{
+    background:var(--white);
+    border-radius:var(--radius-lg);
+    box-shadow:var(--shadow-soft);
+    padding:28px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .hero-media img{width:100%; height:auto; border-radius:var(--radius-md); display:block;}
+  .hero-img-frame{
+    width:100%;
+    aspect-ratio: 1 / 1;
+    border-radius:var(--radius-md);
+    background:var(--sky);
+    position:relative;
+    overflow:hidden;
+  }
+  .hero-img-frame img{
+    position:absolute; inset:0;
+    width:100%; height:100%;
+    object-fit:contain;
+    border-radius:var(--radius-md);
+    z-index:2;
+  }
+  .hero-img-frame::after{
+    content:"Eksisterende bilde: illustrasjon av indre øret";
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    text-align:center; padding:24px;
+    font-family:'Public Sans', sans-serif;
+    font-size:0.85rem; color:#9fb0c9;
+    background:var(--sky);
+    z-index:1;
+  }
+  .hero-actions{display:flex; flex-direction:column; align-items:flex-start; gap:18px; margin-top:32px;}
+
+  /* fact strip */
+  .fact-strip-wrap{background:var(--sky); padding-bottom:0;}
+  .fact-strip{
+    background:var(--white);
+    border-radius:var(--radius-md);
+    box-shadow:var(--shadow-card);
+    display:grid; grid-template-columns:repeat(3,1fr);
+    margin-top:-56px;
+    position:relative; z-index:2;
+  }
+  @media (max-width:720px){ .fact-strip{grid-template-columns:1fr;} }
+  .fact-item{padding:32px 28px; border-right:1px solid #e7edf6;}
+  .fact-item:last-child{border-right:none;}
+  @media (max-width:720px){ .fact-item{border-right:none; border-bottom:1px solid #e7edf6;} .fact-item:last-child{border-bottom:none;} }
+  .fact-item h3{font-size:1.2rem; margin-bottom:6px;}
+  .fact-item p{margin:0; font-size:0.98rem;}
+  .fact-strip-spacer{height:56px; background:var(--sky);}
+
+  /* two col explain */
+  .two-col{
+    display:grid; grid-template-columns:1fr 1fr; gap:64px; align-items:start;
+  }
+  @media (max-width:860px){ .two-col{grid-template-columns:1fr; gap:28px;} }
+  .pull-quote{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-size:1.5rem;
+    color:var(--navy-2);
+    line-height:1.4;
+    border-left:3px solid var(--turkis);
+    padding-left:24px;
+    margin:8px 0 28px 0;
+  }
+
+  /* video section */
+  .media-frame{
+    background:var(--sky);
+    border-radius:var(--radius-lg);
+    padding:20px;
+    margin-top:48px;
+  }
+  .media-frame video{
+    width:100%; display:block; border-radius:var(--radius-md);
+    object-fit:contain; background:var(--sky);
+  }
+  .media-caption{
+    font-size:0.95rem;
+    color:var(--ink-soft);
+    margin-top:14px;
+    padding:0 4px;
+  }
+  .media-caption strong{color:var(--navy);}
+
+  /* symptom cards - beige section */
+  .beige-section{background:var(--beige);}
+  .symptom-grid{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:20px; margin-top:40px;
+  }
+  @media (max-width:960px){ .symptom-grid{grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:600px){ .symptom-grid{grid-template-columns:1fr;} }
+  .symptom-card{
+    background:var(--white);
+    border-radius:var(--radius-md);
+    padding:28px 24px;
+    box-shadow:var(--shadow-card);
+  }
+  .symptom-num{
+    width:36px; height:36px;
+    border-radius:50%;
+    background:var(--sky);
+    color:var(--navy-2);
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    display:flex; align-items:center; justify-content:center;
+    margin-bottom:16px;
+    font-size:1rem;
+  }
+  .symptom-card h3{font-size:1.1rem; margin-bottom:8px;}
+  .symptom-card p{font-size:0.95rem; margin:0;}
+  .symptom-note{margin-top:28px; font-size:0.95rem; color:var(--ink-soft);}
+
+  /* warning box */
+  .warning-box{
+    background:var(--white);
+    border:1.5px solid var(--navy-2);
+    border-left:5px solid var(--navy-2);
+    border-radius:var(--radius-md);
+    padding:36px;
+    display:flex; gap:22px;
+    box-shadow:var(--shadow-card);
+  }
+  @media (max-width:600px){ .warning-box{flex-direction:column;} }
+  .warning-icon{
+    flex-shrink:0;
+    width:48px; height:48px;
+    border-radius:50%;
+    border:1.5px solid var(--navy-2);
+    color:var(--navy-2);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:1.4rem;
+  }
+  .warning-box h3{margin-bottom:12px; color:var(--navy-2);}
+  .warning-box ul{margin:0 0 12px 0; padding-left:20px; color:var(--ink-soft);}
+  .warning-box li{margin-bottom:6px;}
+
+  /* navy sections */
+  .navy-section{background:var(--navy); color:var(--white);}
+  .navy-section h2{color:var(--white);}
+  .navy-section p{color:#c9d7ee;}
+  .navy-section .eyebrow{color:var(--turkis);}
+
+  .canal-grid{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:24px; margin-top:40px;
+  }
+  @media (max-width:860px){ .canal-grid{grid-template-columns:1fr;} }
+  .canal-card{
+    background:rgba(255,255,255,0.06);
+    border:1px solid rgba(255,255,255,0.14);
+    border-radius:var(--radius-md);
+    padding:28px;
+  }
+  .canal-media{
+    background:rgba(255,255,255,0.08);
+    border-radius:var(--radius-sm);
+    height:140px;
+    display:flex; align-items:center; justify-content:center;
+    margin-bottom:20px;
+  }
+  .canal-tag{
+    font-size:0.75rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase;
+    color:var(--turkis); display:block; margin-bottom:8px;
+  }
+  .canal-card h3{color:var(--white); margin-bottom:8px; font-size:1.2rem;}
+  .canal-card p{color:#c9d7ee; font-size:0.95rem; margin:0;}
+
+  /* causes list */
+  .cause-list{display:grid; grid-template-columns:repeat(2,1fr); gap:14px 32px; margin-top:32px;}
+  @media (max-width:640px){ .cause-list{grid-template-columns:1fr;} }
+  .cause-item{display:flex; align-items:flex-start; gap:14px;}
+  .cause-dot{
+    width:10px; height:10px; border-radius:50%;
+    background:var(--accent); margin-top:8px; flex-shrink:0;
+  }
+  .cause-item p{margin:0; color:var(--navy); font-weight:500;}
+
+  /* sky section diagnostics */
+  .sky-section{background:var(--sky);}
+  .diag-steps{
+    background:var(--white);
+    border-radius:var(--radius-lg);
+    box-shadow:var(--shadow-soft);
+    padding:12px 32px;
+  }
+  .diag-step{
+    display:flex; gap:22px; padding:26px 0;
+    border-bottom:1px solid #e7edf6;
+  }
+  .diag-step:last-child{border-bottom:none;}
+  .diag-num{
+    width:40px; height:40px; border-radius:50%;
+    background:var(--sky); color:var(--navy-2);
+    font-family:'Fraunces', serif; font-weight:600;
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0; font-size:1.05rem;
+  }
+  .diag-step h3{font-size:1.1rem; margin-bottom:4px;}
+  .diag-step p{margin:0; font-size:0.95rem;}
+
+  /* info box (beige, after treatment) */
+  .info-box{
+    background:var(--white);
+    border-radius:var(--radius-md);
+    padding:32px;
+    box-shadow:var(--shadow-card);
+    margin-top:28px;
+  }
+  .info-box ul{margin:0; padding-left:20px; color:var(--ink-soft);}
+  .info-box li{margin-bottom:6px;}
+
+  /* FAQ */
+  .faq-list{max-width:760px; margin:40px auto 0 auto;}
+  details{
+    border-bottom:1px solid #e7edf6;
+    padding:22px 0;
+  }
+  details summary{
+    font-family:'Fraunces', serif;
+    font-size:1.15rem;
+    font-weight:500;
+    color:var(--navy);
+    cursor:pointer;
+    list-style:none;
+    display:flex; justify-content:space-between; align-items:center;
+    gap:16px;
+    min-height:44px;
+  }
+  details summary::-webkit-details-marker{display:none;}
+  details summary::after{
+    content:"+";
+    font-size:1.4rem;
+    color:var(--accent);
+    font-family:'Public Sans', sans-serif;
+    flex-shrink:0;
+  }
+  details[open] summary::after{content:"–";}
+  details p{margin-top:14px; font-size:0.98rem;}
+  details summary:focus-visible{outline:2px solid var(--accent); outline-offset:4px; border-radius:6px;}
+  a:focus-visible, button:focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:6px;}
+
+  /* final cta */
+  .final-cta{text-align:center;}
+  .final-cta .wrap{max-width:680px;}
+  .final-cta h2{color:var(--white); margin-bottom:18px;}
+  .final-cta p{color:#c9d7ee; margin-bottom:32px;}
+  .final-cta small{display:block; margin-top:16px; color:#9fb3d6; font-size:0.9rem;}
+
+  /* bildeplass: etter behandling (beige) */
+  .side-media-frame{
+    background:var(--white);
+    border-radius:var(--radius-lg);
+    box-shadow:var(--shadow-card);
+    aspect-ratio: 4 / 5;
+    display:flex; align-items:center; justify-content:center;
+    overflow:hidden;
+    position:relative;
+  }
+  .side-media-frame img{
+    width:100%; height:100%; object-fit:cover; display:block;
+    position:absolute; inset:0; z-index:2;
+  }
+  .side-media-frame::before{
+    content:"Bildeplass — 4:5";
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Public Sans', sans-serif;
+    font-size:0.85rem; color:#9fb0c9;
+    background:var(--sky);
+    z-index:1;
+  }
+  @media (max-width:860px){ .side-media{order:-1;} }
+
+  /* bildeplass: Marie/klinikken */
+  .marie-media{
+    background:var(--sky);
+    border-radius:var(--radius-lg);
+    aspect-ratio: 1 / 1;
+    display:flex; align-items:center; justify-content:center;
+    overflow:hidden;
+    position:relative;
+    box-shadow:var(--shadow-card);
+  }
+  .marie-media img{
+    width:100%; height:100%; object-fit:cover; display:block;
+    position:absolute; inset:0; z-index:2;
+  }
+  .marie-media::before{
+    content:"Bildeplass — 1:1 portrett";
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Public Sans', sans-serif;
+    font-size:0.85rem; color:#9fb0c9;
+    z-index:1;
+  }
+  @media (max-width:860px){ .marie-media{order:-1; aspect-ratio:4/3;} }
+
+  .center{text-align:center;}
+  .note-label{
+    display:inline-block; background:var(--sky); color:var(--navy-2);
+    font-size:0.75rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase;
+    padding:6px 14px; border-radius:999px; margin-bottom:16px;
+  }
+  .mockup-tag{
+    position:fixed; top:12px; right:12px; background:var(--navy); color:white;
+    font-family:'Public Sans'; font-size:12px; padding:6px 12px; border-radius:999px; z-index:99;
+    opacity:0.85;
+  }
+</style>
+</head>
+<body>
+
+<div class="mockup-tag">MOCKUP — /krystallsyken/</div>
+
+<!-- 1. HERO -->
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <span class="eyebrow">Krystallsyke (BPPV)</span>
+        <h1>Krystallsyke: Når verden plutselig begynner å snurre</h1>
+        <p style="font-size:1.15rem; margin-top:20px; max-width:520px;">Krystallsyke gir korte anfall av snurrende svimmelhet når hodet beveges i bestemte retninger. Det kan oppleves dramatisk, men tilstanden kan som regel undersøkes presist og behandles med en målrettet manøver.</p>
+        <div class="hero-actions">
+          <a href="#" class="btn-primary">Bestill time →</a>
+          <a href="#symptomer" class="link-arrow">Forstå symptomene ↓</a>
+        </div>
+      </div>
+      <div class="hero-media">
+        <div class="hero-img-frame">
+          <img src="https://cdn.sanity.io/images/b1cmdslc/production/afc9cfb755263d797e7eab115f15a12c0df05a99-900x906.jpg?w=1200&q=80&fit=max&auto=format" alt="Anatomisk illustrasjon av det indre øret med balanseorganet og buegangene" onerror="this.style.display='none'">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. FAKTABÅND -->
+<div class="fact-strip-wrap">
+  <div class="wrap">
+    <div class="fact-strip">
+      <div class="fact-item">
+        <h3>Korte anfall</h3>
+        <p>Ofte under ett minutt</p>
+      </div>
+      <div class="fact-item">
+        <h3>Stillingsutløst</h3>
+        <p>Kommer ved bestemte bevegelser</p>
+      </div>
+      <div class="fact-item">
+        <h3>Kan behandles</h3>
+        <p>Med en tilpasset manøver</p>
+      </div>
+    </div>
+  </div>
+  <div class="fact-strip-spacer"></div>
+</div>
+
+<!-- 3+4. HVA ER KRYSTALLSYKE + ANIMASJON -->
+<section id="symptomer-forstaa">
+  <div class="wrap">
+    <div class="two-col">
+      <div>
+        <span class="eyebrow">01 · Forstå tilstanden</span>
+        <h2>Hva skjer egentlig i det indre øret?</h2>
+      </div>
+      <div>
+        <p class="pull-quote">Små kalkpartikler som normalt ligger i utriculus, kan løsne og komme inn i en av de væskefylte buegangene.</p>
+        <p>Når hodet beveges, kan partiklene forskyve væsken i buegangen på en måte som ikke passer med den faktiske bevegelsen. Hjernen mottar da motstridende informasjon fra balanseorganene, synet og resten av kroppen — noe som kan oppleves som en intens rotasjonsfølelse.</p>
+        <p>Man skiller gjerne mellom <strong style="color:var(--navy)">canalolithiasis</strong>, hvor partiklene beveger seg fritt i væsken, og <strong style="color:var(--navy)">cupulolithiasis</strong>, hvor partiklene sitter fast på cupula. Skillet har betydning for hvilket symptommønster som oppstår og hvilken manøver som er mest relevant.</p>
+        <a href="#buegangene" class="link-arrow">Se de ulike buegangene →</a>
+      </div>
+    </div>
+
+    <div class="media-frame">
+      <video
+        controls
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="metadata"
+        aria-label="Animasjon som viser hvordan løse kalkpartikler beveger seg i buegangen og skaper feilsignaler om rotasjon">
+        <source src="/videos/krystallsyke%20animasjon.mp4" type="video/mp4">
+      </video>
+      <p class="media-caption"><strong>Se hva som skjer:</strong> Animasjonen viser hvordan løse partikler kan bevege seg i buegangen og gi feil signaler om rotasjon.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 5. SYMPTOMER -->
+<section class="beige-section" id="symptomer">
+  <div class="wrap">
+    <span class="eyebrow">Vanlige kjennetegn</span>
+    <h2>Slik oppleves krystallsyke</h2>
+    <div class="symptom-grid">
+      <div class="symptom-card">
+        <div class="symptom-num">1</div>
+        <h3>Når du snur deg i sengen</h3>
+        <p>Korte, kraftige anfall — ofte tydeligst mot én side.</p>
+      </div>
+      <div class="symptom-card">
+        <div class="symptom-num">2</div>
+        <h3>Når du legger deg eller reiser deg</h3>
+        <p>Svimmelheten kommer gjerne noen sekunder etter bevegelsen.</p>
+      </div>
+      <div class="symptom-card">
+        <div class="symptom-num">3</div>
+        <h3>Når du ser opp eller bøyer deg</h3>
+        <p>Bestemte hodeposisjoner kan utløse den samme snurringen.</p>
+      </div>
+      <div class="symptom-card">
+        <div class="symptom-num">4</div>
+        <h3>Ustøhet og kvalme etterpå</h3>
+        <p>Mange kjenner seg utrygge eller «sjøsyke» mellom anfallene.</p>
+      </div>
+    </div>
+    <p class="symptom-note">Selve snurreanfallet er vanligvis kort, ofte under ett minutt, mens kvalme og ustøhet kan vare noe lenger etterpå.</p>
+  </div>
+</section>
+
+<!-- 6. FARESIGNALER -->
+<section>
+  <div class="wrap">
+    <div class="warning-box">
+      <div class="warning-icon">!</div>
+      <div>
+        <span class="eyebrow" style="color:var(--navy-2);">Viktig å vite</span>
+        <h3>Når det ikke bør forklares som krystallsyke</h3>
+        <p>Søk akutt medisinsk hjelp ved ny svimmelhet sammen med:</p>
+        <ul>
+          <li>lammelser eller tydelig kraftsvikt</li>
+          <li>talevansker</li>
+          <li>dobbeltsyn</li>
+          <li>ny og kraftig hodepine</li>
+          <li>uttalt koordinasjonsvansker</li>
+          <li>plutselig manglende evne til å gå</li>
+          <li>redusert bevissthet eller besvimelse</li>
+        </ul>
+        <p style="margin:0;">Nyoppstått hørselstap, vedvarende kraftig svimmelhet eller et mønster som ikke er tydelig stillingsutløst, bør også vurderes av lege.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 7. DE TRE BUEGANGENE -->
+<section class="navy-section" id="buegangene">
+  <div class="wrap">
+    <span class="eyebrow">Riktig funn · riktig behandling</span>
+    <h2>Det er ikke én manøver som passer for alle</h2>
+    <p style="max-width:600px; margin-top:14px;">Side, buegang og nystagmusmønster avgjør hvilken behandling som er mest relevant.</p>
+
+    <div class="canal-grid">
+      <div class="canal-card">
+        <div class="canal-media">
+          <svg width="90" height="70" viewBox="0 0 90 70" fill="none">
+            <ellipse cx="40" cy="35" rx="30" ry="28" stroke="var(--turkis)" stroke-width="3"/>
+          </svg>
+        </div>
+        <span class="canal-tag">Vanligst</span>
+        <h3>Bakre buegang</h3>
+        <p>Undersøkes ofte med Dix-Hallpike eller sideleietest.</p>
+      </div>
+      <div class="canal-card">
+        <div class="canal-media">
+          <svg width="100" height="60" viewBox="0 0 100 60" fill="none">
+            <ellipse cx="50" cy="30" rx="42" ry="18" stroke="var(--turkis)" stroke-width="3"/>
+          </svg>
+        </div>
+        <span class="canal-tag">Kraftig ved vending</span>
+        <h3>Horisontal buegang</h3>
+        <p>Kan gi kraftig svimmelhet ved vending i sengen. Undersøkes med liggende rulletest.</p>
+      </div>
+      <div class="canal-card">
+        <div class="canal-media">
+          <svg width="70" height="90" viewBox="0 0 70 90" fill="none">
+            <ellipse cx="35" cy="45" rx="20" ry="38" stroke="var(--turkis)" stroke-width="3"/>
+          </svg>
+        </div>
+        <span class="canal-tag">Sjeldnere</span>
+        <h3>Fremre buegang</h3>
+        <p>Kan være vanskeligere å skille fra andre nystagmusmønstre.</p>
+      </div>
+    </div>
+    <p style="margin-top:12px; font-size:0.85rem; color:#8fa5cc;">Illustrasjonene er dekorative. Endelig side bør bruke en kvalitetssikret anatomisk figur.</p>
+  </div>
+</section>
+
+<!-- 8. HVORFOR FÅR MAN KRYSTALLSYKE -->
+<section>
+  <div class="wrap">
+    <span class="eyebrow">Bakgrunn</span>
+    <h2>Hvorfor får man krystallsyke?</h2>
+    <p style="max-width:640px; margin-top:14px;">Mange som får krystallsyke har ingen tydelig utløsende årsak. Enkelte faktorer ser ut til å gjøre det noe mer sannsynlig, uten at det betyr en sikker årsakssammenheng:</p>
+    <div class="cause-list">
+      <div class="cause-item"><span class="cause-dot"></span><p>Økende alder</p></div>
+      <div class="cause-item"><span class="cause-dot"></span><p>Hodeskade</p></div>
+      <div class="cause-item"><span class="cause-dot"></span><p>Sykdom i det indre øret</p></div>
+      <div class="cause-item"><span class="cause-dot"></span><p>Mulig sammenheng med migrene</p></div>
+      <div class="cause-item"><span class="cause-dot"></span><p>Mulig sammenheng med benskjørhet</p></div>
+      <div class="cause-item"><span class="cause-dot"></span><p>Lave vitamin D-nivåer</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 9. DIAGNOSTIKK -->
+<section class="sky-section">
+  <div class="wrap">
+    <div class="two-col" style="align-items:center;">
+      <div>
+        <span class="eyebrow">Undersøkelse</span>
+        <h2>Øyebevegelsene viser vei</h2>
+        <p style="margin-top:16px;">Posisjonstester brukes for å fremkalle et mønster som passer med en bestemt side og buegang.</p>
+        <p>VNG-briller kan gjøre det lettere å se, forstørre og dokumentere nystagmus. Brillene er et nyttig hjelpemiddel — det avgjørende er korrekt testing og klinisk tolkning av øyebevegelsene.</p>
+        <a href="#behandling" class="link-arrow">Slik behandles krystallsyke →</a>
+      </div>
+      <div class="diag-steps">
+        <div class="diag-step">
+          <div class="diag-num">1</div>
+          <div><h3>Sykehistorie</h3><p>Hva utløser svimmelheten?</p></div>
+        </div>
+        <div class="diag-step">
+          <div class="diag-num">2</div>
+          <div><h3>Posisjonstester</h3><p>Dix-Hallpike og liggende rulletest</p></div>
+        </div>
+        <div class="diag-step">
+          <div class="diag-num">3</div>
+          <div><h3>Tolkning</h3><p>Side, buegang og variant</p></div>
+        </div>
+        <div class="diag-step">
+          <div class="diag-num">4</div>
+          <div><h3>Ny test</h3><p>Kontroll av responsen etter manøveren</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 10+11. BEHANDLING + EGENBEHANDLING -->
+<section id="behandling">
+  <div class="wrap">
+    <span class="eyebrow">Behandling</span>
+    <h2>Målrettet – ikke tilfeldig</h2>
+    <p style="max-width:680px; margin-top:16px;">En reposisjoneringsmanøver fører hodet gjennom bestemte stillinger for å flytte partiklene ut av buegangen. Behandlingen må tilpasses hvilken buegang og variant som er funnet.</p>
+    <p class="pull-quote">«Epley er svært nyttig ved riktig variant – men er ikke løsningen på all krystallsyke.»</p>
+    <p style="max-width:680px;">Epley og Semont kan være aktuelle ved varianter i bakre buegang. Gufoni eller barbecue-roll kan være aktuelt ved horisontale varianter, mens fremre buegang krever en tilpasset manøver. Mange opplever tydelig bedring etter én eller noen få behandlinger, mens enkelte trenger gjentatte eller andre manøvrer.</p>
+
+    <div style="margin-top:48px; border-top:1px solid #e7edf6; padding-top:44px;">
+      <h3>Kan jeg gjøre Epleys manøver selv?</h3>
+      <p style="margin-top:14px; max-width:680px;">Egenbehandling kan være aktuelt når diagnosen og riktig side er kjent. Epley passer ikke for alle typer krystallsyke, og ved usikkerhet bør manøveren først gjennomgås med en behandler.</p>
+      <a href="#" class="link-arrow">Se øvelsesbiblioteket →</a>
+    </div>
+  </div>
+</section>
+
+<!-- 12. ETTER BEHANDLING -->
+<section class="beige-section">
+  <div class="wrap">
+    <span class="eyebrow">Etter behandling</span>
+    <h2>Når snurringen er borte, men kroppen fortsatt føles ustø</h2>
+
+    <div class="two-col" style="margin-top:32px; align-items:start;">
+      <div>
+        <p>Noen blir symptomfrie med én gang. Andre kjenner mild ustøhet, kvalme eller en "svaiende" følelse i dager eller uker etter en vellykket manøver.</p>
+        <div class="info-box">
+          <p style="margin-bottom:10px; font-weight:600; color:var(--navy);">Vedvarende symptomer kan skyldes:</p>
+          <ul>
+            <li>fortsatt aktiv BPPV</li>
+            <li>en annen vestibulær tilstand</li>
+            <li>vestibulær migrene</li>
+            <li>PPPD (vedvarende postural-perseptuell svimmelhet)</li>
+            <li>andre nevrologiske eller medisinske årsaker</li>
+          </ul>
+        </div>
+        <p style="margin-top:20px; margin-bottom:0;"><a href="#" class="link-arrow">Les om restsvimmelhet →</a></p>
+      </div>
+      <div class="side-media">
+        <div class="side-media-frame">
+          <!-- BILDEPLASS: illustrasjon/foto som støtter "restsvimmelhet / balanse" -->
+          <img src="" alt="[Sett inn bilde: illustrasjon som viser balanse/restsvimmelhet]" onerror="this.style.display='none'">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 13. TILBAKEFALL -->
+<section>
+  <div class="wrap">
+    <span class="eyebrow">Å være obs på</span>
+    <h2>Krystallsyke kan komme tilbake</h2>
+    <p style="max-width:680px; margin-top:16px;">Tilbakefall er ikke uvanlig, også etter vellykket behandling. Et nytt anfall sitter ikke nødvendigvis i samme øre eller buegang som tidligere — det bør derfor undersøkes på nytt hver gang.</p>
+    <p style="max-width:680px;">Symptomer som endrer karakter, varer lenge, eller ikke lenger virker tydelig stillingsutløst, bør alltid vurderes på nytt av en behandler.</p>
+  </div>
+</section>
+
+<!-- 14. FAQ -->
+<section class="sky-section">
+  <div class="wrap">
+    <span class="eyebrow center" style="display:block; text-align:center;">Ofte stilte spørsmål</span>
+    <h2 class="center">Det mange lurer på</h2>
+    <div class="faq-list">
+      <details>
+        <summary>Er krystallsyke farlig?</summary>
+        <p>Nei, krystallsyke er i seg selv ufarlig, selv om anfallene kan oppleves dramatiske. Det er likevel viktig å skille det fra andre, mer alvorlige årsaker til svimmelhet.</p>
+      </details>
+      <details>
+        <summary>Går krystallsyke over av seg selv?</summary>
+        <p>Hos noen avtar symptomene gradvis av seg selv over dager til uker, men en målrettet manøver gir som regel raskere og mer forutsigbar bedring.</p>
+      </details>
+      <details>
+        <summary>Kan begge ørene rammes?</summary>
+        <p>Ja, selv om det er mest vanlig at kun ett øre er rammet om gangen. Begge sider kan i noen tilfeller være involvert samtidig eller ved ulike episoder.</p>
+      </details>
+      <details>
+        <summary>Hjelper Epley mot all krystallsyke?</summary>
+        <p>Nei. Epley er effektiv ved bestemte varianter i bakre buegang, men andre varianter og buegang krever andre manøvrer.</p>
+      </details>
+      <details>
+        <summary>Hvorfor er jeg fortsatt ustø?</summary>
+        <p>Restsvimmelhet er vanlig en periode etter behandling. Vedvarende plager bør likevel undersøkes, siden andre tilstander også kan bidra.</p>
+      </details>
+      <details>
+        <summary>Bør jeg ta vitamin D?</summary>
+        <p>Lave vitamin D-nivåer har vært satt i sammenheng med krystallsyke hos noen, men dette bør vurderes individuelt og gjerne i samråd med lege.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- OM MARIE / KLINIKKEN -->
+<section>
+  <div class="wrap">
+    <div class="two-col" style="align-items:center;">
+      <div class="marie-media">
+        <!-- BILDEPLASS: marie-portrait.jpg eller foto fra klinikken -->
+        <img src="" alt="[Sett inn bilde: Marie Hermansen på klinikken]" onerror="this.style.display='none'">
+      </div>
+      <div>
+        <span class="eyebrow">Hvem står bak</span>
+        <h2>Undersøkt av kiropraktor med erfaring på krystallsyke</h2>
+        <p style="margin-top:16px;">Krystallsykehjelpen er utviklet av kiropraktor Marie Hermansen, som har jobbet spesialisert med svimmelhet og krystallsyke i over ti år. Vi bruker VNG-briller og målrettede posisjonstester på klinikken i Fetsund for å finne riktig side, buegang og behandling.</p>
+        <a href="#" class="link-arrow">Møt Marie →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 15. AVSLUTTENDE CTA -->
+<section class="navy-section final-cta">
+  <div class="wrap">
+    <span class="eyebrow" style="justify-content:center; display:block;">Få hjelp</span>
+    <h2>Få undersøkt svimmelheten</h2>
+    <p>En målrettet undersøkelse kan avklare om symptomene passer med krystallsyke, hvilken side og buegang som er rammet, og hvilken behandling som er mest relevant.</p>
+    <a href="#" class="btn-primary" style="background:var(--white); color:var(--navy);">Bestill time →</a>
+    <small>Svimmelhetsundersøkelse hos kiropraktor Marie Hermansen i Fetsund.</small>
+  </div>
+</section>
+
+</body>
+</html>
