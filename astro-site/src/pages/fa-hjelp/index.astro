@@ -3,11 +3,6 @@ import Layout from "../../layouts/Layout.astro";
 
 const bookingUrl =
   "https://psno-patient-platform-fe.svc.pasientsky.no/embedded/planner/booking?serviceProviderId=54907264-049e-11eb-8fc8-26c6f94d64b7";
-
-// TODO: Marie skal lage egen Pasientsky-lenke for videobooking - bytt ut
-// videoBookingUrl når den er klar (peker til samme URL som klinikk-booking
-// foreløpig, se kort 3 under).
-const videoBookingUrl = bookingUrl;
 ---
 
 <Layout
@@ -49,8 +44,7 @@ const videoBookingUrl = bookingUrl;
           <span class="card-link">Bestill time →</span>
         </a>
 
-        {/* TODO: Marie skal lage egen Pasientsky-lenke for videobooking - bytt ut når den er klar (bruker samme lenke som klinikk-booking foreløpig) */}
-        <a href={videoBookingUrl} class="card help-card">
+        <a href="/tjenester/videokonsultasjon/" class="card help-card">
           <span class="help-tag">Hjemmefra</span>
           <div class="icon-circle">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7l-7 5 7 5V7z" /><rect x="1" y="5" width="15" height="14" rx="2" /></svg>
