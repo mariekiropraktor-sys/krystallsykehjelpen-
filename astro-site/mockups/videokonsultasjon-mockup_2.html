@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Videokonsultasjon — Krystallsykehjelpen (mockup)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    color-scheme: light;
+    --navy: #163875;
+    --navy-2: #1e4c96;
+    --sky: #eff4fb;
+    --accent: #2f79c9;
+    --beige: #f4eee3;
+    --turkis: #5fc1d6;
+    --ink: #1c2a3a;
+    --white: #ffffff;
+    --radius: 26px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:'Public Sans', sans-serif;
+    color: var(--ink);
+    background: var(--white);
+    color-scheme: light;
+  }
+  h1,h2,h3{
+    font-family:'Fraunces', serif;
+    margin:0;
+    color: var(--navy);
+    font-weight:500;
+  }
+  em{ font-style: italic; color: var(--turkis); }
+  a{ text-decoration:none; }
+  .wrap{ max-width:1180px; margin:0 auto; padding:0 32px; }
+  .section{ padding: 88px 0; }
+
+  /* NAV */
+  header.nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 20px 32px;
+    background: var(--white);
+    border-bottom: 1px solid rgba(22,56,117,0.08);
+    position: sticky; top:0; z-index: 50;
+  }
+  .logo{ display:flex; align-items:center; gap:10px; font-family:'Fraunces', serif; font-weight:600; color:var(--navy); font-size:1.05rem;}
+  .logo-mark{
+    width:34px; height:34px; border-radius:50%;
+    background: conic-gradient(from 210deg, var(--turkis), var(--accent), var(--navy));
+  }
+  nav.links{ display:flex; gap:32px; align-items:center; }
+  nav.links a{ color: var(--navy); font-weight:600; font-size:0.95rem; opacity:0.85; }
+  nav.links a:hover{ opacity:1; }
+  .btn-primary{
+    background: var(--navy);
+    color: var(--white);
+    padding: 13px 28px;
+    border-radius: 999px;
+    font-weight:600;
+    font-size:0.95rem;
+    display:inline-block;
+    transition: transform .2s ease, background .2s ease;
+  }
+  .btn-primary:hover{ background: var(--navy-2); transform: translateY(-1px); }
+  .btn-white{
+    background: var(--white);
+    color: var(--navy);
+    padding: 13px 28px;
+    border-radius: 999px;
+    font-weight:600;
+    font-size:0.95rem;
+    display:inline-block;
+    transition: transform .2s ease;
+  }
+  .btn-white:hover{ transform: translateY(-1px); }
+  .btn-outline-light{
+    border: 1.5px solid rgba(255,255,255,0.5);
+    color: var(--white);
+    padding: 12px 26px;
+    border-radius: 999px;
+    font-weight:600;
+    font-size:0.9rem;
+    display:inline-block;
+  }
+
+  /* HERO */
+  .hero{
+    background: linear-gradient(180deg, var(--navy) 0%, var(--navy-2) 100%);
+    position: relative;
+    overflow:hidden;
+    padding: 96px 0 110px;
+  }
+  .hero::before{
+    content:'';
+    position:absolute; top:-140px; right:-120px;
+    width:420px; height:420px; border-radius:50%;
+    background: radial-gradient(circle at 30% 30%, rgba(95,193,214,0.35), transparent 70%);
+  }
+  .hero-grid{
+    display:grid; grid-template-columns: 1.1fr 0.9fr; gap:64px; align-items:center;
+    position:relative; z-index:2;
+  }
+  .eyebrow{
+    color: var(--turkis);
+    font-weight:700;
+    letter-spacing:0.14em;
+    font-size:0.78rem;
+    text-transform:uppercase;
+    margin-bottom:18px;
+    display:block;
+  }
+  .hero h1{
+    color: var(--white);
+    font-size: 3rem;
+    line-height:1.12;
+    margin-bottom:22px;
+  }
+  .hero p.lead{
+    color: rgba(255,255,255,0.85);
+    font-size:1.15rem;
+    line-height:1.6;
+    max-width: 480px;
+    margin-bottom: 34px;
+  }
+  .hero-ctas{ display:flex; align-items:center; gap:26px; flex-wrap:wrap; }
+  .text-link-light{
+    color: var(--white);
+    font-weight:600;
+    font-size:0.95rem;
+    border-bottom: 1.5px solid rgba(255,255,255,0.4);
+    padding-bottom:2px;
+  }
+
+  /* stylized video window */
+  .video-card{
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.16);
+    border-radius: var(--radius);
+    padding: 18px;
+    backdrop-filter: blur(6px);
+  }
+  .video-frame{
+    background: linear-gradient(160deg, var(--sky) 0%, var(--white) 100%);
+    border-radius: 18px;
+    aspect-ratio: 4/3;
+    position:relative;
+    overflow:hidden;
+    display:flex; align-items:flex-end; justify-content:flex-start;
+    padding:18px;
+  }
+  .video-avatar-main{
+    width:64px; height:64px; border-radius:50%;
+    background: linear-gradient(135deg, var(--accent), var(--navy));
+    display:flex; align-items:center; justify-content:center;
+    color:white; font-family:'Fraunces',serif; font-weight:600; font-size:1.1rem;
+    position:absolute; bottom:18px; left:18px;
+    box-shadow: 0 8px 20px rgba(22,56,117,0.25);
+  }
+  .video-avatar-mini{
+    width:96px; height:72px; border-radius:14px;
+    background: linear-gradient(135deg, var(--turkis), var(--accent));
+    position:absolute; top:16px; right:16px;
+    display:flex; align-items:center; justify-content:center;
+    color:white; font-family:'Fraunces',serif; font-weight:600;
+    box-shadow: 0 8px 20px rgba(22,56,117,0.2);
+  }
+  .video-pulse{
+    position:absolute; top:16px; left:16px;
+    display:flex; align-items:center; gap:6px;
+    background: rgba(255,255,255,0.9);
+    border-radius:999px; padding:5px 12px 5px 8px;
+    font-size:0.72rem; font-weight:700; color: var(--navy);
+  }
+  .video-pulse .dot{ width:7px; height:7px; border-radius:50%; background:#e0524d; animation: pulse 1.8s infinite; }
+  @keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:0.35;} }
+  .video-controls{
+    display:flex; gap:12px; justify-content:center; margin-top:16px;
+  }
+  .video-controls span{
+    width:40px; height:40px; border-radius:50%;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+
+  /* HELP SECTION */
+  .help-grid{
+    display:grid; grid-template-columns: 0.85fr 1.15fr; gap:64px; align-items:start;
+  }
+  .help-grid h2{ font-size:2.1rem; margin-bottom:18px; line-height:1.2;}
+  .help-grid .intro{ color:#4a5b73; font-size:1.05rem; line-height:1.65; }
+  .help-list{ display:grid; grid-template-columns: 1fr 1fr; gap:22px; }
+  .help-item{
+    display:flex; gap:16px; align-items:flex-start;
+    background: var(--sky);
+    border-radius: 20px;
+    padding: 22px;
+  }
+  .icon-circle{
+    width:44px; height:44px; min-width:44px; border-radius:50%;
+    background: var(--white);
+    display:flex; align-items:center; justify-content:center;
+    color: var(--accent);
+  }
+  .help-item p{ margin:0; font-weight:600; color: var(--navy); font-size:0.98rem; line-height:1.4;}
+
+  /* SAFETY BOX */
+  .safety-box{
+    background: var(--beige);
+    padding: 56px 0;
+  }
+  .safety-inner{
+    display:flex; gap:28px; align-items:flex-start;
+    max-width: 880px; margin:0 auto;
+  }
+  .safety-inner .icon-circle{ background: var(--white); color: var(--navy); width:52px; height:52px; min-width:52px;}
+  .safety-inner h3{ font-size:1.3rem; margin-bottom:10px; }
+  .safety-inner p{ color:#4a5b73; line-height:1.65; margin:0; font-size:1rem;}
+
+  /* PRICING */
+  .price-grid{
+    display:grid; grid-template-columns: 1fr 1fr; gap:28px; margin-top:48px;
+  }
+  .price-card{
+    border: 1.5px solid rgba(22,56,117,0.12);
+    border-radius: var(--radius);
+    padding: 36px;
+    background: var(--white);
+    position:relative;
+  }
+  .price-card.featured{
+    border: 2px solid var(--accent);
+    box-shadow: 0 20px 44px rgba(47,121,201,0.16);
+  }
+  .badge{
+    position:absolute; top:-14px; left:36px;
+    background: var(--accent);
+    color:white; font-size:0.72rem; font-weight:700;
+    letter-spacing:0.05em; text-transform:uppercase;
+    padding:6px 14px; border-radius:999px;
+  }
+  .price-card .mins{ color:#7a8ba3; font-weight:600; font-size:0.9rem; text-transform:uppercase; letter-spacing:0.06em;}
+  .price-card .amount{ font-family:'Fraunces',serif; font-size:2.6rem; color:var(--navy); margin: 8px 0 4px;}
+  .price-card .subtitle{ font-weight:700; color:var(--navy); margin-bottom:14px; font-size:1.05rem;}
+  .price-card .desc{ color:#5a6b83; font-size:0.95rem; line-height:1.55; margin-bottom:20px;}
+  .price-card ul{ list-style:none; padding:0; margin:0 0 26px; display:flex; flex-direction:column; gap:10px;}
+  .price-card li{ display:flex; gap:10px; align-items:flex-start; font-size:0.92rem; color:#3d4b60; }
+  .price-card li::before{ content:'✓'; color: var(--turkis); font-weight:700; }
+  .price-card .btn-primary{ width:100%; text-align:center; }
+  .price-card.featured .btn-primary{ background: var(--accent); }
+  .price-card.featured .btn-primary:hover{ background: var(--navy-2); }
+
+  /* MEDHJELPER */
+  .helper-section{
+    background: var(--navy);
+    color: var(--white);
+    padding: 76px 0;
+  }
+  .helper-grid{
+    display:grid; grid-template-columns: 1fr 1fr; gap:56px; align-items:center;
+  }
+  .helper-grid h2{ color: var(--white); font-size:2rem; margin-bottom:16px; line-height:1.25;}
+  .helper-grid p{ color: rgba(255,255,255,0.82); line-height:1.65; font-size:1.02rem;}
+  .helper-visual{
+    background: rgba(255,255,255,0.06);
+    border:1px solid rgba(255,255,255,0.15);
+    border-radius: var(--radius);
+    padding: 32px;
+    display:flex; gap:18px; align-items:center; justify-content:center;
+  }
+  .helper-avatar{
+    width:76px; height:76px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Fraunces',serif; font-weight:600; color:white; font-size:1.3rem;
+  }
+  .helper-avatar.a{ background: linear-gradient(135deg, var(--turkis), var(--accent)); }
+  .helper-avatar.b{ background: linear-gradient(135deg, var(--accent), var(--navy-2)); margin-top:26px; }
+  .helper-avatar.c{ background: rgba(255,255,255,0.15); border:1px dashed rgba(255,255,255,0.4); }
+
+  /* STEPS */
+  .steps-grid{
+    display:grid; grid-template-columns: repeat(3, 1fr); gap:32px; margin-top:48px;
+  }
+  .step{
+    padding: 8px 0;
+  }
+  .step .num{
+    font-family:'Fraunces', serif; font-size:1.1rem; color: var(--turkis);
+    font-weight:600; margin-bottom:14px; display:block;
+  }
+  .step h3{ font-size:1.2rem; margin-bottom:10px; }
+  .step p{ color:#5a6b83; line-height:1.6; margin:0; font-size:0.97rem;}
+
+  /* FAQ */
+  .faq-section{ background: var(--beige); }
+  .faq-item{
+    background: var(--white);
+    border-radius: 18px;
+    padding: 22px 26px;
+    margin-bottom: 14px;
+  }
+  .faq-q{
+    display:flex; justify-content:space-between; align-items:center;
+    font-weight:700; color:var(--navy); cursor:pointer; font-size:1.02rem;
+  }
+  .faq-plus{ color: var(--accent); font-size:1.3rem; font-weight:400; }
+  .faq-a{ color:#5a6b83; line-height:1.6; margin-top:14px; font-size:0.96rem; display:none;}
+  .faq-item.open .faq-a{ display:block; }
+  .faq-item.open .faq-plus{ transform: rotate(45deg); display:inline-block; }
+
+  .acute-box{
+    margin-top: 28px;
+    background: var(--white);
+    border: 1.5px solid rgba(224,82,77,0.35);
+    border-radius: 18px;
+    padding: 20px 24px;
+    display:flex; gap:14px; align-items:flex-start;
+  }
+  .acute-box .dot-icon{ width:10px; height:10px; border-radius:50%; background:#e0524d; margin-top:6px; min-width:10px;}
+  .acute-box p{ margin:0; font-size:0.92rem; color:#4a5b73; line-height:1.55;}
+  .acute-box strong{ color:#c23f3a; }
+
+  /* FINAL CTA */
+  .final-cta{
+    background: linear-gradient(120deg, var(--navy-2), var(--navy));
+    text-align:center;
+    padding: 84px 0;
+  }
+  .final-cta h2{ color:white; font-size: 2.2rem; margin-bottom:16px;}
+  .final-cta p{ color: rgba(255,255,255,0.8); margin-bottom:32px; font-size:1.05rem;}
+
+  footer.site-footer{
+    background: var(--sky);
+    padding: 40px 0;
+    text-align:center;
+    color:#7a8ba3;
+    font-size:0.85rem;
+  }
+
+  @media (max-width: 900px){
+    .hero-grid, .help-grid, .price-grid, .helper-grid{ grid-template-columns: 1fr; }
+    .hero h1{ font-size:2.2rem; }
+    .help-list{ grid-template-columns: 1fr; }
+    .steps-grid{ grid-template-columns: 1fr; }
+    nav.links{ display:none; }
+    .section{ padding: 56px 0; }
+    .price-card.featured{ order:-1; }
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="logo">
+    <div class="logo-mark"></div>
+    Krystallsykehjelpen
+  </div>
+  <nav class="links">
+    <a href="#hjelp">Om tjenesten</a>
+    <a href="#pris">Tid og pris</a>
+    <a href="#slik">Slik fungerer det</a>
+  </nav>
+  <a href="#pris" class="btn-primary">Bestill time</a>
+</header>
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow">Videokonsultasjon</span>
+      <h1>Trygg veiledning.<br><em>Hjemme hos deg.</em></h1>
+      <p class="lead">Få personlig hjelp med øvelser, spørsmål og usikkerhet etter svimmelhet eller krystallsyke — i rolige omgivelser hjemme.</p>
+      <div class="hero-ctas">
+        <a href="#pris" class="btn-white">Se timer og priser</a>
+        <a href="#hjelp" class="text-link-light">Er dette riktig for meg?</a>
+      </div>
+    </div>
+    <div class="video-card" style="padding:0; overflow:hidden;">
+      <img src="hero-videokonsultasjon.png" alt="Videokonsultasjon med Krystallsykehjelpen" style="width:100%; height:100%; display:block; border-radius:22px; object-fit:cover;">
+    </div>
+  </div>
+</section>
+
+<section class="section" id="hjelp">
+  <div class="wrap help-grid">
+    <div>
+      <h2>Hva kan du få hjelp med?</h2>
+      <p class="intro">Det er lett å bli usikker når du skal fortsette på egen hånd. Videokonsultasjonen gir deg tid til å spørre, forstå og øve — uten reisevei og i ditt eget tempo.</p>
+    </div>
+    <div class="help-list">
+      <div class="help-item">
+        <div class="icon-circle">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2v20M2 12h20"/></svg>
+        </div>
+        <p>Veiledning i øvelser og reposisjoneringsmanøvre</p>
+      </div>
+      <div class="help-item">
+        <div class="icon-circle">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <p>Spørsmål etter undersøkelse eller behandling</p>
+      </div>
+      <div class="help-item">
+        <div class="icon-circle">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
+        </div>
+        <p>Bekymringer og usikkerhet rundt svimmelheten</p>
+      </div>
+      <div class="help-item">
+        <div class="icon-circle">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 12a8 8 0 1 1 16 0 8 8 0 0 1-16 0z"/><path d="M12 8v4l3 2"/></svg>
+        </div>
+        <p>Tilpasning av vestibulær rehabilitering</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="safety-box">
+  <div class="wrap safety-inner">
+    <div class="icon-circle">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#163875" stroke-width="1.6"><path d="M12 2 3 6v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V6z"/></svg>
+    </div>
+    <div>
+      <h3>Videoveiledning kommer etter en faglig vurdering</h3>
+      <p>Tjenesten er først og fremst for deg som allerede er vurdert av lege, kiropraktor, fysioterapeut eller annet kvalifisert helsepersonell. Ny, uforklarlig eller annerledes svimmelhet bør undersøkes fysisk først.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="pris">
+  <div class="wrap">
+    <h2 style="font-size:2.1rem; text-align:center;">Tid og pris</h2>
+    <div class="price-grid">
+      <div class="price-card">
+        <span class="mins">20 minutter</span>
+        <div class="amount">590 kr</div>
+        <div class="subtitle">Kort oppfølging</div>
+        <p class="desc">For deg som allerede kjenner øvelsen og trenger noen konkrete avklaringer.</p>
+        <ul>
+          <li>Ett eller noen få spørsmål</li>
+          <li>Kontroll av kjent øvelse</li>
+          <li>Mindre justeringer</li>
+        </ul>
+        <a href="#" class="btn-primary" style="background:var(--navy); color:white;">Bestill 20 minutter</a>
+      </div>
+      <div class="price-card featured">
+        <span class="badge">Anbefalt første gang</span>
+        <span class="mins">40 minutter</span>
+        <div class="amount">990 kr</div>
+        <div class="subtitle">Grundig veiledning</div>
+        <p class="desc">God tid til samtale, spørsmål og trinnvis veiledning i en aktuell manøver.</p>
+        <ul>
+          <li>Gjennomgang av tidligere funn</li>
+          <li>Veiledning steg for steg</li>
+          <li>Plan for veien videre</li>
+        </ul>
+        <a href="#" class="btn-primary">Bestill 40 minutter</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="helper-section">
+  <div class="wrap helper-grid">
+    <div>
+      <span class="eyebrow" style="color: var(--turkis);">Hvis vi skal gjøre en manøver</span>
+      <h2>Ha en annen voksen person i nærheten</h2>
+      <p>En medhjelper kan støtte deg, hjelpe med hodets plassering og passe på kameraet. Det gir en tryggere og roligere gjennomføring dersom du blir svimmel eller ustø. Ha gjerne seng eller sofa klar.</p>
+    </div>
+    <div class="helper-visual">
+      <div class="helper-avatar a">P</div>
+      <div class="helper-avatar b">M</div>
+      <div class="helper-avatar c">+1</div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="slik">
+  <div class="wrap">
+    <h2 style="font-size:2.1rem; text-align:center;">Slik fungerer det</h2>
+    <div class="steps-grid">
+      <div class="step">
+        <span class="num">01</span>
+        <h3>Bestill riktig tid</h3>
+        <p>Velg 40 minutter første gang, eller 20 minutter for en kort oppfølging.</p>
+      </div>
+      <div class="step">
+        <span class="num">02</span>
+        <h3>Finn et rolig sted</h3>
+        <p>Ha god plass, stabilt kamera og gjerne en seng eller sofa i nærheten.</p>
+      </div>
+      <div class="step">
+        <span class="num">03</span>
+        <h3>Få personlig veiledning</h3>
+        <p>Vi går gjennom spørsmålene dine og øver sammen, steg for steg.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section faq-section">
+  <div class="wrap" style="max-width:820px;">
+    <h2 style="font-size:2.1rem; text-align:center; margin-bottom:40px;">Ofte stilte spørsmål</h2>
+
+    <div class="faq-item open">
+      <div class="faq-q">Kan videokonsultasjon erstatte en fysisk undersøkelse? <span class="faq-plus">+</span></div>
+      <div class="faq-a">Nei. Video kan brukes til samtale og veiledning, men kan ikke erstatte full klinisk undersøkelse, posisjonstesting, VNG eller annen nødvendig utredning.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Hva trenger jeg å ha klart hjemme? <span class="faq-plus">+</span></div>
+      <div class="faq-a">Et rolig rom, stabil internettforbindelse, telefon eller datamaskin med kamera, god plass og gjerne en seng eller sofa.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Hva hvis jeg blir veldig svimmel underveis? <span class="faq-plus">+</span></div>
+      <div class="faq-a">Vi stopper eller tilpasser øvelsen. Dersom manøver er planlagt, bør en annen voksen være til stede for å støtte og hjelpe.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Kan jeg bestille uten å ha fått en diagnose? <span class="faq-plus">+</span></div>
+      <div class="faq-a">Ved ny, uforklarlig eller annerledes svimmelhet bør pasienten undersøkes fysisk først. Videosamtalen kan ikke brukes til å avkrefte alle andre årsaker.</div>
+    </div>
+
+    <div class="acute-box">
+      <div class="dot-icon"></div>
+      <p><strong>Akutte symptomer:</strong> Videokonsultasjon er ikke en akuttjeneste. Ved nye lammelser, ansiktsskjevhet, talevansker, dobbeltsyn, besvimelse, plutselig kraftig hodepine eller andre alvorlige symptomer — søk akutt hjelp. Ring 113 ved alvorlige eller akutte symptomer. Legevakt: 116 117.</p>
+    </div>
+  </div>
+</section>
+
+<section class="final-cta">
+  <div class="wrap">
+    <h2>Klar for å bestille time?</h2>
+    <p>Velg tidspunkt og få veiledning hjemmefra, i ditt eget tempo.</p>
+    <a href="#" class="btn-white">Bestill time</a>
+  </div>
+</section>
+
+<footer class="site-footer">
+  Krystallsykehjelpen — mockup for intern gjennomgang
+</footer>
+
+<script>
+  document.querySelectorAll('.faq-q').forEach(q => {
+    q.addEventListener('click', () => {
+      q.parentElement.classList.toggle('open');
+    });
+  });
+</script>
+
+</body>
+</html>
