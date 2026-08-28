@@ -1,44 +1,92 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import { getPageSections } from "../../lib/pageSections";
 import { safeFetch } from "../../lib/safeFetch";
-import { inlineHtmlFromBlock } from "../../lib/portableText";
+import { blogPreviewClient } from "../../lib/blogPreviewClient";
 import { urlForImage } from "../../lib/sanityImage";
 import "leaflet/dist/leaflet.css";
 
-const sections = await getPageSections("finn-behandler");
+const bookingUrl =
+  "https://psno-patient-platform-fe.svc.pasientsky.no/embedded/planner/booking?serviceProviderId=54907264-049e-11eb-8fc8-26c6f94d64b7";
 
-const practitioners = await safeFetch(
-  `*[_type == "practitioner"]{
-    _id, name, title, clinicName, address, phone, bookingUrl, photo, latitude, longitude
-  }`,
-  {},
-  [],
-);
+// Forretningsregel: kun dokumenter med reviewStatus "confirmed" skal vises
+// her — "pending" (importert, ikke kontaktet ennå) vises ALDRI offentlig.
+// I en faktisk build/deploy faller blogPreviewClient alltid tilbake til den
+// vanlige offentlige klienten (ser kun publiserte dokumenter), akkurat som
+// for blogg-utkast — se blogPreviewClient.ts. Lokalt (npm run dev med
+// skrivetoken) ser den i tillegg drafts, slik at Marie kan forhåndsvise en
+// behandler hun har satt til "confirmed" før hun publiserer den i Studio.
+const QUERY = `*[_type == "practitioner" && reviewStatus == "confirmed"]{
+  _id, name, role, clinic, address, sted, profession, treatmentTags,
+  equipment, access, verificationLevel, sourceUrl, location, kind, tier,
+  photo, bookingUrl
+}`;
 
-const mapPoints = practitioners
-  .filter((p) => p.latitude != null && p.longitude != null)
-  .map((p) => ({
-    name: p.name,
-    clinicName: p.clinicName,
-    address: p.address,
-    lat: p.latitude,
-    lng: p.longitude,
-  }));
+const practitioners = await safeFetch(QUERY, {}, [], blogPreviewClient);
+
+function initials(name) {
+  return (name ?? "")
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0]?.toUpperCase())
+    .join("");
+}
+
+const listData = practitioners.map((p) => ({
+  id: p._id,
+  name: p.name,
+  role: p.role ?? "",
+  clinic: p.clinic ?? "",
+  address: p.address ?? "",
+  sted: p.sted ?? "",
+  profession: p.profession ?? "",
+  tags: p.treatmentTags ?? [],
+  equipment: p.equipment ?? [],
+  access: p.access ?? "",
+  verif: p.verificationLevel ?? "",
+  source: p.sourceUrl ?? "",
+  lat: p.location?.lat ?? null,
+  lng: p.location?.lng ?? null,
+  kind: p.kind ?? "private",
+  tier: p.tier ?? "standard",
+  photoUrl: urlForImage(p.photo, 400) ?? null,
+  bookingUrl: p.bookingUrl || null,
+  initials: initials(p.name),
+}));
+
+const availableTags = new Set(listData.flatMap((p) => p.tags));
+const treatmentChips = [
+  { value: "krystallsyke", label: "Krystallsyke" },
+  { value: "svimmelhet", label: "Svimmelhet" },
+  ...(availableTags.has("hjemmebesok") ? [{ value: "hjemmebesok", label: "Hjemmebesøk" }] : []),
+  ...(availableTags.has("video") ? [{ value: "video", label: "Video" }] : []),
+];
+
+const professionOptions = [
+  { value: "kiropraktor", label: "Kiropraktor" },
+  { value: "fysioterapeut", label: "Fysioterapeut" },
+  { value: "manuellterapeut", label: "Manuellterapeut" },
+  { value: "naprapat", label: "Naprapat" },
+  { value: "tverrfaglig", label: "Tverrfaglig senter" },
+  { value: "onh", label: "Lege / ØNH" },
+  { value: "offentlig", label: "Offentlig / sykehus" },
+];
+
+const featured = listData.filter((p) => p.tier === "featured");
+const FEATURED_MIN = 4;
+const emptySlots = Math.max(0, FEATURED_MIN - featured.length);
 ---
 
 <Layout
   title="Finn behandler | Krystallsykehjelpen"
-  description="Behandlere hos Krystallsykehjelpen — kontaktinfo og adresse."
+  description="Finn en behandler for krystallsyke og svimmelhet i Norge — private klinikker og offentlige tilbud, søkbart på sted, navn og behandlingstype."
   activePath="/finn-behandler/"
 >
   <section class="hero hero-simple">
     <div class="container">
-      <span class="eyebrow">Behandlere</span>
-      <h1>{sections.hero?.heading ?? "Finn behandler"}</h1>
-      <p class="lead" set:html={sections.hero?.body?.[0]
-        ? inlineHtmlFromBlock(sections.hero.body[0])
-        : "Møt behandlerne hos Krystallsykehjelpen."} />
+      <span class="eyebrow">Behandlere i Norge</span>
+      <h1>Finn din behandler</h1>
+      <p class="lead">Søk på navn, sted eller behandlingstype for å finne en behandler for krystallsyke og svimmelhet nær deg.</p>
     </div>
     <svg class="hero-wave" viewBox="0 0 1440 60" preserveAspectRatio="none">
       <path d="M0,32 C360,72 1080,0 1440,32 L1440,60 L0,60 Z" fill="#ffffff" />
@@ -47,106 +95,445 @@ const mapPoints = practitioners
 
   <section class="section-alt no-top">
     <div class="container">
-      {practitioners.length ? (
-        <div class="practitioner-grid">
-          {practitioners.map((p) => (
-            <div class="bio-card">
-              <img src={urlForImage(p.photo, 320) ?? "/marie-portrait.jpg"} alt={p.name} class="bio-photo" />
-              <div>
-                <h3>{p.name}</h3>
-                {p.title && <p class="p-title">{p.title}</p>}
-                {p.clinicName && <p class="p-clinic">{p.clinicName}</p>}
-                {p.address && <p class="p-address">{p.address}</p>}
-                <div class="p-links">
-                  {p.phone && <a href={`tel:${p.phone.replace(/\s/g, "")}`} class="card-link">{p.phone}</a>}
-                  {p.bookingUrl && <a href={p.bookingUrl} class="btn btn-primary btn-sm">Bestill time</a>}
-                </div>
-              </div>
-            </div>
-          ))}
+      <div class="section-head">
+        <span class="eyebrow center">Søk i Norge</span>
+        <h2>Finn en behandler</h2>
+        <p>Vi viser både private klinikker og offentlige tilbud. Offentlige tilbud krever henvisning fra fastlege.</p>
+      </div>
+
+      <div class="search-panel">
+        <div class="search-row">
+          <div class="search-input-wrap">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
+            <input type="text" id="search-input" placeholder="Søk på navn, sted eller klinikk..." />
+          </div>
+          <select id="profession-filter">
+            <option value="">Alle profesjoner</option>
+            {professionOptions.map((opt) => <option value={opt.value}>{opt.label}</option>)}
+          </select>
         </div>
-      ) : (
-        <p>Ingen behandlere lagt inn ennå.</p>
-      )}
+        {treatmentChips.length > 0 && (
+          <div class="filter-chips" id="treatment-chips">
+            {treatmentChips.map((chip) => (
+              <button type="button" class="chip" data-tag={chip.value}>{chip.label}</button>
+            ))}
+          </div>
+        )}
+        <div class="result-count" id="result-count"></div>
+      </div>
+
+      <div class="search-hint" id="search-hint">
+        <strong>Søk over for å se behandlere</strong>
+        Skriv et sted, navn eller klinikk — eller velg profesjon/behandlingstype — for å utforske behandlerne.
+      </div>
+
+      <div class="practitioner-grid" id="grid" style="display:none;"></div>
+
+      <div id="public-section" style="display:none;">
+        <div class="section-head public-head">
+          <span class="eyebrow center">Krever henvisning</span>
+          <h2>Offentlige tilbud</h2>
+          <p>Sykehus- og rehabiliteringstilbud. Du kan ikke bestille time direkte her — snakk med fastlegen din om henvisning.</p>
+        </div>
+        <div class="practitioner-grid" id="grid-public"></div>
+      </div>
+
+      <div class="empty-state" id="empty-state">
+        <p>Ingen behandlere matcher søket ditt. Prøv et annet sted, navn eller filter.</p>
+      </div>
     </div>
   </section>
 
   <section class="section-beige">
     <div class="container">
-      <h2>Kart</h2>
-      <hr class="heading-rule" />
-      <div id="practitioner-map" class="map" data-points={JSON.stringify(mapPoints)}>
-        {!mapPoints.length && <p class="map-empty">Kart vises når adresse er registrert.</p>}
+      <div class="section-head">
+        <span class="eyebrow center">Kart</span>
+        <h2>Se behandlerne på kartet</h2>
+        <p>Kartet oppdateres med søkeresultatene over.</p>
       </div>
+      <div id="practitioner-map" class="map"></div>
+    </div>
+  </section>
+
+  <section class="section-featured">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow center">Fremhevet</span>
+        <h2>Fremhevede behandlere</h2>
+        <p>Betalte, fremhevede oppføringer — tydelig merket. Vises her uavhengig av søk over.</p>
+      </div>
+      <div class="featured-grid">
+        {featured.map((p) => (
+          <div class="p-card compact premium">
+            <span class="premium-badge">⭐ Fremhevet</span>
+            <div class="p-photo">
+              {p.photoUrl ? <img src={p.photoUrl} alt={p.name} /> : <div class="ph-fallback">{p.initials}</div>}
+            </div>
+            <div class="p-body">
+              <h3>{p.name}</h3>
+              {p.role && <div class="p-role">{p.role}</div>}
+              <div class="p-clinic"><strong>{p.clinic}</strong>{p.address}</div>
+              {p.tags.length > 0 && (
+                <div class="p-tags">
+                  {p.tags.filter((t) => t === "krystallsyke" || t === "svimmelhet").map((t) => (
+                    <span class="p-tag">{t === "krystallsyke" ? "Krystallsyke" : "Svimmelhet"}</span>
+                  ))}
+                </div>
+              )}
+              <div class="p-actions">
+                {p.bookingUrl ? (
+                  <a href={p.bookingUrl} class="p-btn primary">Bestill time</a>
+                ) : (
+                  <a href={p.source || "#"} class="p-btn primary">Se profil</a>
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
+        {Array.from({ length: emptySlots }).map(() => (
+          <div class="p-card compact premium slot-empty">
+            <span class="premium-badge muted">Ledig</span>
+            <div class="p-photo"><div class="ph-fallback">+</div></div>
+            <div class="p-body">
+              <h3>Bli fremhevet</h3>
+              <div class="p-role">Ta kontakt for priser</div>
+              <div class="p-clinic"><strong>mariekiropraktor@gmail.com</strong></div>
+              <div class="p-actions">
+                <a href="mailto:mariekiropraktor@gmail.com" class="p-btn secondary">Ta kontakt</a>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section-cta">
+    <div class="container cta-inner">
+      <div>
+        <h2>Klar til å bli kvitt svimmelheten?</h2>
+        <p class="sub">Bestill en time hos Krystallsykehjelpen i dag.</p>
+      </div>
+      <a href={bookingUrl} class="btn btn-outline">Bestill time →</a>
     </div>
   </section>
 </Layout>
 
+<script type="application/json" id="practitioner-data" set:html={JSON.stringify(listData)} />
+
 <script>
   import L from "leaflet";
 
-  const el = document.getElementById("practitioner-map");
-  const points = JSON.parse(el?.dataset.points ?? "[]");
+  function escapeHtml(value) {
+    return (value ?? "").toString().replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
 
-  if (el && points.length) {
-    const markerSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="34" height="44" viewBox="0 0 34 44"><path d="M17 0C7.6 0 0 7.6 0 17c0 12.7 17 27 17 27s17-14.3 17-27C34 7.6 26.4 0 17 0z" fill="#163875"/><circle cx="17" cy="17" r="7" fill="#5fc1d6"/></svg>`;
-    const icon = L.icon({
-      iconUrl: `data:image/svg+xml;base64,${btoa(markerSvg)}`,
-      iconSize: [34, 44],
-      iconAnchor: [17, 44],
-      popupAnchor: [0, -40],
-    });
+  const dataEl = document.getElementById("practitioner-data");
+  const ENTRIES = JSON.parse(dataEl?.textContent ?? "[]");
 
-    const map = L.map(el, { scrollWheelZoom: false }).setView([points[0].lat, points[0].lng], 14);
+  const searchInput = document.getElementById("search-input");
+  const professionFilter = document.getElementById("profession-filter");
+  const chips = Array.from(document.querySelectorAll(".chip"));
+  const resultCount = document.getElementById("result-count");
+  const emptyState = document.getElementById("empty-state");
+  const searchHint = document.getElementById("search-hint");
+  const grid = document.getElementById("grid");
+  const publicSection = document.getElementById("public-section");
+  const gridPublic = document.getElementById("grid-public");
+  const mapEl = document.getElementById("practitioner-map");
+
+  const NORWAY_CENTER = [64.5, 13];
+
+  const markerSvg = (color) =>
+    `<svg xmlns="http://www.w3.org/2000/svg" width="26" height="34" viewBox="0 0 26 34"><path d="M13 0C5.8 0 0 5.8 0 13c0 9.7 13 21 13 21s13-11.3 13-21C26 5.8 20.2 0 13 0z" fill="${color}"/><circle cx="13" cy="13" r="5.5" fill="#fff"/></svg>`;
+
+  const privateIcon = L.icon({
+    iconUrl: `data:image/svg+xml;base64,${btoa(markerSvg("#163875"))}`,
+    iconSize: [26, 34], iconAnchor: [13, 34], popupAnchor: [0, -30],
+  });
+  const publicIcon = L.icon({
+    iconUrl: `data:image/svg+xml;base64,${btoa(markerSvg("#2f79c9"))}`,
+    iconSize: [26, 34], iconAnchor: [13, 34], popupAnchor: [0, -30],
+  });
+
+  let map;
+  let resultMarkers = [];
+
+  if (mapEl) {
+    map = L.map(mapEl, { scrollWheelZoom: false }).setView(NORWAY_CENTER, 5);
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution: "&copy; OpenStreetMap-bidragsytere",
       maxZoom: 19,
     }).addTo(map);
-
-    points.forEach((p) => {
-      L.marker([p.lat, p.lng], { icon })
-        .addTo(map)
-        .bindPopup(`<strong>${p.name}</strong><br>${p.clinicName ?? ""}<br>${p.address ?? ""}`);
-    });
   }
+
+  function clearResultMarkers() {
+    resultMarkers.forEach((m) => map.removeLayer(m));
+    resultMarkers = [];
+  }
+
+  function verifLabel(v) {
+    if (v === "A") return "Navngitt behandler";
+    if (v === "B") return "Klinikktilbud";
+    if (v === "C") return "Offentlig/henvisningsbasert tilbud";
+    return "";
+  }
+
+  function safeHost(url) {
+    try { return new URL(url).hostname; } catch { return url; }
+  }
+
+  function avatarHtml(p) {
+    return p.photoUrl
+      ? `<img src="${escapeHtml(p.photoUrl)}" alt="${escapeHtml(p.name)}" />`
+      : `<div class="ph-fallback">${escapeHtml(p.initials)}</div>`;
+  }
+
+  function tagsHtml(p) {
+    const treatment = p.tags
+      .map((t) => `<span class="p-tag">${t === "krystallsyke" ? "Krystallsyke" : t === "svimmelhet" ? "Svimmelhet" : escapeHtml(t)}</span>`)
+      .join("");
+    const equip = p.equipment.map((e) => `<span class="p-tag equip">${escapeHtml(e)}</span>`).join("");
+    const access = p.access ? `<span class="p-tag access">${escapeHtml(p.access)}</span>` : "";
+    return treatment + equip + access;
+  }
+
+  function cardHtml(p) {
+    const actions = p.bookingUrl
+      ? `<a href="${escapeHtml(p.bookingUrl)}" class="p-btn primary">Bestill time</a>`
+      : p.source
+        ? `<a href="${escapeHtml(p.source)}" class="p-btn secondary" target="_blank" rel="noopener">Se profil</a>`
+        : "";
+    return `
+      <div class="p-card">
+        <div class="p-photo">${avatarHtml(p)}</div>
+        <div class="p-body">
+          <h3>${escapeHtml(p.name)}</h3>
+          ${p.role ? `<div class="p-role">${escapeHtml(p.role)}</div>` : ""}
+          <div class="p-clinic"><strong>${escapeHtml(p.clinic)}</strong>${escapeHtml(p.address)}</div>
+          <div class="p-tags">${tagsHtml(p)}</div>
+          ${p.verif ? `<div class="p-verif"><span class="badge">${escapeHtml(p.verif)}</span>${verifLabel(p.verif)}</div>` : ""}
+          ${p.source ? `<div class="p-source">Kilde: <a href="${escapeHtml(p.source)}" target="_blank" rel="noopener">${escapeHtml(safeHost(p.source))}</a></div>` : ""}
+          ${actions ? `<div class="p-actions">${actions}</div>` : ""}
+        </div>
+      </div>`;
+  }
+
+  function publicCardHtml(p) {
+    return `
+      <div class="p-card public">
+        <div class="p-photo">${avatarHtml(p)}</div>
+        <div class="p-body">
+          <h3>${escapeHtml(p.name)}</h3>
+          ${p.role ? `<div class="p-role">${escapeHtml(p.role)}</div>` : ""}
+          <div class="p-clinic"><strong>${escapeHtml(p.clinic)}</strong>${escapeHtml(p.address)}</div>
+          <div class="p-tags">${tagsHtml(p)}<span class="public-note">Krever henvisning</span></div>
+          <div class="p-verif"><span class="badge">C</span>Offentlig/henvisningsbasert tilbud</div>
+          ${p.source ? `<div class="p-source">Kilde: <a href="${escapeHtml(p.source)}" target="_blank" rel="noopener">${escapeHtml(safeHost(p.source))}</a></div>` : ""}
+        </div>
+      </div>`;
+  }
+
+  const activeChips = new Set();
+
+  function filter() {
+    const q = (searchInput?.value ?? "").trim().toLowerCase();
+    const prof = professionFilter?.value ?? "";
+    const anyFilterActive = q.length > 0 || prof !== "" || activeChips.size > 0;
+
+    if (map) clearResultMarkers();
+
+    if (!anyFilterActive) {
+      if (grid) { grid.innerHTML = ""; grid.style.display = "none"; }
+      if (publicSection) publicSection.style.display = "none";
+      if (gridPublic) gridPublic.innerHTML = "";
+      emptyState?.classList.remove("show");
+      if (searchHint) searchHint.style.display = "block";
+      if (resultCount) resultCount.textContent = "";
+      map?.setView(NORWAY_CENTER, 5);
+      return;
+    }
+
+    if (searchHint) searchHint.style.display = "none";
+    if (grid) grid.style.display = "grid";
+
+    const matched = ENTRIES.filter((p) => {
+      const hay = `${p.name} ${p.sted} ${p.clinic}`.toLowerCase();
+      const matchesQuery = !q || hay.includes(q);
+      const matchesProf = !prof || p.profession === prof;
+      const matchesTags = activeChips.size === 0 || p.tags.some((t) => activeChips.has(t));
+      return matchesQuery && matchesProf && matchesTags;
+    });
+
+    const privateResults = matched.filter((p) => p.kind === "private");
+    const publicResults = matched.filter((p) => p.kind === "public");
+
+    if (grid) grid.innerHTML = privateResults.map(cardHtml).join("");
+
+    if (publicResults.length > 0) {
+      if (publicSection) publicSection.style.display = "block";
+      if (gridPublic) gridPublic.innerHTML = publicResults.map(publicCardHtml).join("");
+    } else {
+      if (publicSection) publicSection.style.display = "none";
+      if (gridPublic) gridPublic.innerHTML = "";
+    }
+
+    const total = privateResults.length + publicResults.length;
+    emptyState?.classList.toggle("show", total === 0);
+    if (resultCount) {
+      resultCount.textContent = total === 0
+        ? ""
+        : `${privateResults.length} behandlere` + (publicResults.length > 0 ? ` · ${publicResults.length} offentlige tilbud` : "");
+    }
+
+    if (map) {
+      const bounds = [];
+      matched.forEach((p) => {
+        if (p.lat != null && p.lng != null) {
+          const m = L.marker([p.lat, p.lng], { icon: p.kind === "public" ? publicIcon : privateIcon })
+            .addTo(map)
+            .bindPopup(`<strong>${escapeHtml(p.name)}</strong><br>${escapeHtml(p.clinic)}<br>${escapeHtml(p.address)}`);
+          resultMarkers.push(m);
+          bounds.push([p.lat, p.lng]);
+        }
+      });
+      if (bounds.length > 0) map.fitBounds(bounds, { padding: [40, 40], maxZoom: 12 });
+      else map.setView(NORWAY_CENTER, 5);
+    }
+  }
+
+  chips.forEach((chip) => {
+    chip.addEventListener("click", () => {
+      chip.classList.toggle("active");
+      if (chip.classList.contains("active")) activeChips.add(chip.dataset.tag);
+      else activeChips.delete(chip.dataset.tag);
+      filter();
+    });
+  });
+
+  searchInput?.addEventListener("input", filter);
+  professionFilter?.addEventListener("change", filter);
+  filter();
 </script>
 
 <style>
   .hero-simple { padding: 56px 0 90px; position: relative; overflow: hidden; text-align: center; }
   .hero-simple .container { max-width: 640px; }
   .eyebrow { font-size: 0.82rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 10px; display: inline-block; }
-  .lead { font-size: 1.05rem; }
+  .eyebrow.center { display: block; text-align: center; }
+  .lead { font-size: 1.05rem; color: var(--ink-soft); }
   .hero-wave { position: absolute; bottom: -2px; left: 0; width: 100%; line-height: 0; }
 
   .section-alt { background: var(--paper); padding: 60px 0; }
-  .section-alt.no-top { padding-top: 0; padding-bottom: 60px; }
+  .section-alt.no-top { padding-top: 0; padding-bottom: 70px; }
   .section-beige { background: var(--beige); padding: 60px 0; }
+  .section-featured { background: #ece3d1; padding: 60px 0; }
+  .section-cta { background: var(--navy); color: #fff; padding: 48px 0; }
 
-  .practitioner-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
-  .bio-card {
-    display: grid;
-    grid-template-columns: 140px 1fr;
-    gap: 20px;
-    align-items: center;
-    background: #fff;
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    padding: 24px;
-    box-shadow: 0 18px 42px rgba(22, 56, 117, 0.08);
+  .section-head { max-width: 620px; margin: 0 auto 30px; text-align: center; }
+  .section-head h2 { font-size: clamp(1.4rem, 2.6vw, 1.9rem); }
+  .section-head p { color: var(--ink-soft); margin-top: 8px; }
+  .public-head { margin-top: 48px; }
+
+  /* SØK */
+  .search-panel {
+    background: #fff; border: 1px solid var(--line); border-radius: var(--radius);
+    box-shadow: 0 10px 28px rgba(22, 56, 117, 0.1); padding: 20px; max-width: 900px; margin: 0 auto 8px;
   }
-  .bio-photo { width: 100%; border-radius: var(--radius-sm); object-fit: cover; aspect-ratio: 4/5; }
-  .bio-card h3 { margin: 0 0 4px; }
-  .p-title { color: var(--turquoise); font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.04em; margin: 0 0 6px; }
-  .p-clinic { margin: 0 0 2px; color: var(--ink); font-weight: 600; }
-  .p-address { margin: 0 0 12px; color: var(--ink-soft); font-size: 0.9rem; }
-  .p-links { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
-  .btn-sm { padding: 9px 18px; font-size: 0.86rem; }
-
-  @media (max-width: 520px) {
-    .bio-card { grid-template-columns: 1fr; text-align: center; }
-    .p-links { align-items: center; }
+  .search-row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .search-input-wrap { flex: 1 1 240px; position: relative; }
+  .search-input-wrap .icon { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: var(--ink-soft); pointer-events: none; }
+  .search-input-wrap input {
+    width: 100%; padding: 12px 14px 12px 40px; border: 1px solid var(--line); border-radius: var(--radius-sm);
+    font-family: var(--font-body); font-size: 0.94rem; background: var(--sky); color: var(--ink);
   }
+  .search-panel select {
+    flex: 1 1 170px; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius-sm);
+    font-family: var(--font-body); font-size: 0.94rem; background: var(--sky); color: var(--ink);
+  }
+  .filter-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+  .chip {
+    border: 1px solid var(--line); background: #fff; color: var(--ink-soft); font-size: 0.84rem; font-weight: 600;
+    padding: 7px 14px; border-radius: 999px; cursor: pointer; font-family: var(--font-body); min-height: 36px;
+  }
+  .chip.active { background: var(--navy); border-color: var(--navy); color: #fff; }
+  .result-count { margin-top: 14px; font-size: 0.86rem; color: var(--ink-soft); text-align: center; min-height: 1.2em; }
 
-  .map { height: 420px; border-radius: var(--radius); overflow: hidden; margin-top: 20px; background: #fff; }
-  .map-empty { padding: 24px; text-align: center; color: var(--ink-soft); }
+  .search-hint {
+    max-width: 900px; margin: 28px auto 0; text-align: center; background: var(--sky);
+    border: 1px dashed var(--line); border-radius: var(--radius); padding: 32px 20px; color: var(--ink-soft); font-size: 0.92rem;
+  }
+  .search-hint strong { display: block; color: var(--navy); font-size: 1.02rem; margin-bottom: 6px; }
+
+  /* RESULTATKORT */
+  .practitioner-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 22px; max-width: 940px; margin: 20px auto 0; }
+  :global(.p-card) {
+    background: #fff; border: 1px solid var(--line); border-radius: var(--radius-sm); overflow: hidden;
+    box-shadow: 0 10px 28px rgba(22, 56, 117, 0.08); display: flex; flex-direction: column; position: relative;
+  }
+  :global(.p-photo) {
+    aspect-ratio: 4/3; position: relative; background: linear-gradient(135deg, var(--sky), var(--beige));
+    display: flex; align-items: center; justify-content: center;
+  }
+  :global(.p-photo img) { width: 100%; height: 100%; object-fit: cover; }
+  :global(.ph-fallback) { color: var(--navy); font-family: var(--font-display); font-size: 1.4rem; font-weight: 600; }
+  :global(.p-body) { padding: 20px; }
+  :global(.p-body h3) { color: var(--navy); font-size: 1.02rem; font-weight: 600; margin: 0; }
+  :global(.p-role) { color: var(--accent); font-size: 0.78rem; font-weight: 600; margin-top: 2px; }
+  :global(.p-clinic) { margin-top: 10px; font-size: 0.86rem; color: var(--ink-soft); }
+  :global(.p-clinic strong) { display: block; color: var(--ink); font-weight: 600; font-size: 0.86rem; }
+  :global(.p-tags) { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+  :global(.p-tag) { font-size: 0.7rem; background: var(--sky); color: var(--navy); padding: 4px 9px; border-radius: 999px; font-weight: 600; }
+  :global(.p-tag.equip) { background: var(--beige); color: #7a5a1e; }
+  :global(.p-tag.access) { background: #f0eaff; color: #5b3fa0; }
+  :global(.p-verif) { margin-top: 10px; font-size: 0.7rem; color: var(--ink-soft); display: flex; align-items: center; gap: 5px; }
+  :global(.p-verif .badge) {
+    width: 16px; height: 16px; border-radius: 50%; background: var(--line); display: inline-flex; align-items: center;
+    justify-content: center; font-size: 0.6rem; font-weight: 700; color: var(--ink-soft); flex-shrink: 0;
+  }
+  :global(.p-source) { margin-top: 6px; font-size: 0.7rem; }
+  :global(.p-source a) { color: var(--ink-soft); text-decoration: underline; }
+  :global(.p-actions) { margin-top: 16px; display: flex; gap: 10px; }
+  :global(.p-btn) { flex: 1; text-align: center; padding: 9px 0; border-radius: 999px; font-size: 0.8rem; font-weight: 600; text-decoration: none; min-height: 36px; }
+  :global(.p-btn.primary) { background: var(--navy); color: #fff; }
+  :global(.p-btn.secondary) { background: var(--sky); color: var(--navy); }
+
+  :global(.p-card.public) { border-style: dashed; background: var(--sky); }
+  :global(.public-note) { background: var(--beige); color: #7a5a1e; font-size: 0.7rem; font-weight: 600; padding: 4px 9px; border-radius: 999px; display: inline-block; }
+
+  .empty-state { display: none; text-align: center; padding: 40px 20px; color: var(--ink-soft); max-width: 900px; margin: 20px auto 0; }
+  .empty-state.show { display: block; }
+
+  /* KART */
+  .map { height: 420px; border-radius: var(--radius); overflow: hidden; background: #fff; box-shadow: 0 10px 28px rgba(22, 56, 117, 0.08); }
+
+  /* FREMHEVET */
+  .featured-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 16px; max-width: 960px; margin: 0 auto; }
+  :global(.p-card.premium) { border: 2px solid var(--accent); box-shadow: 0 14px 34px rgba(47, 121, 201, 0.2); }
+  :global(.premium-badge) {
+    position: absolute; top: 10px; right: 10px; background: var(--navy); color: #fff; font-size: 0.66rem; font-weight: 700;
+    letter-spacing: 0.04em; text-transform: uppercase; padding: 5px 10px; border-radius: 999px; z-index: 2;
+  }
+  :global(.premium-badge.muted) { background: var(--ink-soft); }
+  :global(.p-card.compact .p-photo) { aspect-ratio: 16/10; }
+  :global(.p-card.compact .p-body) { padding: 14px 14px 16px; }
+  :global(.p-card.compact h3) { font-size: 0.92rem; }
+  :global(.p-card.compact .p-role) { font-size: 0.7rem; }
+  :global(.p-card.compact .p-clinic) { font-size: 0.76rem; margin-top: 6px; }
+  :global(.p-card.compact .p-tags) { margin-top: 8px; }
+  :global(.p-card.compact .p-tag) { font-size: 0.62rem; padding: 3px 8px; }
+  :global(.p-card.compact .p-actions) { margin-top: 10px; }
+  :global(.p-card.compact .p-btn) { padding: 7px 0; font-size: 0.72rem; }
+  :global(.slot-empty) { opacity: 0.6; }
+
+  /* CTA */
+  .section-cta .cta-inner { display: flex; gap: 24px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+  .section-cta h2 { color: #fff; margin-bottom: 6px; }
+  .section-cta .sub { color: #d9e9f6; margin: 0; }
+  .btn-outline { background: var(--beige); color: var(--navy); }
+
+  @media (max-width: 720px) {
+    .search-row { flex-direction: column; }
+    .section-cta .cta-inner { flex-direction: column; align-items: flex-start; }
+  }
 </style>

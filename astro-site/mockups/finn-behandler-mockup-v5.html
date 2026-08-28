@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Finn behandler – Krystallsykehjelpen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+  :root{
+    --navy:#163875; --navy-2:#1e4c96; --sky:#eff4fb; --accent:#2f79c9;
+    --beige:#f4eee3; --beige-deep:#e9e0cf; --white:#ffffff; --ink:#1c2a3a;
+    --ink-soft:#51606f; --border:#e2ddd0; --shadow:0 10px 28px -16px rgba(22,56,117,.25);
+    --max:1100px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Public Sans',sans-serif;color:var(--ink);background:var(--white);line-height:1.65;}
+  h1,h2,h3,.fraunces{font-family:'Fraunces',serif;}
+  img{max-width:100%;display:block;}
+  a{color:var(--accent);}
+  .wrap{max-width:var(--max);margin:0 auto;padding:0 clamp(20px,5vw,32px);}
+
+  header{background:var(--white);border-bottom:1px solid var(--border);padding:16px 0;}
+  header .wrap{display:flex;align-items:center;justify-content:space-between;}
+  .brand{display:flex;align-items:center;gap:10px;font-family:'Fraunces',serif;color:var(--navy);font-weight:600;font-size:18px;text-decoration:none;}
+  .brand .dot{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#57c2d9);}
+  nav{display:flex;gap:22px;font-size:14.5px;font-weight:500;}
+  nav a{color:var(--ink-soft);text-decoration:none;}
+  nav a.active{color:var(--navy);font-weight:600;}
+  .btn-book{background:var(--navy);color:#fff;padding:10px 18px;border-radius:30px;font-size:14px;font-weight:600;text-decoration:none;white-space:nowrap;}
+  @media(max-width:820px){nav{display:none;}}
+
+  .hero{background:var(--sky);padding:52px 0 60px;}
+  .eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:14px;}
+  .eyebrow::before{content:'';width:22px;height:2px;background:var(--accent);}
+  .hero h1{font-size:clamp(30px,4.4vw,42px);color:var(--navy);font-weight:500;line-height:1.15;max-width:620px;}
+  .hero p{margin-top:16px;max-width:560px;color:var(--ink-soft);font-size:16.5px;}
+
+  .disclaimer{background:#fff8e8;border:1px solid #f0dfa8;border-radius:10px;padding:14px 16px;font-size:13.5px;color:#6b5518;max-width:720px;margin-top:22px;}
+  .disclaimer b{display:block;margin-bottom:4px;}
+
+  section{padding:56px 0;}
+  .section-head{text-align:center;max-width:640px;margin:0 auto 32px;}
+  .section-head .eyebrow{justify-content:center;}
+  .section-head .eyebrow::before{display:none;}
+  .section-head h2{color:var(--navy);font-size:clamp(24px,3vw,30px);font-weight:500;}
+  .section-head p{color:var(--ink-soft);margin-top:10px;}
+
+  .search-panel{background:var(--white);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);padding:20px;max-width:900px;margin:0 auto 8px;}
+  .search-row{display:flex;gap:12px;flex-wrap:wrap;}
+  .search-input-wrap{flex:1 1 240px;position:relative;}
+  .search-input-wrap input{width:100%;padding:12px 14px 12px 40px;border:1px solid var(--border);border-radius:10px;font-family:inherit;font-size:14.5px;background:var(--sky);}
+  .search-input-wrap .icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--ink-soft);font-size:15px;}
+  .search-panel select{flex:1 1 170px;padding:12px 14px;border:1px solid var(--border);border-radius:10px;font-family:inherit;font-size:14.5px;background:var(--sky);color:var(--ink);}
+  .filter-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;}
+  .chip{border:1px solid var(--border);background:var(--white);color:var(--ink-soft);font-size:13px;font-weight:600;padding:7px 14px;border-radius:20px;cursor:pointer;user-select:none;}
+  .chip.active{background:var(--navy);border-color:var(--navy);color:#fff;}
+  .result-count{margin-top:14px;font-size:13.5px;color:var(--ink-soft);text-align:center;}
+
+  .search-hint{max-width:900px;margin:28px auto 0;text-align:center;background:var(--sky);border:1px dashed var(--border);border-radius:14px;padding:32px 20px;color:var(--ink-soft);font-size:14.5px;}
+  .search-hint strong{display:block;color:var(--navy);font-size:16px;margin-bottom:6px;}
+
+  .practitioner-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:22px;max-width:940px;margin:20px auto 0;}
+  .p-card{background:var(--white);border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column;position:relative;}
+  .featured-section{background:var(--beige-deep);}
+  .featured-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px;max-width:960px;margin:0 auto;}
+  .p-card.compact .p-photo{aspect-ratio:16/10;}
+  .p-card.compact .p-body{padding:14px 14px 16px;}
+  .p-card.compact h3{font-size:14.5px;}
+  .p-card.compact .p-role{font-size:11px;}
+  .p-card.compact .p-clinic{font-size:12px;margin-top:6px;}
+  .p-card.compact .p-clinic strong{font-size:12px;}
+  .p-card.compact .p-tags{margin-top:8px;}
+  .p-card.compact .p-tag{font-size:10px;padding:3px 8px;}
+  .p-card.compact .p-actions{margin-top:10px;gap:6px;}
+  .p-card.compact .p-btn{padding:7px 0;font-size:11.5px;}
+  .p-card.compact .premium-badge{font-size:9px;padding:3px 8px;top:8px;right:8px;}
+  .p-card.premium{border:2px solid var(--accent);box-shadow:0 14px 34px -14px rgba(47,121,201,.45);}
+  .premium-badge{position:absolute;top:10px;right:10px;background:var(--navy);color:#fff;font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:5px 10px;border-radius:20px;z-index:2;}
+  .p-photo{aspect-ratio:4/3;position:relative;background:linear-gradient(135deg,var(--sky),var(--beige));}
+  .p-photo .ph-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--navy);font-family:Fraunces,serif;font-size:13.5px;text-align:center;padding:10px;}
+  .p-photo .own-tag{position:absolute;top:10px;left:10px;background:rgba(47,121,201,.9);color:#fff;font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:4px 8px;border-radius:20px;}
+  .p-body{padding:20px 20px 22px;}
+  .p-body h3{color:var(--navy);font-size:17px;font-weight:600;}
+  .p-role{color:var(--accent);font-size:12.5px;font-weight:600;margin-top:2px;}
+  .p-clinic{margin-top:10px;font-size:13.5px;color:var(--ink-soft);}
+  .p-clinic strong{display:block;color:var(--ink);font-weight:600;font-size:13.5px;}
+  .p-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;}
+  .p-tag{font-size:11px;background:var(--sky);color:var(--navy);padding:4px 9px;border-radius:20px;font-weight:600;}
+  .p-tag.equip{background:var(--beige);color:#7a5a1e;}
+  .p-tag.access{background:#f0eaff;color:#5b3fa0;}
+  .p-verif{margin-top:10px;font-size:11px;color:var(--ink-soft);display:flex;align-items:center;gap:5px;}
+  .p-verif .badge{width:16px;height:16px;border-radius:50%;background:var(--border);display:inline-flex;align-items:center;justify-content:center;font-size:9.5px;font-weight:700;color:var(--ink-soft);flex-shrink:0;}
+  .p-source{margin-top:6px;font-size:11px;}
+  .p-source a{color:var(--ink-soft);text-decoration:underline;}
+  .p-actions{margin-top:16px;display:flex;gap:10px;}
+  .p-btn{flex:1;text-align:center;padding:9px 0;border-radius:30px;font-size:13px;font-weight:600;text-decoration:none;}
+  .p-btn.primary{background:var(--navy);color:#fff;}
+  .p-btn.secondary{background:var(--sky);color:var(--navy);}
+
+  .p-card.public{border-style:dashed;background:var(--sky);}
+  .public-note{background:var(--beige);color:#7a5a1e;font-size:11px;font-weight:600;padding:4px 9px;border-radius:20px;display:inline-block;}
+
+  .empty-state{display:none;text-align:center;padding:40px 20px;color:var(--ink-soft);max-width:900px;margin:20px auto 0;}
+  .empty-state.show{display:block;}
+
+  .map-section{background:var(--sky);}
+  .map-wrap{display:grid;grid-template-columns:1.1fr 1fr;gap:32px;align-items:stretch;max-width:1000px;margin:0 auto;}
+  @media(max-width:800px){.map-wrap{grid-template-columns:1fr;}}
+  #map{width:100%;height:100%;min-height:380px;border-radius:14px;box-shadow:var(--shadow);border:1px solid var(--border);}
+  .map-info{background:var(--white);border-radius:14px;box-shadow:var(--shadow);padding:26px;display:flex;flex-direction:column;justify-content:center;}
+  .map-info h3{color:var(--navy);font-size:19px;font-weight:600;}
+  .map-info .addr-line{display:flex;gap:10px;margin-top:8px;color:var(--ink-soft);font-size:14px;}
+  .map-info .btn-book{align-self:flex-start;margin-top:18px;}
+
+  .cta-band{background:var(--beige);text-align:center;padding:52px 0;}
+  .cta-band h2{color:var(--navy);font-size:clamp(22px,3vw,28px);font-weight:500;}
+  .cta-band p{color:var(--ink-soft);margin-top:10px;}
+  .cta-band .btn-book{display:inline-block;margin-top:20px;}
+
+  footer{background:var(--navy);color:#cfd9ec;padding:36px 0 22px;font-size:14px;}
+  footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:22px;}
+  footer h4{color:#fff;font-size:15px;margin-bottom:8px;font-weight:600;}
+  footer a{color:#cfd9ec;text-decoration:none;}
+  .foot-bottom{text-align:center;margin-top:24px;font-size:12.5px;color:#8fa2c7;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <a href="#" class="brand"><span class="dot"></span>Krystallsykehjelpen</a>
+    <nav>
+      <a href="#">Hjem</a>
+      <a href="#">Om Krystallsykehjelpen</a>
+      <a href="#">Krystallsyken</a>
+      <a href="#">Øvelsesbibliotek</a>
+      <a href="#" class="active">Finn behandler</a>
+      <a href="#">Kontakt oss</a>
+    </nav>
+    <a href="#" class="btn-book">Bestill time →</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Behandlere i Norge</div>
+    <h1>Finn din behandler</h1>
+    <p>Søk på navn, sted eller behandlingstype for å finne en behandler for krystallsyke og svimmelhet nær deg.</p>
+    <div class="disclaimer">
+      <b>⚠️ Til Marie:</b>
+      Disse 65 oppføringene er hentet fra arbeidslisten din (svimmelhet_krystallsyke_norge.xlsx). Ingen av dem er kontaktet ennå. Merking per kort viser kilde og verifiseringsnivå (A/B/C fra arket), slik at du ser nøyaktig hvem som fortsatt trenger «kontakt før publisering» eller «be om navn og samtykke» før dette går live. Kortene vises kun når noen søker — ingen full liste vises ved innlasting, slik du ba om.
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Søk i Norge</div>
+      <h2>Finn en behandler</h2>
+      <p>65 oppføringer fra offentlig tilgjengelige kilder — søk for å utforske.</p>
+      <p style="margin-top:8px;font-size:13.5px;color:var(--ink-soft);">Vi viser både private klinikker og offentlige tilbud. Offentlige tilbud krever henvisning fra fastlege.</p>
+    </div>
+
+    <div class="search-panel">
+      <div class="search-row">
+        <div class="search-input-wrap">
+          <span class="icon">🔍</span>
+          <input id="searchInput" type="text" placeholder="Søk på navn, sted eller klinikk (f.eks. «Bergen» eller «Nor Klinikken»)">
+        </div>
+        <select id="professionFilter">
+          <option value="">Alle profesjoner</option>
+          <option value="kiropraktor">Kiropraktor</option>
+          <option value="fysioterapeut">Fysioterapeut</option>
+          <option value="manuellterapeut">Manuellterapeut</option>
+          <option value="naprapat">Naprapat</option>
+          <option value="tverrfaglig">Tverrfaglig senter</option>
+          <option value="onh">Lege / ØNH</option>
+          <option value="offentlig">Offentlig / sykehus</option>
+        </select>
+      </div>
+      <div class="filter-chips" id="treatmentChips">
+        <span class="chip" data-tag="krystallsyke">Krystallsyke</span>
+        <span class="chip" data-tag="svimmelhet">Svimmelhet</span>
+      </div>
+      <div class="result-count" id="resultCount"></div>
+    </div>
+
+    <div class="search-hint" id="searchHint">
+      <strong>Søk over for å se behandlere</strong>
+      Skriv et sted, navn eller klinikk — eller velg profesjon/behandlingstype — for å utforske de 65 oppføringene.
+    </div>
+
+    <div class="practitioner-grid" id="grid"></div>
+
+    <div id="publicSection" style="display:none;">
+      <div class="section-head" style="margin-top:48px;">
+        <div class="eyebrow">Krever henvisning</div>
+        <h2>Offentlige tilbud</h2>
+        <p>Sykehus- og rehabiliteringstilbud. Du kan ikke bestille time direkte her — snakk med fastlegen din om henvisning.</p>
+      </div>
+      <div class="practitioner-grid" id="gridPublic"></div>
+    </div>
+
+    <div class="empty-state" id="emptyState">
+      Ingen behandlere matcher søket ditt. Prøv et annet sted, navn eller filter.
+    </div>
+  </div>
+</section>
+
+<section class="map-section">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Kart</div>
+      <h2>Se behandlerne på kartet</h2>
+      <p>Kartet oppdateres med søkeresultatene over.</p>
+    </div>
+    <div id="map" style="width:100%;height:420px;border-radius:14px;box-shadow:var(--shadow);border:1px solid var(--border);"></div>
+  </div>
+</section>
+
+<section class="featured-section">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Fremhevet</div>
+      <h2>Fremhevede behandlere</h2>
+      <p>Betalte, fremhevede oppføringer — tydelig merket. Vises her uavhengig av søk over.</p>
+    </div>
+    <div class="featured-grid">
+
+      <div class="p-card premium compact" style="position:relative;">
+        <span class="premium-badge">⭐ Fremhevet</span>
+        <div class="p-photo"><div class="ph-fallback">[ Eksempel ]</div></div>
+        <div class="p-body">
+          <h3>Eksempelklinikken</h3>
+          <div class="p-role">Kiropraktor</div>
+          <div class="p-clinic"><strong>Eksempelklinikken AS</strong>Storgata 1, Bergen</div>
+          <div class="p-tags"><span class="p-tag">Krystallsyke</span><span class="p-tag">Svimmelhet</span></div>
+          <div class="p-actions">
+            <a href="#" class="p-btn primary">Bestill time</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-card premium compact" style="position:relative;">
+        <span class="premium-badge">⭐ Fremhevet</span>
+        <div class="p-photo"><div class="ph-fallback">[ Eksempel ]</div></div>
+        <div class="p-body">
+          <h3>Nordkystklinikken</h3>
+          <div class="p-role">Fysioterapeut</div>
+          <div class="p-clinic"><strong>Nordkystklinikken</strong>Kaigata 4, Ålesund</div>
+          <div class="p-tags"><span class="p-tag">Krystallsyke</span><span class="p-tag">Svimmelhet</span></div>
+          <div class="p-actions">
+            <a href="#" class="p-btn primary">Bestill time</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-card premium compact" style="position:relative;opacity:.55;">
+        <span class="premium-badge" style="background:var(--ink-soft);">Ledig</span>
+        <div class="p-photo"><div class="ph-fallback">[ Ledig plass ]</div></div>
+        <div class="p-body">
+          <h3>Bli fremhevet</h3>
+          <div class="p-role">Ta kontakt for priser</div>
+          <div class="p-clinic"><strong>mariekiropraktor@gmail.com</strong></div>
+        </div>
+      </div>
+
+      <div class="p-card premium compact" style="position:relative;opacity:.55;">
+        <span class="premium-badge" style="background:var(--ink-soft);">Ledig</span>
+        <div class="p-photo"><div class="ph-fallback">[ Ledig plass ]</div></div>
+        <div class="p-body">
+          <h3>Bli fremhevet</h3>
+          <div class="p-role">Ta kontakt for priser</div>
+          <div class="p-clinic"><strong>mariekiropraktor@gmail.com</strong></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="cta-band">
+  <div class="wrap">
+    <h2>Klar til å bli kvitt svimmelheten?</h2>
+    <p>Bestill en time hos Krystallsykehjelpen i dag.</p>
+    <a href="#" class="btn-book">Bestill time →</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <h4>Krystallsykehjelpen</h4>
+      <p>Klinikk-, hjemme- og telefonkonsultasjoner for krystallsyke og svimmelhet i Fetsund.</p>
+    </div>
+    <div>
+      <h4>Snarveier</h4>
+      <a href="#">Om Krystallsykehjelpen</a><br>
+      <a href="#">Krystallsyken</a><br>
+      <a href="#">Finn behandler</a>
+    </div>
+    <div>
+      <h4>Kontakt</h4>
+      <a href="tel:+4746384492">+47 46384492</a><br>
+      <a href="mailto:mariekiropraktor@gmail.com">mariekiropraktor@gmail.com</a><br>
+      Garderbakken 1, Fetsund
+    </div>
+  </div>
+  <div class="foot-bottom">© 2026 Krystallsykehjelpen</div>
+</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  const ENTRIES = [{"name": "Catharina Gjerde Håkonsen", "role": "Kiropraktor", "clinic": "Svimmelhetsgruppen", "sted": "Oslo", "address": "Oslo (159)", "profession": "kiropraktor", "tags": ["krystallsyke", "svimmelhet"], "equip": ["TRV-stol", "VNG/Frenzel"], "access": "Privat", "verif": "A", "source": "https://www.svimmelhetsgruppen.no/om-oss", "lat": 59.9139, "lng": 10.7522, "kind": "private"}, {"name": "Halvor Brochmann", "role": "Kiropraktor", "clinic": "Svimmelhetsgruppen", "sted": "Oslo", "address": "Oslo (159)", "profession": "kiropraktor", "tags": ["krystallsyke", "svimmelhet"], "equip": ["TRV-stol", "VNG/Frenzel"], "access": "Privat", "verif": "A", "source": "https://www.svimmelhetsgruppen.no/om-oss", "lat": 59.9139, "lng": 10.7522, "kind": "private"}, {"name": "Karl Nordfalk", "role": "ØNH-lege", "clinic": "Nordfalk ØNH / Svimmelhetsgruppen", "sted": "Oslo", "address": "Oslo (159)", "profession": "onh", "tags": ["svimmelhet"], "equip": [], "access": "Avtalespesialist/privat – avklar vilkår", "verif": "A", "source": "https://www.nordfalkonh.no/", "lat": 59.9139, "lng": 10.7522, "kind": "private"}, {"name": "Limbra Skøyen", "role": "Kiropraktor / fysioterapeut", "clinic": "Limbra Skøyen", "sted": "Oslo", "address": "Oslo (275)", "profession": "tverrfaglig", "tags": ["svimmelhet"], "equip": [], "access": "Privat", "verif": "B", "source": "https://limbra.no/kompetansesentre/svimmelhet/", "lat": 59.9145, "lng": 10.687, "kind": "private"}, {"name": "Limbra Majorstuen", "role": "Kiropraktor / fysioterapeut", "clinic": "Limbra Majorstuen", "sted": "Oslo", "address": "Oslo (363)", "profession": "tverrfaglig", "tags": ["svimmelhet"], "equip": [], "access": "Privat", "verif": "B", "source": "https://limbra.no/kompetansesentre/svimmelhet/", "lat": 59.9284, "lng": 10.7133, "kind": "private"}, {"name": "Johannes Nygaard Nilsen", "role": "Kiropraktor", "clinic": "NEMUS Smestad / Ullevål Kiropraktorklinikk", "sted": "Oslo", "address": "Oslo (377)", "profession": "kiropraktor", "tags": ["svimmelhet"], "equip": [], "access": "Privat", "verif": "A", "source": "https://www.ullevalkiropraktor.no/om-oss/", "lat": 59.943, "lng": 10.713, "kind": "private"}, {"name": "Toralf Wollkert Thomassen", "role": "Kiropraktor og fysioterapeut", "clinic": "Din Helse Nydalen", "sted": "Oslo", "address": "Oslo (468)", "profession": "tverrfaglig", "tags": ["krystallsyke"], "equip": [], "access": "Privat", "verif": "A", "source": "https://dhn.no/krystallsyke-behandling/", "lat": 59.95, "lng": 10.766, "kind": "private"}, {"name": "Lovisa Klingenberg", "role": "Kiropraktor", "clinic": "Dr.Dropin Økern", "sted": "Oslo", "address": "Oslo (581)", "profession": "kiropraktor", "tags": ["krystallsyke", "svimmelhet"], "equip": [], "access": "Privat", "verif": "A", "source": "https://www.drdropin.no/fysikalsk/behandlere/lovisa-klingenberg", "lat": 59.933, "lng": 10.81, "kind": "private"}, {"name": "Narve Bjørneseth", "role": "Fysioterapeut", "clinic": "Apexklinikken", "sted": "Oslo", "address": "Oslo (661)", "profession": "fysioterapeut", "tags": ["krystallsyke", "svimmelhet"], "equip": [], "access": "Privat", "verif": "A", "source": "https://www.apexklinikken.no/behandling/svimmelhet-og-krystallsyke", "lat": 59.9089, "lng": 10.793, "kind": "private"}, {"name": "Lars Martin Fischer", "role": "Fysioterapeut og osteopat", "clinic": "Apexklinikken", "sted": "Oslo", "address": "Oslo (661)", "profession": "tverrfaglig", "tags": ["krystallsyke", "svimmelhet"], "equip": [], "access": "Privat", "verif": "A", "source": "https://www.apexklinikken.no/behandling/svimmelhet-og-krystallsyke", "lat": 59.9089, "lng": 10.793, "kind": "private"}, {"name": "Martin Pran", "role": "Kiropraktor", "clinic": "Apexklinikken", "sted": "Oslo", "address": "Oslo (661)", "profession": "kiropraktor", "tags": ["krystallsyke", "svimmelhet"], "equip": [], "access": "Privat", "verif": "A", "source": "https://www.apexklinikken.no/behandling/svimmelhet-og-krystallsyke", "lat": 59.9089, "lng": 10.793, "kind": "private"}, {"name": "Audun Rønning", "role": "Kiropraktor MSc / svimmelhetsterapeut", "clinic": "Sandvika Svimmelhetssenter", "sted": "Sandvika", "address": "Sandvika (1337)", "profession": "kiropraktor", "tags": ["svimmelhet"], "equip": [], "access": "Privat", "verif": "A", "source": "https://www.sandvikasvimmelhetssenter.no/behandlerne", "lat": 59.8917, "lng": 10.5273, "kind": "private"}, {"name": "Håvard Tønnessen", "role": "Kiropraktor MSc / svimmelhetsterapeut", "clinic": "Sandvika Svimmelhetssenter", "sted": "Sandvika", "address": "Sandvika (1337)", "profession": "kiropraktor", "tags": ["svimmelhet"], "equip": [], "access": "Privat", "verif": "A", "source": "https://www.sandvikasvimmelhetssenter.no/behandlerne", "lat": 59.8917, "lng": 10.5273, "kind": "private"}, {"name": "Martin Olsen Ulseth", "role": "Fysioterapeut / svimmelhetsterapeut", "clinic": "Høvikklinikken", "sted": "Høvik", "address": "Høvik (1363)", "profession": "fysioterapeut", "tags": ["krystallsyke", "svimmelhet"], "equip": [], "access": "Privat", "verif": "A", "source": "https://hovikklinikken.no/om-oss/fysioterapeut-martin-ulseth/", "lat": 59.8975, "lng": 10.592, "kind": "private"}, {"name": "Håvard Tønnessen", "role": "Kiropraktor / svimmelhetsterapeut", "clinic": "Høvikklinikken", "sted": "Høvik", "address": "Høvik (1363)", "profession": "kiropraktor", "tags": ["svimmelhet"], "equip": [], "access": "Privat", "verif": "A", "source": "https://hovikklinikken.no/om-oss/kiropraktor-havard-tonnessen/", "lat": 59.8975, "lng": 10.592, "kind": "private"}, {"name": "Rafael Mathisen", "role": "Kiropraktor", "clinic": "Follo Medical", "sted": "Ski", "address": "Ski (1400)", "profession": "kiropraktor", "tags": ["krystallsyke", "svimmelhet"], "equip": [], "access": "Privat", "verif": "A", "source": "https://www.follomedical.no/rafael-mathisen", "lat": 59.7186, "lng": 10.8347, "kind": "private"}, {"name": "Limbra Ski stasjon", "role": "Kiropraktor / fysioterapeut", "clinic": "Limbra Ski stasjon", "sted": "Ski", "address": "Ski (1400)", "profession": "tverrfaglig", "tags": ["svimmelhet"], "equip": [], "access": "Privat", "verif": "B", "source": "https://limbra.no/kompetansesentre/svimmelhet/", "lat": 59.7186, "lng": 10.8347, "kind": "private"}, {"name": "Vansjøklinikken", "role": "Kiropraktor / fysioterapeut", "clinic": "Vansjøklinikken", "sted": "Moss", "address": "Moss (1523)", "profession": "tverrfaglig", "tags": ["krystallsyke", "svimmelhet"], "equip": [], "access": "Privat", "verif": "B", "source": "https://www.vansjoklinikken.no/svimmelhet-og-krystallsyke/", "lat": 59.4342, "lng": 10.6579, "kind": "private"}, {"name": "Fredrikstad Rygg- og Leddsenter", "role": "Kiropraktor / fysioterapeut", "clinic": "Fredrikstad Rygg- og Leddsenter", "sted": "Fredrikstad", "address": "Fredrikstad (1605)", "profession": "tverrfaglig", "tags": ["svimmelhet"], "equip": [], "access": "Privat", "verif": "B", "source": "https://www.frl.no/diagnoser/svimmelhet/", "lat": 59.2181, "lng": 10.9298, "kind": "private"}, {"name": "Sarpsborg Kiropraktorklinikk", "role": "Kiropraktor", "clinic": "Sarpsborg Kiropraktorklinikk", "sted": "Grålum", "address": "Grålum (1712)", "profession": "kiropraktor", "tags": ["svimmelhet"], "equip": [], "access": "Privat", "verif": "B", "source": "https://sarpsborgkiropraktorklinikk.no/svimmelhet-og-balanseutfordringer", "lat": 59.2833, "lng": 11.1167, "kind": "private"}, {"name": "Mathilde Norbakke Bergstrøm", "role": "Kiropraktor", "clinic": "Limbra Sarpsborg", "sted": "Sarpsborg", "address": "Sarpsborg (1721)", "profession": "kiropraktor", "tags": ["svimmelhet"], "equip": [], "access": "Privat", "verif": "A", "source": "https://limbra.no/terapeuter/mathilde-norbakke-bergstrom/", "lat": 59.2839, "lng": 11.1097, "kind": "private"}, {"name": "Mathilde Norbakke Bergstrøm", "role": "Kiropraktor", "clinic": "Limbra Halden", "sted": "Halden", "address": "Halden (1767)", "profession": "kiropraktor", "tags": ["svimmelhet"], "equip": [], "access": "Privat", "verif": "A", "source": "https://limbra.no/terapeuter/mathilde-norbakke-bergstrom/", "lat": 59.133, "lng": 11.3875, "kind": "private"}, {"name": "Malin Olsrud Åslie", "role": "Fysioterapeut / svimmelhet- og balanseterapeut", "clinic": "Vollaklinikken Svimmelhetssenter", "sted": "Lillestrøm", "address": "Lillestrøm (2000)", "profession": "fysioterapeut", "tags": ["svimmelhet"], "equip": [], "access": "Privat", "verif": "A", "source": "https://www.vollaklinikken.no/svimmelhetssenteret/", "lat": 59.9556, "lng": 11.0477, "kind": "private"}, {"name": "Catharina Gjerde Håkonsen", "role": "Kiropraktor / svimmelhet- og balanseterapeut", "clinic": "Vollaklinikken Svimmelhetssenter", "sted": "Lillestrøm", "address": "Lillestrøm (2000)", "profession": "kiropraktor", "tags": ["svimmelhet"], "equip": [], "access": "Privat", "verif": "A", "source": "https://www.vollaklinikken.no/svimmelhetssenteret/", "lat": 59.9556, "lng": 11.0477, "kind": "private"}, {"name": "Hege Grøndahl", "role": "Fysioterapeut", "clinic": "Lillestrøm Fysikalske Institutt", "sted": "Lillestrøm", "address": "Lillestrøm (2003)", "profession": "fysioterapeut", "tags": ["krystallsyke", "svimmelhet"], "equip": [], "access": "Offentlig avtale – avklar vilkår", "verif": "A", "source": "https://lfi.no/fysikalske-tjenester/behandling-mot-svimmelhelt-balanseproblemer-og-krystallsyke-bppv/", "lat": 59.9556, "lng": 11.0477, "kind": "private"}, {"name": "NEMUS Hamar", "role": "Kiropraktor / fysioterapeut", "clinic": "NEMUS Hamar", "sted": "Hamar", "address": "Hamar (2319)", "profession": "tverrfaglig", "tags": ["krystallsyke", "svimmelhet"], "equip": [], "access": "Privat", "verif": "B", "source": "https://nemus.no/klinikk/nemus-hamar/", "lat": 60.7945, "lng": 11.068, "kind": "private"}, {"name": "Gro Røsok", "role": "Kiropraktor", "clinic": "Kiropraktorhuset Elverum", "sted": "Elverum", "address": "Elverum (2408)", "profession": "kiropraktor", "tags": ["krystallsyke", "svimmelhet"], "equip": [], "access": "Privat", "verif": "A", "source": "https://kirohuset.no/gro-rosok", "lat": 60.8817, "lng": 11.5623, "kind": "private"}, {"name": "Åssiden Kiropraktorsenter", "role": "Kiropraktor", "clinic": "Åssiden Kiropraktorsenter", "sted": "Drammen", "address": "Drammen (3027)", "profession": "kiropraktor", "tags": ["krystallsyke", "svimmelhet"], "equip": [], "access": "Privat", "verif": "B", "source": "https://aassidenkiropraktorsenter.no/krystallsyke-behandling-svimmelhet/", "lat": 59.744, "lng": 10.2045, "kind": "private"}, {"name": "Mjøndalen Kiropraktorsenter", "role": "Kiropraktor", "clinic": "Mjøndalen Kiropraktorsenter", "sted": "Mjøndalen", "address": "Mjøndalen (3050)", "profession": "kiropraktor", "tags": ["krystallsyke", "svimmelhet"], "equip": [], "access": "Privat", "verif": "B", "source": "https://aassidenkiropraktorsenter.no/krystallsyke-behandling-svimmelhet/", "lat": 59.75, "lng": 9.9833, "kind": "private"}, {"name": "Per Thomas Mørk", "role": "Naprapat", "clinic": "Sandefjord Helsepark / Naprapat & Helse", "sted": "Sandefjord", "address": "Sandefjord (3208)", "profession": "naprapat", "tags": ["krystallsyke", "svimmelhet"], "equip": [], "access": "Privat", "verif": "A", "source": "https://naprapatoghelse.no/svimmelhet-2/design-uten-navn-1/", "lat": 59.133, "lng": 10.2167, "kind": "private"}, {"name": "Ole Kjetil Vik", "role": "Kiropraktor og fysioterapeut", "clinic": "Hønefoss Kiropraktikk og Rehabilitering", "sted": "Hønefoss", "address": "Hønefoss (3513)", "profession": "tverrfaglig", "tags": ["svimmelhet"], "equip": ["TRV-stol"], "access": "Privat", "verif": "A", "source": "https://www.honefosskiropraktikk.no/", "lat": 60.169, "lng": 10.258, "kind": "private"}, {"name": "Kristi Søndenå", "role": "Kiropraktor", "clinic": "Balansehuset", "sted": "Stavanger", "address": "Stavanger (4016)", "profession": "kiropraktor", "tags": ["krystallsyke", "svimmelhet"], "equip": [], "access": "Privat", "verif": "A", "source": "https://www.balansehuset.no/kontakt-oss", "lat": 58.97, "lng": 5.7331, "kind": "private"}, {"name": "Silje Kristensen", "role": "Kiropraktor", "clinic": "Balansehuset", "sted": "Stavanger", "address": "Stavanger (4016)", "profession": "kiropraktor", "tags": ["krystallsyke", "svimmelhet"], "equip": [], "access": "Privat", "verif": "A", "source": "https://www.balansehuset.no/kontakt-oss", "lat": 58.97, "lng": 5.7331, "kind": "private"}, {"name": "Elisabeth Espedal", "role": "Nevrokiropraktor (DACNB)", "clinic": "Balansehuset", "sted": "Stavanger", "address": "Stavanger (4016)", "profession": "kiropraktor", "tags": ["krystallsyke", "svimmelhet"], "equip": ["TRV-stol"], "access": "Privat", "verif": "A", "source": "https://www.balansehuset.no/kontakt-oss", "lat": 58.97, "lng": 5.7331, "kind": "private"}, {"name": "Henning Winkels", "role": "Nevrokiropraktor (DACNB)", "clinic": "Balansehuset", "sted": "Stavanger", "address": "Stavanger (4016)", "profession": "kiropraktor", "tags": ["krystallsyke", "svimmelhet"], "equip": ["TRV-stol"], "access": "Privat", "verif": "A", "source": "https://www.balansehuset.no/kontakt-oss", "lat": 58.97, "lng": 5.7331, "kind": "private"}, {"name": "Limbra Sola", "role": "Kiropraktor / fysioterapeut", "clinic": "Limbra Sola", "sted": "Sola", "address": "Sola (4050)", "profession": "tverrfaglig", "tags": ["svimmelhet"], "equip": [], "access": "Privat", "verif": "B", "source": "https://limbra.no/kompetansesentre/svimmelhet/", "lat": 58.88, "lng": 5.61, "kind": "private"}, {"name": "Daniel Dyrstad", "role": "Kiropraktor", "clinic": "Nor Klinikken", "sted": "Sandnes", "address": "Sandnes (4306)", "profession": "kiropraktor", "tags": ["krystallsyke"], "equip": [], "access": "Privat", "verif": "A", "source": "https://norklinikken.no/sandnes/krystallsyke-behandling/", "lat": 58.8517, "lng": 5.735, "kind": "private"}, {"name": "Mikal Dyrstad", "role": "Kiropraktor", "clinic": "Nor Klinikken", "sted": "Sandnes", "address": "Sandnes (4306)", "profession": "kiropraktor", "tags": ["krystallsyke"], "equip": [], "access": "Privat", "verif": "A", "source": "https://norklinikken.no/sandnes/krystallsyke-behandling/", "lat": 58.8517, "lng": 5.735, "kind": "private"}, {"name": "Jorunn Hustoft Fiane", "role": "Kiropraktor", "clinic": "Dr.Dropin Kristiansand", "sted": "Kristiansand", "address": "Kristiansand (4611)", "profession": "kiropraktor", "tags": ["krystallsyke", "svimmelhet"], "equip": [], "access": "Privat", "verif": "A", "source": "https://www.drdropin.no/fysikalsk/behandlere/jorunn-hustoft-fiane", "lat": 58.1467, "lng": 7.9956, "kind": "private"}, {"name": "Christian Nordgård", "role": "Kiropraktor", "clinic": "Sentrumklinikken", "sted": "Kristiansand", "address": "Kristiansand (4612)", "profession": "kiropraktor", "tags": ["krystallsyke", "svimmelhet"], "equip": ["VNG/Frenzel"], "access": "Privat", "verif": "A", "source": "https://www.sentrumklinikken.no/svimmelhet/", "lat": 58.1467, "lng": 7.9956, "kind": "private"}, {"name": "Gina Vissheim", "role": "Fysioterapeut", "clinic": "Grimstad Fysikalske", "sted": "Grimstad", "address": "Grimstad (4876)", "profession": "fysioterapeut", "tags": ["krystallsyke", "svimmelhet"], "equip": [], "access": "Privat", "verif": "A", "source": "https://www.grimstadfysikalske.no/", "lat": 58.34, "lng": 8.5933, "kind": "private"}, {"name": "Krister Børgesen", "role": "Fysioterapeut", "clinic": "Gard Fysikalske", "sted": "Haugesund", "address": "Haugesund (5515)", "profession": "fysioterapeut", "tags": ["krystallsyke"], "equip": [], "access": "Privat", "verif": "A", "source": "https://gardfysikalske.no/artikler/krystallsyke", "lat": 59.4136, "lng": 5.268, "kind": "private"}, {"name": "Bjørn Tore Hjelle", "role": "Kiropraktor", "clinic": "Plexus Helse / Ålesund Kiropraktor og Svimmelhetsklinikk", "sted": "Ålesund", "address": "Ålesund (6002)", "profession": "kiropraktor", "tags": ["krystallsyke", "svimmelhet"], "equip": [], "access": "Privat", "verif": "A", "source": "https://www.plexushelse.no/behandlinger", "lat": 62.4722, "lng": 6.1495, "kind": "private"}, {"name": "Sunnfjord Naprapatsenter", "role": "Naprapat", "clinic": "Sunnfjord Naprapatsenter", "sted": "Førde", "address": "Førde (6800)", "profession": "naprapat", "tags": ["krystallsyke"], "equip": [], "access": "Privat", "verif": "B", "source": "https://sunnfjord-naprapatsenter.no/tilstander/krystallsyke", "lat": 61.4522, "lng": 5.8567, "kind": "private"}, {"name": "Nikolai Nyenget", "role": "Kiropraktor", "clinic": "Dr.Dropin Trondheim", "sted": "Trondheim", "address": "Trondheim (7011)", "profession": "kiropraktor", "tags": ["krystallsyke", "svimmelhet"], "equip": [], "access": "Privat", "verif": "A", "source": "https://www.drdropin.no/fysikalsk/behandlere/nikolai-nyenget", "lat": 63.4305, "lng": 10.3951, "kind": "private"}, {"name": "Kiropraktor Akutten", "role": "Kiropraktor", "clinic": "Kiropraktor Akutten", "sted": "Trondheim", "address": "Trondheim (7038)", "profession": "kiropraktor", "tags": ["krystallsyke", "svimmelhet"], "equip": [], "access": "Privat", "verif": "B", "source": "https://kiropraktorakutten.no/", "lat": 63.4305, "lng": 10.3951, "kind": "private"}, {"name": "Kiropraktor Akutten", "role": "Kiropraktor", "clinic": "Kiropraktor Akutten", "sted": "Støren", "address": "Støren (7290)", "profession": "kiropraktor", "tags": ["krystallsyke", "svimmelhet"], "equip": [], "access": "Privat", "verif": "B", "source": "https://kiropraktorakutten.no/", "lat": 63.0333, "lng": 10.2833, "kind": "private"}, {"name": "Øivind Kolstad", "role": "Kiropraktor", "clinic": "Limbra Bodø Storgata", "sted": "Bodø", "address": "Bodø (8006)", "profession": "kiropraktor", "tags": ["krystallsyke", "svimmelhet"], "equip": ["VNG/Frenzel"], "access": "Privat", "verif": "A", "source": "https://limbra.no/terapeuter/oivind-kolstad/", "lat": 67.2804, "lng": 14.4049, "kind": "private"}, {"name": "Bodø Naprapati", "role": "Naprapat", "clinic": "Bodø Naprapati", "sted": "Bodø", "address": "Bodø (8006)", "profession": "naprapat", "tags": ["krystallsyke", "svimmelhet"], "equip": [], "access": "Privat", "verif": "B", "source": "https://www.bodonaprapati.no/", "lat": 67.2804, "lng": 14.4049, "kind": "private"}, {"name": "Tone Stensland", "role": "Kiropraktor", "clinic": "Bodø Kiropraktorsenter / City Nord", "sted": "Bodø", "address": "Bodø (8013)", "profession": "kiropraktor", "tags": ["krystallsyke", "svimmelhet"], "equip": [], "access": "Privat", "verif": "A", "source": "https://kiropraktorgruppen.no/klinikk/nordland/bodo-kiropraktorsenter/", "lat": 67.2804, "lng": 14.4049, "kind": "private"}, {"name": "Atle Aksum", "role": "Manuellterapeut", "clinic": "Institutt for manuellterapi", "sted": "Narvik", "address": "Narvik (8510)", "profession": "manuellterapeut", "tags": ["krystallsyke", "svimmelhet"], "equip": [], "access": "Privat/offentlig avtale – avklar", "verif": "A", "source": "https://narvik.manuellterapi.no/ansatt/atle-aksum/", "lat": 68.4384, "lng": 17.4272, "kind": "private"}, {"name": "Actaklinikken", "role": "Kiropraktor", "clinic": "Actaklinikken", "sted": "Mo i Rana", "address": "Mo i Rana (8626)", "profession": "kiropraktor", "tags": ["krystallsyke", "svimmelhet"], "equip": [], "access": "Privat", "verif": "B", "source": "https://www.actaklinikken.no/behandlinger/kiropraktikk/", "lat": 66.3128, "lng": 14.1428, "kind": "private"}, {"name": "NEMUS Harstad", "role": "Kiropraktor / fysioterapeut", "clinic": "NEMUS Harstad", "sted": "Harstad", "address": "Harstad (9405)", "profession": "tverrfaglig", "tags": ["krystallsyke", "svimmelhet"], "equip": ["TRV-stol"], "access": "Privat", "verif": "B", "source": "https://nemus.no/klinikk/nemus-harstad/", "lat": 68.7983, "lng": 16.5414, "kind": "private"}, {"name": "Sunnaas sykehus", "role": "Lege / tverrfaglig rehabiliteringsteam", "clinic": "Sunnaas sykehus", "sted": "Bjørnemyr", "address": "Bjørnemyr (1453)", "profession": "offentlig", "tags": ["svimmelhet"], "equip": [], "access": "Henvisning", "verif": "C", "source": "https://vestibular.no/vestibulaere-behandlingstilbud/", "lat": 59.7772, "lng": 10.628, "kind": "public"}, {"name": "Sykehuset i Vestfold", "role": "ØNH / sykehus", "clinic": "Sykehuset i Vestfold", "sted": "Tønsberg", "address": "Tønsberg (3116)", "profession": "offentlig", "tags": ["krystallsyke"], "equip": [], "access": "Henvisning / sykehus", "verif": "C", "source": "https://www.siv.no/behandlinger/krystallsyke-diagnostiske-manovrer/", "lat": 59.2674, "lng": 10.4076, "kind": "public"}, {"name": "Sykehuset Telemark", "role": "ØNH / sykehus", "clinic": "Sykehuset Telemark", "sted": "Skien", "address": "Skien (3710)", "profession": "offentlig", "tags": ["krystallsyke"], "equip": [], "access": "Henvisning / sykehus", "verif": "C", "source": "https://www.sthf.no/behandlinger/krystallsyke-diagnostiske-manovrer/", "lat": 59.2096, "lng": 9.6088, "kind": "public"}, {"name": "Sørlandet sykehus", "role": "Fysioterapeut / tverrfaglig team", "clinic": "Sørlandet sykehus", "sted": "Kristiansand", "address": "Kristiansand (4604)", "profession": "offentlig", "tags": ["svimmelhet"], "equip": [], "access": "Henvisning", "verif": "C", "source": "https://www.sshf.no/behandlinger/vestibuler-rehabilitering", "lat": 58.1467, "lng": 7.9956, "kind": "public"}, {"name": "Balanselaboratoriet", "role": "ØNH / audiologi / tverrfaglig team", "clinic": "Haukeland universitetssjukehus", "sted": "Bergen", "address": "Bergen (5021)", "profession": "offentlig", "tags": ["svimmelhet"], "equip": [], "access": "Henvisning", "verif": "C", "source": "https://www.helse-bergen.no/avdelinger/klinikk-for-hovudhals/oyre-nase-halsavdelinga/balanselaboratoriet/", "lat": 60.3819, "lng": 5.3327, "kind": "public"}, {"name": "Røde Kors Haugland Rehabiliteringssenter", "role": "Tverrfaglig rehabiliteringsteam", "clinic": "Røde Kors Haugland Rehabiliteringssenter", "sted": "Flekke", "address": "Flekke (6968)", "profession": "offentlig", "tags": ["svimmelhet"], "equip": [], "access": "Henvisning", "verif": "C", "source": "https://vestibular.no/vestibulaere-behandlingstilbud/", "lat": 61.42, "lng": 5.22, "kind": "public"}, {"name": "St. Olavs hospital", "role": "Tverrfaglig team", "clinic": "St. Olavs hospital", "sted": "Trondheim", "address": "Trondheim (7006)", "profession": "offentlig", "tags": ["svimmelhet"], "equip": [], "access": "Henvisning", "verif": "C", "source": "https://vestibular.no/vestibulaere-behandlingstilbud/", "lat": 63.4189, "lng": 10.397, "kind": "public"}, {"name": "Sykehuset Levanger", "role": "ØNH / sykehus", "clinic": "Helse Nord-Trøndelag", "sted": "Levanger", "address": "Levanger (7600)", "profession": "offentlig", "tags": ["krystallsyke"], "equip": [], "access": "Henvisning / sykehus", "verif": "C", "source": "https://www.hnt.no/behandlinger/rullemanover-ved-krystallsyke/", "lat": 63.747, "lng": 11.299, "kind": "public"}, {"name": "Nordlandssykehuset Bodø", "role": "ØNH / sykehus", "clinic": "Nordlandssykehuset", "sted": "Bodø", "address": "Bodø (8092)", "profession": "offentlig", "tags": ["krystallsyke"], "equip": [], "access": "Henvisning / sykehus", "verif": "C", "source": "https://www.nordlandssykehuset.no/behandlinger/krystallsyke-bppv/", "lat": 67.296, "lng": 14.387, "kind": "public"}, {"name": "Universitetssykehuset Nord-Norge", "role": "ØNH / sykehus", "clinic": "UNN Tromsø", "sted": "Tromsø", "address": "Tromsø (9019)", "profession": "offentlig", "tags": ["krystallsyke"], "equip": [], "access": "Henvisning / sykehus", "verif": "C", "source": "https://www.unn.no/behandlinger/diagnostiske-manovre-ved-krystallsyke/", "lat": 69.679, "lng": 18.97, "kind": "public"}, {"name": "Hammerfest sykehus", "role": "ØNH / sykehus", "clinic": "Finnmarkssykehuset", "sted": "Hammerfest", "address": "Hammerfest (9601)", "profession": "offentlig", "tags": ["krystallsyke"], "equip": [], "access": "Henvisning / sykehus", "verif": "C", "source": "https://www.finnmarkssykehuset.no/behandlinger/krystallsyke-diagnostiske-manovrer/", "lat": 70.6634, "lng": 23.6821, "kind": "public"}, {"name": "Kirkenes sykehus", "role": "ØNH / sykehus", "clinic": "Finnmarkssykehuset", "sted": "Kirkenes", "address": "Kirkenes (9900)", "profession": "offentlig", "tags": ["krystallsyke"], "equip": [], "access": "Henvisning / sykehus", "verif": "C", "source": "https://www.finnmarkssykehuset.no/behandlinger/krystallsyke-epleys-manover/", "lat": 69.7273, "lng": 30.045, "kind": "public"}]
+;
+
+  const MARIE = {lat:59.9333, lng:11.1600, name:'Krystallsykehjelpen', clinic:'Garderbakken 1, 1900 Fetsund'};
+
+  const searchInput = document.getElementById('searchInput');
+  const professionFilter = document.getElementById('professionFilter');
+  const chips = Array.from(document.querySelectorAll('.chip'));
+  const resultCount = document.getElementById('resultCount');
+  const emptyState = document.getElementById('emptyState');
+  const searchHint = document.getElementById('searchHint');
+  const grid = document.getElementById('grid');
+  const publicSection = document.getElementById('publicSection');
+  const gridPublic = document.getElementById('gridPublic');
+
+  const map = L.map('map', {scrollWheelZoom:false}).setView([MARIE.lat, MARIE.lng], 8);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap-bidragsytere'
+  }).addTo(map);
+
+  function makeIcon(color){
+    return L.divIcon({
+      className:'',
+      html:'<div style="background:'+color+';width:22px;height:22px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);box-shadow:0 4px 10px rgba(22,56,117,.4);"></div>',
+      iconSize:[22,22], iconAnchor:[11,22]
+    });
+  }
+  const marieIcon = makeIcon('#2f79c9');
+  const resultIcon = makeIcon('#163875');
+
+  const marieMarker = L.marker([MARIE.lat, MARIE.lng], {icon:marieIcon}).addTo(map)
+    .bindPopup('<strong>'+MARIE.name+'</strong><br>'+MARIE.clinic);
+
+  let activeChips = new Set();
+  let resultMarkers = [];
+
+  function clearResultMarkers(){
+    resultMarkers.forEach(m => map.removeLayer(m));
+    resultMarkers = [];
+  }
+
+  function verifLabel(v){
+    if (v === 'A') return 'Navngitt behandler — kontakt før publisering';
+    if (v === 'B') return 'Klinikktilbud — be om navn og samtykke';
+    return 'Offentlig/henvisningsbasert tilbud';
+  }
+
+  function safeHost(url){ try { return new URL(url).hostname; } catch(err){ return url; } }
+
+  function cardHTML(e){
+    const tagsHtml = e.tags.map(t => '<span class="p-tag">'+(t==='krystallsyke'?'Krystallsyke':'Svimmelhet')+'</span>').join('');
+    const equipHtml = e.equip.map(x => '<span class="p-tag equip">'+x+'</span>').join('');
+    const accessHtml = '<span class="p-tag access">'+e.access+'</span>';
+    return '<div class="p-card">'
+      + '<div class="p-photo"><div class="ph-fallback">[ Bilde ]</div></div>'
+      + '<div class="p-body">'
+      + '<h3>'+e.name+'</h3>'
+      + '<div class="p-role">'+e.role+'</div>'
+      + '<div class="p-clinic"><strong>'+e.clinic+'</strong>'+e.address+'</div>'
+      + '<div class="p-tags">'+tagsHtml+equipHtml+accessHtml+'</div>'
+      + '<div class="p-verif"><span class="badge">'+e.verif+'</span>'+verifLabel(e.verif)+'</div>'
+      + '<div class="p-source">Kilde: <a href="'+e.source+'" target="_blank" rel="noopener">'+ safeHost(e.source) +'</a></div>'
+      + '</div></div>';
+  }
+
+  function publicCardHTML(e){
+    const tagsHtml = e.tags.map(t => '<span class="p-tag">'+(t==='krystallsyke'?'Krystallsyke':'Svimmelhet')+'</span>').join('');
+    return '<div class="p-card public">'
+      + '<div class="p-photo"><div class="ph-fallback">[ Bilde ]</div></div>'
+      + '<div class="p-body">'
+      + '<h3>'+e.name+'</h3>'
+      + '<div class="p-role">'+e.role+'</div>'
+      + '<div class="p-clinic"><strong>'+e.clinic+'</strong>'+e.address+'</div>'
+      + '<div class="p-tags">'+tagsHtml+'<span class="public-note">Krever henvisning</span></div>'
+      + '<div class="p-verif"><span class="badge">C</span>Offentlig/henvisningsbasert tilbud</div>'
+      + '<div class="p-source">Kilde: <a href="'+e.source+'" target="_blank" rel="noopener">'+ safeHost(e.source) +'</a></div>'
+      + '</div></div>';
+  }
+
+  function filter(){
+    const q = searchInput.value.trim().toLowerCase();
+    const prof = professionFilter.value;
+    const anyFilterActive = q.length > 0 || prof !== '' || activeChips.size > 0;
+
+    clearResultMarkers();
+
+    if (!anyFilterActive){
+      grid.innerHTML = '';
+      grid.style.display = 'none';
+      publicSection.style.display = 'none';
+      gridPublic.innerHTML = '';
+      emptyState.classList.remove('show');
+      searchHint.style.display = 'block';
+      resultCount.textContent = '';
+      map.setView([MARIE.lat, MARIE.lng], 8);
+      return;
+    }
+
+    searchHint.style.display = 'none';
+    grid.style.display = 'grid';
+
+    const matched = ENTRIES.filter(e => {
+      const hay = (e.name+' '+e.sted+' '+e.clinic).toLowerCase();
+      const matchesQuery = !q || hay.includes(q);
+      const matchesProf = !prof || e.profession === prof;
+      const matchesTags = activeChips.size === 0 || e.tags.some(t => activeChips.has(t));
+      return matchesQuery && matchesProf && matchesTags;
+    });
+
+    const privateResults = matched.filter(e => e.kind === 'private');
+    const publicResults = matched.filter(e => e.kind === 'public');
+
+    grid.innerHTML = privateResults.map(cardHTML).join('');
+
+    if (publicResults.length > 0){
+      publicSection.style.display = 'block';
+      gridPublic.innerHTML = publicResults.map(publicCardHTML).join('');
+    } else {
+      publicSection.style.display = 'none';
+      gridPublic.innerHTML = '';
+    }
+
+    const totalResults = privateResults.length + publicResults.length;
+    emptyState.classList.toggle('show', totalResults === 0);
+    resultCount.textContent = privateResults.length + ' behandlere'
+      + (publicResults.length > 0 ? ' · ' + publicResults.length + ' offentlige tilbud' : '');
+
+    const bounds = [[MARIE.lat, MARIE.lng]];
+    matched.forEach(e => {
+      if (e.lat && e.lng){
+        const m = L.marker([e.lat, e.lng], {icon:resultIcon}).addTo(map)
+          .bindPopup('<strong>'+e.name+'</strong><br>'+e.clinic+'<br>'+e.address);
+        resultMarkers.push(m);
+        bounds.push([e.lat, e.lng]);
+      }
+    });
+    if (bounds.length > 1) map.fitBounds(bounds, {padding:[40,40], maxZoom:11});
+  }
+
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      chip.classList.toggle('active');
+      if (chip.classList.contains('active')) activeChips.add(chip.dataset.tag);
+      else activeChips.delete(chip.dataset.tag);
+      filter();
+    });
+  });
+
+  searchInput.addEventListener('input', filter);
+  professionFilter.addEventListener('change', filter);
+  filter();
+</script>
+
+</body>
+</html>
