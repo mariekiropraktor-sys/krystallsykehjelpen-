@@ -601,9 +601,9 @@ const attributionText =
     });
   });
 
-  // Sidevalg-knapper og manøvre uten sidevalg (f.eks. Brandt-Daroff) velger
-  // øvelsen direkte.
-  document.querySelectorAll(".side-btn, .row-main.single").forEach((el) => {
+  // Sidevalg-knapper, manøvre uten sidevalg (f.eks. Brandt-Daroff) og
+  // rehabiliteringsøvelser (ExerciseCard i steg 3) velger direkte.
+  document.querySelectorAll(".side-btn, .row-main.single, .exercise-card").forEach((el) => {
     el.addEventListener("click", () => selectExercise(el));
   });
 
