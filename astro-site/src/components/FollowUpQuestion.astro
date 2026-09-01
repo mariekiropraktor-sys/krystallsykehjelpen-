@@ -1,0 +1,168 @@
+---
+// Del 1 av fase 3 på /hjemme/: «Hva skjer nå?» — fem svaralternativer i en
+// vertikal liste, hvert med et tilhørende panel som vises alene når
+// alternativet velges. Ingen svar lagres (kun lokal DOM-state via
+// scriptet lenger nede). Teksten kommer fra hjemmePage i Sanity, med
+// fallback til Maries godkjente tekst — se hjemme/index.astro.
+//
+// Ingen diagnostisk logikk: alternativene beskriver hvordan brukeren har
+// det etter en manøver de allerede har gjort, ikke hvilken buegang de har.
+export interface Props {
+  eyebrow: string;
+  heading: string;
+  intro: string;
+  question: string;
+  divider: string;
+  panels: {
+    key: string;
+    optionLabel: string;
+    optionSublabel: string;
+    panelHeading: string;
+    panelBody: string;
+    background: "white" | "beige";
+    buttons: { label: string; href: string }[];
+    showAcuteWarning?: boolean;
+  }[];
+  acuteWarning: {
+    heading: string;
+    intro: string;
+    list: string[];
+    check: string;
+  };
+}
+
+const { eyebrow, heading, intro, question, divider, panels, acuteWarning } = Astro.props;
+const firstFour = panels.slice(0, 4);
+const fifth = panels[4];
+---
+
+<section class="followup section-sky" id="oppfolging">
+  <div class="container">
+    <span class="eyebrow">{eyebrow}</span>
+    <h2>{heading}</h2>
+    <p class="intro">{intro}</p>
+
+    <div class="followup-body">
+      <p class="question">{question}</p>
+      <div class="option-list" role="group" aria-label={question}>
+        {firstFour.map((panel) => (
+          <button type="button" class="option" data-panel-key={panel.key} aria-expanded="false" aria-controls={`panel-${panel.key}`}>
+            <span class="option-label">{panel.optionLabel}</span>
+            <span class="option-sublabel">{panel.optionSublabel}</span>
+          </button>
+        ))}
+
+        <p class="option-divider">{divider}</p>
+
+        {fifth && (
+          <button type="button" class="option" data-panel-key={fifth.key} aria-expanded="false" aria-controls={`panel-${fifth.key}`}>
+            <span class="option-label">{fifth.optionLabel}</span>
+            <span class="option-sublabel">{fifth.optionSublabel}</span>
+          </button>
+        )}
+      </div>
+
+      <div class="panels" aria-live="polite">
+        {panels.map((panel) => (
+          <div class={`panel ${panel.background === "beige" ? "panel-beige" : ""}`} id={`panel-${panel.key}`} data-panel-key={panel.key} hidden>
+            <h3>{panel.panelHeading}</h3>
+            {panel.panelBody.split("\n\n").map((para) => <p>{para}</p>)}
+            {panel.buttons.length > 0 && (
+              <div class="panel-ctas">
+                {panel.buttons.map((btn) => (
+                  <a href={btn.href} class="btn btn-outline btn-sm">{btn.label}</a>
+                ))}
+              </div>
+            )}
+
+            {panel.showAcuteWarning && (
+              <div class="acute-warning">
+                <h4>{acuteWarning.heading}</h4>
+                <p>{acuteWarning.intro}</p>
+                <ul>
+                  {acuteWarning.list.map((item) => <li>{item}</li>)}
+                </ul>
+                <p class="acute-check">{acuteWarning.check}</p>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const options = document.querySelectorAll(".option[data-panel-key]");
+  const panels = document.querySelectorAll(".panel[data-panel-key]");
+
+  options.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const key = btn.getAttribute("data-panel-key");
+
+      options.forEach((o) => {
+        const isSelected = o === btn;
+        o.classList.toggle("selected", isSelected);
+        o.setAttribute("aria-expanded", isSelected ? "true" : "false");
+      });
+
+      panels.forEach((p) => {
+        p.hidden = p.getAttribute("data-panel-key") !== key;
+      });
+
+      const activePanel = document.getElementById(`panel-${key}`);
+      activePanel?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    });
+  });
+</script>
+
+<style>
+  .section-sky { background: var(--sky); padding: 72px 0; }
+  .eyebrow { font-weight: 700; font-size: 0.78rem; letter-spacing: 0.09em; text-transform: uppercase; color: var(--navy-2); margin: 0 0 14px; display: block; }
+  .followup h2 { margin: 0 0 10px; }
+  .intro { font-size: 1rem; line-height: 1.6; color: var(--ink-soft); max-width: 62ch; margin: 0 0 36px; }
+
+  .followup-body { max-width: 640px; }
+  .question { font-weight: 700; color: var(--navy); font-size: 1.02rem; margin: 0 0 18px; }
+
+  .option-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 32px; }
+  .option {
+    background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-sm);
+    padding: 16px 20px; text-align: left; cursor: pointer; font-family: var(--font-body);
+    display: flex; flex-direction: column; gap: 3px; transition: border-color 0.15s ease;
+  }
+  .option:hover { border-color: var(--accent); }
+  .option.selected { border-color: var(--accent); border-width: 1.5px; background: #fff; }
+  .option-label { font-family: var(--font-display); font-weight: 600; color: var(--navy); font-size: 1rem; }
+  .option-sublabel { font-size: 0.86rem; color: var(--ink-soft); }
+
+  .option-divider {
+    text-align: center; font-size: 0.86rem; color: var(--ink-soft); margin: 6px 0; font-style: italic;
+  }
+
+  .panel {
+    background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); padding: 30px 32px;
+  }
+  .panel-beige { background: var(--beige); border-color: transparent; }
+  .panel h3 { font-size: 1.2rem; margin: 0 0 12px; }
+  .panel p { font-size: 0.95rem; line-height: 1.65; color: var(--ink-soft); margin: 0 0 12px; max-width: 58ch; }
+  .panel p:last-of-type { margin-bottom: 0; }
+  .panel-ctas { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
+  .btn-sm { padding: 10px 20px; font-size: 0.86rem; }
+
+  .acute-warning {
+    margin-top: 24px; background: #fff; border: 2px solid var(--navy-2); border-radius: var(--radius-sm); padding: 24px 26px;
+  }
+  .acute-warning h4 { font-family: var(--font-display); font-weight: 600; font-size: 1.05rem; color: var(--navy-2); margin: 0 0 10px; }
+  .acute-warning p { font-size: 0.9rem; color: var(--ink-soft); margin: 0 0 12px; max-width: none; }
+  .acute-warning ul { margin: 0 0 14px; padding-left: 20px; }
+  .acute-warning li { font-size: 0.9rem; color: var(--ink-soft); line-height: 1.55; margin-bottom: 5px; }
+  .acute-check {
+    background: var(--sky); border-radius: var(--radius-sm); padding: 12px 16px; color: var(--navy); font-weight: 600;
+    font-size: 0.9rem; margin-bottom: 0;
+  }
+
+  @media (max-width: 640px) {
+    .panel { padding: 24px 22px; }
+  }
+</style>

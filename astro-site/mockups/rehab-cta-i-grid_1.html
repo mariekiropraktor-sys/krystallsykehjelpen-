@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rehabilitering – CTA fyller tomrommet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#163875; --navy-2:#1e4c96; --sky:#eff4fb; --accent:#2f79c9;
+    --beige:#f4eee3; --turkis:#5fc1d6; --white:#fff; --muted:#5a6b85;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:#fafbfc;font-family:'Public Sans',sans-serif;color:var(--navy);}
+  .page{max-width:1000px;margin:0 auto;padding:0 20px 90px;}
+  .mockup-tag{background:var(--navy);color:#fff;font-size:12px;letter-spacing:.06em;
+    text-transform:uppercase;padding:6px 14px;border-radius:999px;display:inline-block;margin:32px 0 10px;}
+  .intro{font-size:14.5px;color:var(--muted);line-height:1.6;max-width:68ch;margin:0 0 8px;}
+  .step{font-size:11.5px;font-weight:700;color:var(--navy-2);text-transform:uppercase;
+    letter-spacing:.05em;margin:38px 0 10px;}
+
+  .sec{background:var(--sky);border:1px solid #dde4ee;border-radius:14px;padding:32px 34px;}
+  .eyebrow{font-weight:700;font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;
+    color:var(--navy-2);margin:0 0 8px;}
+  .sec h3{font-family:'Fraunces',serif;font-weight:600;font-size:25px;margin:0 0 10px;}
+  .sec .ing{font-size:14.5px;line-height:1.65;color:#3c4a63;margin:0 0 6px;max-width:58ch;}
+  .sec .lead{font-size:14.5px;line-height:1.65;color:#3c4a63;margin:0 0 22px;max-width:58ch;font-weight:600;}
+
+  /* Tre faste kolonner. CTA-boksen ligger i samme grid og strekker seg
+     over to kolonner, slik at den fyller tomrommet ved siden av siste kort. */
+  .reh-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:14px;
+    align-items:stretch;
+  }
+  .reh{background:#fff;border:1px solid #e7ecf4;border-radius:13px;padding:18px 19px;
+    display:flex;flex-direction:column;gap:6px;min-width:0;}
+  .reh h5{font-family:'Fraunces',serif;font-weight:600;font-size:15px;margin:0;
+    line-height:1.3;overflow-wrap:break-word;}
+  .reh p{font-size:12.5px;color:var(--muted);margin:0;line-height:1.45;flex-grow:1;}
+  .reh a{color:var(--accent);font-weight:600;font-size:12.5px;text-decoration:none;margin-top:2px;}
+
+  .tilpass{
+    grid-column:span 2;
+    background:#fff;border:1px solid #dfe7f3;border-radius:13px;padding:20px 24px;
+    display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;
+  }
+  .tilpass .t{flex:1;min-width:220px;}
+  .tilpass h5{font-family:'Fraunces',serif;font-weight:600;font-size:16px;margin:0 0 5px;line-height:1.3;}
+  .tilpass p{font-size:13.5px;color:var(--muted);margin:0;line-height:1.55;max-width:46ch;}
+  .btn{background:var(--navy);color:#fff;font-weight:600;font-size:13.5px;padding:12px 22px;
+    border-radius:999px;text-decoration:none;display:inline-block;flex-shrink:0;}
+
+  @media (max-width:900px){
+    .reh-grid{grid-template-columns:repeat(2,1fr);}
+    .tilpass{grid-column:span 2;}
+  }
+  @media (max-width:600px){
+    .reh-grid{grid-template-columns:1fr;}
+    .tilpass{grid-column:span 1;}
+    .sec{padding:22px 18px;}
+  }
+
+  .notes{margin:50px 0 0;padding:22px 26px;background:#fbfaf7;border:1px dashed #d8d0c0;
+    border-radius:14px;font-size:13.5px;color:var(--muted);line-height:1.65;}
+  .notes strong{color:var(--navy);}
+  .notes ul{margin:10px 0 0;padding-left:20px;}
+  .notes li{margin-bottom:8px;}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <span class="mockup-tag">Rehabilitering – CTA fyller tomrommet</span>
+  <p class="intro">CTA-boksen ligger nå inne i selve gridet og strekker seg over to kolonner. Da havner den ved siden av Blikkstabilisering i stedet for at raden står halvtom.</p>
+
+  <p class="step">Slik ser det ut</p>
+  <div class="sec">
+    <p class="eyebrow">Vestibulær rehabilitering</p>
+    <h3>Når balansen trenger litt tid</h3>
+    <p class="ing">Etter at krystallsyken er behandlet, kan noen ha nytte av gradvis trening av balanse, hodebevegelser og bevegelsestoleranse.</p>
+    <p class="lead">Velg øvelsene som kjennes ubehagelige å gjøre. Det er de bevegelsene kroppen trenger å bli vant til igjen.</p>
+
+    <div class="reh-grid">
+      <div class="reh">
+        <h5>Balanseøvelse</h5>
+        <p>Fra Sanity</p>
+        <a href="#">Se øvelse →</a>
+      </div>
+      <div class="reh">
+        <h5>Gange med hodebevegelser</h5>
+        <p>Fra Sanity</p>
+        <a href="#">Se øvelse →</a>
+      </div>
+      <div class="reh">
+        <h5>Enkel habituering</h5>
+        <p>Fra Sanity</p>
+        <a href="#">Se øvelse →</a>
+      </div>
+      <div class="reh">
+        <h5>Blikkstabilisering</h5>
+        <p>Fra Sanity</p>
+        <a href="#">Se øvelse →</a>
+      </div>
+
+      <div class="tilpass">
+        <div class="t">
+          <h5>Usikker på hvilke øvelser som passer for deg?</h5>
+          <p>I en videokonsultasjon kan øvelsene tilpasses situasjonen din, og du får veiledning i hvordan de skal gjøres.</p>
+        </div>
+        <a class="btn" href="#">Bestill videokonsultasjon</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="notes">
+    <strong>Én ting å være klar over:</strong> denne løsningen passer perfekt fordi det er nøyaktig fire øvelser og tre kolonner — 3 på første rad, så 1 øvelse pluss CTA-boksen på andre rad.
+    <ul>
+      <li>Legger du til en <strong>femte</strong> øvelse i Sanity senere, blir det 3 + 2, og CTA-boksen faller ned på egen rad med ett tomrom ved siden av. Ikke ødelagt, men ikke like pent.</li>
+      <li>Med <strong>seks</strong> øvelser blir det 3 + 3, og CTA-boksen får hele bredden under. Det ser også fint ut.</li>
+      <li>Så: fire eller seks øvelser gir penest resultat. Verdt å vite når du bestemmer hvilke som skal med.</li>
+      <li>På smalere skjerm går gridet til to kolonner, og på mobil til én — CTA-boksen følger med.</li>
+    </ul>
+  </div>
+
+</div>
+</body>
+</html>

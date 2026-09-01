@@ -21,6 +21,11 @@ export const structure: StructureResolver = (S) =>
         .child(
           S.document().schemaType("siteSettings").documentId("siteSettings"),
         ),
+      S.listItem()
+        .title("Hjemme-siden (fase 3-innhold)")
+        .child(
+          S.document().schemaType("hjemmePage").documentId("hjemmePage"),
+        ),
       S.divider(),
       S.listItem()
         .title("Sidetekster")

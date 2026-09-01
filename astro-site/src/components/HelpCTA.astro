@@ -1,0 +1,58 @@
+---
+// Del 4 av fase 3 på /hjemme/: hjelp-seksjonen. Beige bakgrunn, to
+// kolonner desktop (tekst/CTA venstre, illustrasjon høyre). Teksten kommer
+// fra hjemmePage i Sanity, med fallback — se hjemme/index.astro.
+export interface Props {
+  eyebrow: string;
+  heading: string;
+  text1: string;
+  text2: string;
+  button1Label: string;
+  button2Label: string;
+}
+
+const bookingUrl = "/tjenester/videokonsultasjon/";
+const { eyebrow, heading, text1, text2, button1Label, button2Label } = Astro.props;
+---
+
+<section class="help-cta">
+  <div class="container help-grid">
+    <div>
+      <span class="eyebrow">{eyebrow}</span>
+      <h2>{heading}</h2>
+      <p>{text1}</p>
+      <p>{text2}</p>
+      <div class="help-ctas">
+        <a href={bookingUrl} class="btn btn-primary">{button1Label}</a>
+        <a href="/fa-hjelp/" class="btn btn-outline">{button2Label}</a>
+      </div>
+    </div>
+    <div class="help-visual">
+      <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M100 40c33 0 60 27 60 60s-27 60-60 60-60-27-60-60 27-60 60-60z" stroke="var(--navy)" stroke-width="4" />
+        <path d="M78 100l16 16 30-34" stroke="var(--turquoise)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+      </svg>
+    </div>
+  </div>
+</section>
+
+<style>
+  .help-cta { background: var(--beige); padding: 72px 0; }
+  .help-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 48px; align-items: center; }
+  @media (max-width: 860px) {
+    .help-grid { grid-template-columns: 1fr; }
+    .help-visual { order: -1; aspect-ratio: 16/11; }
+  }
+  .eyebrow { font-weight: 700; font-size: 0.78rem; letter-spacing: 0.09em; text-transform: uppercase; color: var(--navy-2); margin: 0 0 14px; display: block; }
+  .help-cta h2 { margin: 0 0 16px; }
+  .help-cta p { font-size: 0.97rem; line-height: 1.65; color: var(--ink-soft); margin: 0 0 12px; max-width: 56ch; }
+  .help-ctas { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 22px; }
+
+  .help-visual {
+    background: var(--sky); border-radius: var(--radius); aspect-ratio: 4/3.4;
+    display: flex; align-items: center; justify-content: center; overflow: hidden;
+  }
+  .help-visual svg { width: 50%; height: 50%; }
+
+  @media (max-width: 640px) { .help-cta { padding: 48px 0; } }
+</style>

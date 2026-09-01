@@ -3,7 +3,11 @@ import Layout from "../../layouts/Layout.astro";
 import ManeuverRow from "../../components/ManeuverRow.astro";
 import SafetyNotice from "../../components/SafetyNotice.astro";
 import VideoGuide from "../../components/VideoGuide.astro";
+import ExerciseCard from "../../components/ExerciseCard.astro";
+import FollowUpQuestion from "../../components/FollowUpQuestion.astro";
+import HelpCTA from "../../components/HelpCTA.astro";
 import { safeFetch } from "../../lib/safeFetch";
+import { HABITUERING_SECTIONS } from "../../lib/habitueringSections";
 
 // Fase 1 av 3 for /hjemme/ («Krystallsykehjelpen hjemme») — hero, «Før du
 // starter» og steg 1. Fase 2: steg 2 (manøverbibliotek), SafetyNotice og
@@ -132,6 +136,213 @@ const stepCards = [
     comingSoon: false,
   },
 ];
+
+// ===== Fase 3: oppfølging, restsvimmelhet, rehabilitering, hjelp =====
+// Alle pasientrettede tekster under kommer fra hjemmePage-singletonet i
+// Sanity (opprett/publiser i Studio: "Hjemme-siden (fase 3-innhold)").
+// DEFAULTS speiler nøyaktig initialValue i
+// src/sanity/schemaTypes/hjemmePage.ts, slik at siden viser riktig
+// godkjent tekst selv om dokumentet aldri publiseres.
+const hp = await safeFetch(
+  `*[_id == "hjemmePage"][0]{
+    followUpEyebrow, followUpHeading, followUpIntro, followUpQuestion, followUpDivider,
+    panelMuchBetter, panelSlightlyBetter, panelNoChange, panelWorse, panelStillUnsteady,
+    acuteWarningHeading, acuteWarningIntro, acuteWarningList, acuteWarningCheck,
+    restsvimmelhetEyebrow, restsvimmelhetHeading, restsvimmelhetIntro, restsvimmelhetCards,
+    restsvimmelhetCard4Heading, restsvimmelhetCard4Body, restsvimmelhetCard4Button1, restsvimmelhetCard4Button2,
+    rehabEyebrow, rehabHeading, rehabIntro, rehabLead, rehabCtaHeading, rehabCtaBody, rehabCtaButton,
+    hjelpEyebrow, hjelpHeading, hjelpText1, hjelpText2, hjelpButton1, hjelpButton2, attributionText
+  }`,
+  {},
+  {},
+);
+
+const PANEL_DEFAULTS = {
+  panelMuchBetter: {
+    optionLabel: "Mye bedre",
+    optionSublabel: "Svimmelheten er borte eller nesten borte",
+    panelHeading: "Så bra at det går riktig vei",
+    panelBody:
+      "Når svimmelheten gir seg etter behandling, er det et godt tegn. Noen kjenner seg helt bra med én gang, mens andre kan merke litt ustøhet eller uvanthet en periode etterpå. Det betyr ikke nødvendigvis at noe er galt.",
+    button1Label: "Hva kan jeg forvente etter behandling?",
+    button2Label: "",
+  },
+  panelSlightlyBetter: {
+    optionLabel: "Litt bedre",
+    optionSublabel: "Noe bedring, men fortsatt tydelige symptomer",
+    panelHeading: "Det tyder på at manøveren virket",
+    panelBody:
+      "Delvis bedring er et godt tegn. Symptomene trenger ikke å forsvinne med én gang.\n\nEr du ikke helt bra dagen etter, kan du gjøre manøveren på nytt.",
+    button1Label: "Gjør manøveren på nytt",
+    button2Label: "Hva kan jeg forvente?",
+  },
+  panelNoChange: {
+    optionLabel: "Ingen forskjell",
+    optionSublabel: "Symptomene er omtrent som før behandlingen",
+    panelHeading: "Noen kjenner ikke bedring med én gang",
+    panelBody:
+      "Det er ikke uvanlig at det ikke merkes forskjell etter første forsøk. Manøveren må ofte gjentas før krystallene kommer på plass.\n\nDu kan gjenta den morgen og kveld i to til tre dager. Hvis du fortsatt ikke merker bedring etter det, kan en ny vurdering være lurt.",
+    button1Label: "Gjør manøveren på nytt",
+    button2Label: "Få en ny vurdering",
+  },
+  panelWorse: {
+    optionLabel: "Verre",
+    optionSublabel: "Symptomene har økt eller endret seg",
+    panelHeading: "Det er ikke uvanlig å kjenne seg verre rett etter en manøver",
+    panelBody:
+      "Når krystallene flytter på seg, forstyrrer det balansesystemet før det faller til ro igjen. Mange kjenner seg mer svimle eller ustø den første tiden etter en manøver. Det betyr ikke i seg selv at noe har gått galt.\n\nHvis det ikke gir seg, eller svimmelheten kjennes annerledes enn den du kjenner igjen fra krystallsyken, bør du ikke fortsette med flere manøvrer på egen hånd. Da er en ny vurdering bedre.",
+    button1Label: "Få hjelp",
+    button2Label: "",
+  },
+  panelStillUnsteady: {
+    optionLabel: "Fortsatt ustø",
+    optionSublabel: "Den kraftige svimmelheten er borte, men jeg er fortsatt ustø",
+    panelHeading: "Dette er en vanlig opplevelse",
+    panelBody:
+      "At den kraftige, kortvarige svimmelheten er borte mens en mer generell ustøhet blir igjen, er noe mange kjenner igjen etter behandling.\n\nUnder finner du rehabiliterings- og habitueringsøvelser du kan gjøre hjemme.",
+    button1Label: "Se øvelsene",
+    button2Label: "",
+  },
+};
+
+function resolvePanel(key, background, buttonTargets, showAcuteWarning) {
+  const data = { ...PANEL_DEFAULTS[key], ...hp[key] };
+  const buttons = [
+    data.button1Label ? { label: data.button1Label, href: buttonTargets[0] } : null,
+    data.button2Label ? { label: data.button2Label, href: buttonTargets[1] } : null,
+  ].filter(Boolean);
+  return {
+    key,
+    optionLabel: data.optionLabel,
+    optionSublabel: data.optionSublabel,
+    panelHeading: data.panelHeading,
+    panelBody: data.panelBody,
+    background,
+    buttons,
+    showAcuteWarning,
+  };
+}
+
+const followUpData = {
+  eyebrow: hp.followUpEyebrow ?? "Etter behandlingen",
+  heading: hp.followUpHeading ?? "Hva skjer nå?",
+  intro:
+    hp.followUpIntro ??
+    "Det er ikke uvanlig å kjenne seg litt annerledes etter behandling av krystallsyke. Noen blir raskt bedre, mens andre kan være ustø eller lettere svimle en periode.",
+  question: hp.followUpQuestion ?? "Hvordan har du det nå?",
+  divider: hp.followUpDivider ?? "eller kjenner du deg igjen i dette?",
+  panels: [
+    resolvePanel("panelMuchBetter", "white", ["/krystallsyken/"], false),
+    resolvePanel("panelSlightlyBetter", "white", ["#steg2", "/krystallsyken/"], false),
+    resolvePanel("panelNoChange", "white", ["#steg2", "/fa-hjelp/"], false),
+    resolvePanel("panelWorse", "beige", ["/fa-hjelp/"], true),
+    resolvePanel("panelStillUnsteady", "white", ["#rehab"], false),
+  ],
+  acuteWarning: {
+    heading: hp.acuteWarningHeading ?? "Noen symptomer krever øyeblikkelig hjelp",
+    intro:
+      hp.acuteWarningIntro ??
+      "Svimmelhet sammen med noen av disse tegnene kan skyldes noe annet enn krystallsyke, og kan være symptomer på hjerneslag:",
+    list: hp.acuteWarningList?.length
+      ? hp.acuteWarningList
+      : [
+          "Lammelse eller kraftsvikt i ansikt, arm eller bein",
+          "Problemer med å snakke eller forstå det andre sier",
+          "Plutselige synsforstyrrelser eller dobbeltsyn",
+          "Uvanlig kraftig hodepine",
+          "Nummenhet i ansiktet eller på én side av kroppen",
+        ],
+    check: hp.acuteWarningCheck ?? "Klarer personen å prate, smile og løfte begge armene? Svikter noe av dette — ring 113.",
+  },
+};
+
+const restsvimmelhetData = {
+  eyebrow: hp.restsvimmelhetEyebrow ?? "Restsvimmelhet",
+  heading: hp.restsvimmelhetHeading ?? "Krystallsyken er bedre – men jeg føler meg fortsatt ustø",
+  intro:
+    hp.restsvimmelhetIntro ??
+    "Dette er en vanlig opplevelse etter behandling. Restsvimmelhet kan blant annet kjennes som ustøhet, bevegelsesfølsomhet eller en følelse av at balansen ikke er helt som før.",
+  cards: hp.restsvimmelhetCards?.length
+    ? hp.restsvimmelhetCards
+    : [
+        {
+          heading: "Jeg blir svimmel når jeg beveger hodet",
+          body: "Mange kjenner at raske hodebevegelser gir en kort følelse av at omgivelsene henger etter. Det er noe man ofte kan trene seg gradvis ut av.",
+        },
+        {
+          heading: "Jeg føler meg ustø når jeg går",
+          body: "Det kan kjennes som at underlaget er ujevnt, eller at du må konsentrere deg mer enn før for å gå trygt. Dette bedrer seg for mange gradvis.",
+        },
+        {
+          heading: "Jeg blir verre i butikker og steder med mye synsinntrykk",
+          body: "Store rom med mye bevegelse, mønstre og lys kan oppleves overveldende når balansesystemet er ute av vane. Gradvis eksponering er ofte en del av opptreningen.",
+        },
+      ],
+  card4Heading: hp.restsvimmelhetCard4Heading ?? "Jeg føler meg utrygg når jeg ligger eller beveger meg raskt",
+  card4Body:
+    hp.restsvimmelhetCard4Body ??
+    "Svimmelhet som kommer når du legger deg ned eller snur deg i sengen, er typisk for krystallsyke. Det kan bety at krystallene ikke har kommet helt på plass ennå.\n\nManøveren kan gjentas morgen og kveld i to til tre dager. Hvis du ikke merker bedring i løpet av den tiden, kan en ny vurdering være lurt.",
+  card4Button1: hp.restsvimmelhetCard4Button1 ?? "Gjør manøveren på nytt",
+  card4Button2: hp.restsvimmelhetCard4Button2 ?? "Få en ny vurdering",
+};
+
+// Rehab-øvelser: eksisterende exercise-dokumenter, filtrert på
+// exerciseType == "habituering" (ikke reposisjoneringsmanøvrer). Brandt-
+// Daroff er bevisst utelatt her — den vises allerede som egen rad i steg 2
+// (samme dokument, samme veiledningsflyt), og ville dukket opp to ganger på
+// samme side. Se sluttrapport for nøyaktig antall/begrunnelse.
+const rehabExercisesRaw = await safeFetch(
+  `*[_type == "exercise" && exerciseType == "habituering" && slug.current != "brandt-daroff"]{
+    title, "slug": slug.current, habitueringSeksjon, duration, lead,
+    steps[]{ title, description },
+    mediaFile{ asset->{ url, mimeType } }
+  } | order(order asc)`,
+  {},
+  [],
+);
+
+const rehabExercises = rehabExercisesRaw.map((ex) => {
+  const mediaUrl = ex.mediaFile?.asset?.url ?? null;
+  const isVideo = ex.mediaFile?.asset?.mimeType?.startsWith("video/") ?? false;
+  return {
+    title: ex.title,
+    situasjon: HABITUERING_SECTIONS[ex.habitueringSeksjon]?.title ?? "",
+    lead: ex.lead,
+    duration: ex.duration,
+    mediaUrl,
+    isVideo,
+    payload: {
+      title: ex.title,
+      mediaUrl,
+      isVideo,
+      steps: (ex.steps ?? []).map((s) => ({ title: s.title, description: s.description })),
+    },
+  };
+});
+
+const rehabData = {
+  eyebrow: hp.rehabEyebrow ?? "Vestibulær rehabilitering",
+  heading: hp.rehabHeading ?? "Når balansen trenger litt tid",
+  intro: hp.rehabIntro ?? "Etter at krystallsyken er behandlet, kan noen ha nytte av gradvis trening av balanse, hodebevegelser og bevegelsestoleranse.",
+  lead: hp.rehabLead ?? "Velg øvelsene som kjennes ubehagelige å gjøre. Det er de bevegelsene kroppen trenger å bli vant til igjen.",
+  ctaHeading: hp.rehabCtaHeading ?? "Usikker på hvilke øvelser som passer for deg?",
+  ctaBody: hp.rehabCtaBody ?? "I en videokonsultasjon kan øvelsene tilpasses situasjonen din, og du får veiledning i hvordan de skal gjøres.",
+  ctaButton: hp.rehabCtaButton ?? "Bestill videokonsultasjon",
+};
+
+const helpData = {
+  eyebrow: hp.hjelpEyebrow ?? "Trenger du hjelp?",
+  heading: hp.hjelpHeading ?? "Usikker på hva som er riktig neste steg?",
+  text1:
+    hp.hjelpText1 ??
+    "Hvis du ikke vet hvilken buegang som er påvirket, hvilken manøver du skal gjøre, eller symptomene dine har endret seg, kan det være bedre med en ny vurdering enn å prøve flere øvelser på egen hånd.",
+  text2: hp.hjelpText2 ?? "Videokonsultasjon kan brukes til spørsmål, usikkerhet og veiledning av øvelser og manøvrer.",
+  button1: hp.hjelpButton1 ?? "Bestill videokonsultasjon",
+  button2: hp.hjelpButton2 ?? "Se alle måter å få hjelp på",
+};
+
+const attributionText =
+  hp.attributionText ?? "Krystallsykehjelpen er utviklet for å gjøre kunnskap om svimmelhet og krystallsyke lettere tilgjengelig.";
 ---
 
 <Layout
@@ -221,6 +432,92 @@ const stepCards = [
       <VideoGuide />
     </div>
   </section>
+
+  <FollowUpQuestion
+    eyebrow={followUpData.eyebrow}
+    heading={followUpData.heading}
+    intro={followUpData.intro}
+    question={followUpData.question}
+    divider={followUpData.divider}
+    panels={followUpData.panels}
+    acuteWarning={followUpData.acuteWarning}
+  />
+
+  <section class="restsvimmelhet">
+    <div class="container">
+      <span class="eyebrow">{restsvimmelhetData.eyebrow}</span>
+      <h2>{restsvimmelhetData.heading}</h2>
+      <p class="intro">{restsvimmelhetData.intro}</p>
+
+      <div class="restsvimmelhet-grid">
+        {restsvimmelhetData.cards.map((card) => (
+          <a href="#rehab" class="rest-card">
+            <h3>{card.heading}</h3>
+            <p>{card.body}</p>
+            <span class="link">Se øvelser →</span>
+          </a>
+        ))}
+      </div>
+
+      <div class="rest-card-wide">
+        <h3>{restsvimmelhetData.card4Heading}</h3>
+        {restsvimmelhetData.card4Body.split("\n\n").map((para) => <p>{para}</p>)}
+        <div class="rest-card-ctas">
+          <a href="#steg2" class="btn btn-outline btn-sm">{restsvimmelhetData.card4Button1}</a>
+          <a href="/fa-hjelp/" class="btn btn-outline btn-sm">{restsvimmelhetData.card4Button2}</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="rehab section-sky" id="rehab">
+    <div class="container">
+      <span class="eyebrow">{rehabData.eyebrow}</span>
+      <h2>{rehabData.heading}</h2>
+      <p class="intro">{rehabData.intro}</p>
+      <p class="lead">{rehabData.lead}</p>
+
+      {rehabExercises.length ? (
+        <div class="rehab-grid">
+          {rehabExercises.map((ex) => (
+            <ExerciseCard
+              title={ex.title}
+              situasjon={ex.situasjon}
+              lead={ex.lead}
+              duration={ex.duration}
+              mediaUrl={ex.mediaUrl}
+              isVideo={ex.isVideo}
+              payload={ex.payload}
+              compact
+              linkText="Se øvelse →"
+            />
+          ))}
+          <div class="rehab-cta">
+            <div>
+              <h3>{rehabData.ctaHeading}</h3>
+              <p>{rehabData.ctaBody}</p>
+            </div>
+            <a href="/tjenester/videokonsultasjon/" class="btn btn-primary">{rehabData.ctaButton}</a>
+          </div>
+        </div>
+      ) : (
+        <p class="exercise-empty">Rehabiliteringsøvelsene er ikke tilgjengelige akkurat nå.</p>
+      )}
+    </div>
+  </section>
+
+  <HelpCTA
+    eyebrow={helpData.eyebrow}
+    heading={helpData.heading}
+    text1={helpData.text1}
+    text2={helpData.text2}
+    button1Label={helpData.button1}
+    button2Label={helpData.button2}
+  />
+
+  <div class="attribution-band">
+    <p class="container">{attributionText}</p>
+  </div>
 </Layout>
 
 <script>
