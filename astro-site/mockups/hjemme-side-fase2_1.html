@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mockup – /hjemme/ fase 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#163875; --navy-2:#1e4c96; --sky:#eff4fb; --accent:#2f79c9;
+    --beige:#f4eee3; --turkis:#5fc1d6; --white:#ffffff; --text-muted:#5a6b85;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--white);font-family:'Public Sans',sans-serif;color:var(--navy);}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 24px;}
+  .mockup-tag{
+    background:var(--navy);color:#fff;font-size:12px;letter-spacing:.06em;text-transform:uppercase;
+    padding:6px 14px;border-radius:999px;display:inline-block;margin:32px 0 8px;
+  }
+  .screen-label{
+    font-family:'Public Sans',sans-serif;font-weight:700;font-size:13px;color:var(--navy-2);
+    text-transform:uppercase;letter-spacing:.06em;margin:64px 0 20px;padding-top:40px;border-top:1px dashed #d8d0c0;
+  }
+  .eyebrow{font-weight:700;font-size:12.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--navy-2);margin:0 0 10px;}
+  h2{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(26px,3vw,32px);margin:0 0 12px;color:var(--navy);}
+  .helper{font-size:15px;color:var(--text-muted);margin:0 0 32px;max-width:60ch;}
+
+  /* ---------- STEG 2: manøverbibliotek ---------- */
+  .exercise-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:48px;}
+  .exercise-card{
+    background:#fff;border:1px solid #e7ecf4;border-radius:18px;overflow:hidden;
+    box-shadow:0 8px 24px rgba(22,56,117,0.06);display:flex;flex-direction:column;
+  }
+  .exercise-thumb{
+    background:var(--sky);aspect-ratio:16/10;display:flex;align-items:center;justify-content:center;position:relative;
+  }
+  .exercise-thumb svg{width:34%;height:34%;}
+  .exercise-thumb .play{
+    position:absolute;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.9);
+    display:flex;align-items:center;justify-content:center;color:var(--navy);font-size:14px;
+  }
+  .exercise-body{padding:20px 22px 22px;display:flex;flex-direction:column;gap:8px;flex-grow:1;}
+  .exercise-body .situasjon{font-size:12px;font-weight:700;color:var(--turkis);text-transform:uppercase;letter-spacing:.04em;}
+  .exercise-body h3{font-family:'Fraunces',serif;font-weight:600;font-size:18px;margin:0;color:var(--navy);}
+  .exercise-body p{font-size:14px;line-height:1.5;color:var(--text-muted);margin:0;flex-grow:1;}
+  .exercise-meta{font-size:12.5px;color:var(--navy-2);font-weight:600;}
+  .exercise-body a.link{color:var(--accent);font-weight:600;font-size:14px;text-decoration:none;margin-top:4px;}
+
+  /* ---------- SAFETY NOTICE ---------- */
+  .safety{
+    background:var(--sky);border-radius:20px;padding:36px 40px;margin-bottom:40px;
+  }
+  .safety h3{font-family:'Fraunces',serif;font-weight:600;font-size:21px;margin:0 0 16px;color:var(--navy);}
+  .safety ul{margin:0 0 16px;padding-left:20px;}
+  .safety li{font-size:14.5px;line-height:1.6;color:#3c4a63;margin-bottom:6px;}
+  .safety a.link{color:var(--accent);font-weight:600;font-size:14px;text-decoration:none;}
+
+  /* ---------- VIDEO GUIDE ---------- */
+  .videoguide{
+    background:#fff;border:1px solid #e7ecf4;border-radius:20px;padding:32px;
+    box-shadow:0 8px 24px rgba(22,56,117,0.06);
+  }
+  .vg-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:10px;}
+  .vg-title{font-family:'Fraunces',serif;font-weight:600;font-size:20px;color:var(--navy);margin:0;}
+  .vg-step{font-size:13px;font-weight:700;color:var(--navy-2);background:var(--beige);padding:6px 14px;border-radius:999px;}
+  .vg-video{
+    background:var(--sky);border-radius:14px;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;margin-bottom:20px;
+  }
+  .vg-video svg{width:50px;height:50px;}
+  .vg-text{font-size:15px;line-height:1.6;color:#3c4a63;margin:0 0 22px;}
+  .vg-footer{display:flex;justify-content:space-between;align-items:center;}
+  .vg-dots{display:flex;gap:6px;}
+  .vg-dots span{width:8px;height:8px;border-radius:50%;background:#dbe4f2;}
+  .vg-dots span.active{background:var(--accent);}
+  .btn-primary{background:var(--navy);color:#fff;font-weight:600;font-size:14.5px;padding:12px 22px;border-radius:12px;text-decoration:none;display:inline-block;}
+
+  @media (max-width: 860px){
+    .exercise-grid{grid-template-columns:1fr;}
+    .safety{padding:26px 22px;}
+    .videoguide{padding:22px;}
+  }
+
+  .notes{
+    margin:48px 0;padding:20px 24px;background:#fbfaf7;border:1px dashed #d8d0c0;
+    border-radius:14px;font-size:13.5px;color:var(--text-muted);line-height:1.6;
+  }
+  .notes strong{color:var(--navy);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="mockup-tag">Mockup – Fase 2 av /hjemme/ (manøverbibliotek, SafetyNotice, VideoGuide)</span>
+
+  <!-- SCREEN A: STEG 2 -->
+  <div class="screen-label">Skjerm A — Steg 2: manøverbibliotek</div>
+  <p class="eyebrow">Steg 2</p>
+  <h2>Hva har du fått anbefalt?</h2>
+  <p class="helper">Velg bare en manøver du har fått anbefalt etter undersøkelse.</p>
+
+  <div class="exercise-grid">
+    <div class="exercise-card">
+      <div class="exercise-thumb">
+        <svg viewBox="0 0 100 100" fill="none"><circle cx="50" cy="50" r="30" stroke="#163875" stroke-width="4"/></svg>
+        <span class="play">▶</span>
+      </div>
+      <div class="exercise-body">
+        <span class="situasjon">Bakre buegang, høyre</span>
+        <h3>Epleys manøver – høyre side</h3>
+        <p>Fra Sanity: introtekst hentes fra eksisterende øvelsesdokument.</p>
+        <span class="exercise-meta">Ca. 5–10 min</span>
+        <a class="link" href="#skjerm-b">Start veiledning →</a>
+      </div>
+    </div>
+    <div class="exercise-card">
+      <div class="exercise-thumb">
+        <svg viewBox="0 0 100 100" fill="none"><circle cx="50" cy="50" r="30" stroke="#163875" stroke-width="4"/></svg>
+        <span class="play">▶</span>
+      </div>
+      <div class="exercise-body">
+        <span class="situasjon">Bakre buegang, venstre</span>
+        <h3>Epleys manøver – venstre side</h3>
+        <p>Fra Sanity: introtekst hentes fra eksisterende øvelsesdokument.</p>
+        <span class="exercise-meta">Ca. 5–10 min</span>
+        <a class="link" href="#">Start veiledning →</a>
+      </div>
+    </div>
+    <div class="exercise-card">
+      <div class="exercise-thumb">
+        <svg viewBox="0 0 100 100" fill="none"><circle cx="50" cy="50" r="30" stroke="#163875" stroke-width="4"/></svg>
+        <span class="play">▶</span>
+      </div>
+      <div class="exercise-body">
+        <span class="situasjon">Alternativ til Epley</span>
+        <h3>Semont-manøver</h3>
+        <p>Fra Sanity: introtekst hentes fra eksisterende øvelsesdokument.</p>
+        <span class="exercise-meta">Ca. 5 min</span>
+        <a class="link" href="#">Start veiledning →</a>
+      </div>
+    </div>
+    <div class="exercise-card">
+      <div class="exercise-thumb">
+        <svg viewBox="0 0 100 100" fill="none"><circle cx="50" cy="50" r="30" stroke="#163875" stroke-width="4"/></svg>
+        <span class="play">▶</span>
+      </div>
+      <div class="exercise-body">
+        <span class="situasjon">Horisontal buegang</span>
+        <h3>BBQ roll</h3>
+        <p>Fra Sanity: introtekst hentes fra eksisterende øvelsesdokument.</p>
+        <span class="exercise-meta">Ca. 5 min</span>
+        <a class="link" href="#">Start veiledning →</a>
+      </div>
+    </div>
+    <div class="exercise-card">
+      <div class="exercise-thumb">
+        <svg viewBox="0 0 100 100" fill="none"><circle cx="50" cy="50" r="30" stroke="#163875" stroke-width="4"/></svg>
+        <span class="play">▶</span>
+      </div>
+      <div class="exercise-body">
+        <span class="situasjon">Horisontal buegang</span>
+        <h3>Gufoni-manøver</h3>
+        <p>Fra Sanity: introtekst hentes fra eksisterende øvelsesdokument.</p>
+        <span class="exercise-meta">Ca. 5 min</span>
+        <a class="link" href="#">Start veiledning →</a>
+      </div>
+    </div>
+    <div class="exercise-card">
+      <div class="exercise-thumb">
+        <svg viewBox="0 0 100 100" fill="none"><circle cx="50" cy="50" r="30" stroke="#163875" stroke-width="4"/></svg>
+        <span class="play">▶</span>
+      </div>
+      <div class="exercise-body">
+        <span class="situasjon">Etter behandling / vedlikehold</span>
+        <h3>Brandt-Daroff-øvelser</h3>
+        <p>Fra Sanity: introtekst hentes fra eksisterende øvelsesdokument.</p>
+        <span class="exercise-meta">Ca. 2 min / omgang</span>
+        <a class="link" href="#">Start veiledning →</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN B: manøverside -->
+  <div class="screen-label" id="skjerm-b">Skjerm B — Eksempel: Epleys manøver – høyre side</div>
+
+  <div class="safety">
+    <h3>Før du starter</h3>
+    <ul>
+      <li>Sørg for at dette er manøveren du har fått anbefalt.</li>
+      <li>Det kan være lurt å ha en annen person til stede.</li>
+      <li>Beveg deg rolig mellom stillingene.</li>
+      <li>Det er vanlig at svimmelhet kan utløses under manøveren.</li>
+      <li>Stopp dersom du får nye eller tydelig annerledes symptomer enn dem du vanligvis forbinder med krystallsyken.</li>
+    </ul>
+    <a class="link" href="#">Når bør jeg få ny vurdering? →</a>
+  </div>
+
+  <div class="videoguide">
+    <div class="vg-header">
+      <h3 class="vg-title">Epleys manøver – høyre side</h3>
+      <span class="vg-step">Steg 1 av 5</span>
+    </div>
+    <div class="vg-video">
+      <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" stroke="#163875" stroke-width="1.5"/><path d="M10 8l6 4-6 4V8z" fill="#163875"/></svg>
+    </div>
+    <p class="vg-text">Kort forklaring av dette steget hentes fra Sanity-dokumentet for denne manøveren.</p>
+    <div class="vg-footer">
+      <div class="vg-dots">
+        <span class="active"></span><span></span><span></span><span></span><span></span>
+      </div>
+      <a class="btn-primary" href="#">Neste steg →</a>
+    </div>
+  </div>
+
+  <div class="notes">
+    <strong>Merk – kun for gjennomgang:</strong> Dette viser to skjermer i /hjemme/-flyten: (A) manøverbiblioteket i steg 2, bygget som ExerciseCard-komponenter som henter fra de <em>samme</em> Sanity-dokumentene som /ovelsesbibliotek/ bruker i dag, og (B) et eksempel på hvordan en valgt manøver vises med SafetyNotice øverst og VideoGuide under. Tekstinnholdet i kortene og video-guiden ("Fra Sanity: ...") er kun plassholdere som viser hvor ekte innhold kobles inn — ingen medisinske instruksjoner er funnet på i denne mockupen. SafetyNotice-teksten er hentet direkte fra planen din og bør godkjennes av deg som fagperson før den går live. "Steg X av 5" og antall steg er illustrativt og styres av faktisk innhold i Sanity per manøver.
+  </div>
+</div>
+</body>
+</html>

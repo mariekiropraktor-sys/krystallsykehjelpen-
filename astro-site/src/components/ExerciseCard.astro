@@ -1,0 +1,60 @@
+---
+// Gjenbrukbar manøver-/øvelseskort — brukes i steg 2 på /hjemme/, og kan
+// gjenbrukes for rehabiliteringsøvelser i fase 3. Trigger for
+// exercise-valg (ikke en vanlig lenke) — se scriptet i hjemme/index.astro,
+// som lytter etter klikk og populerer SafetyNotice/VideoGuide via
+// `data-exercise`.
+export interface Props {
+  title: string;
+  situasjon?: string;
+  lead?: string;
+  duration?: string;
+  mediaUrl?: string | null;
+  isVideo?: boolean;
+  payload: Record<string, unknown>;
+}
+
+const { title, situasjon, lead, duration, mediaUrl, isVideo, payload } = Astro.props;
+---
+
+<button type="button" class="exercise-card" data-exercise={JSON.stringify(payload)}>
+  <span class="exercise-thumb">
+    {mediaUrl ? (
+      isVideo ? <video src={mediaUrl} muted playsinline preload="metadata" /> : <img src={mediaUrl} alt="" />
+    ) : (
+      <svg viewBox="0 0 100 100" fill="none" aria-hidden="true"><circle cx="50" cy="50" r="30" stroke="var(--navy)" stroke-width="4" /></svg>
+    )}
+    <span class="play" aria-hidden="true">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
+    </span>
+  </span>
+  <span class="exercise-body">
+    {situasjon && <span class="situasjon">{situasjon}</span>}
+    <span class="exercise-title">{title}</span>
+    {lead && <span class="exercise-lead">{lead}</span>}
+    {duration && <span class="exercise-meta">{duration}</span>}
+    <span class="exercise-link">Start veiledning →</span>
+  </span>
+</button>
+
+<style>
+  .exercise-card {
+    background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius);
+    overflow: hidden; box-shadow: 0 8px 24px rgba(22, 56, 117, 0.06); display: flex; flex-direction: column;
+    text-align: left; font-family: var(--font-body); cursor: pointer; padding: 0; width: 100%;
+  }
+  .exercise-thumb { background: var(--sky); aspect-ratio: 16/10; display: flex; align-items: center; justify-content: center; position: relative; }
+  .exercise-thumb svg:first-child { width: 34%; height: 34%; color: var(--navy); }
+  .exercise-thumb img, .exercise-thumb video { width: 100%; height: 100%; object-fit: cover; }
+  .exercise-thumb .play {
+    position: absolute; width: 40px; height: 40px; border-radius: 50%; background: rgba(255, 255, 255, 0.9);
+    display: flex; align-items: center; justify-content: center; color: var(--navy);
+  }
+  .exercise-body { padding: 20px 22px 22px; display: flex; flex-direction: column; gap: 8px; flex-grow: 1; }
+  .exercise-body .situasjon { font-size: 0.75rem; font-weight: 700; color: var(--turquoise); text-transform: uppercase; letter-spacing: 0.04em; }
+  .exercise-title { font-family: var(--font-display); font-weight: 600; font-size: 1.12rem; color: var(--navy); }
+  .exercise-lead { font-size: 0.88rem; line-height: 1.5; color: var(--ink-soft); flex-grow: 1; }
+  .exercise-meta { font-size: 0.78rem; color: var(--navy-2); font-weight: 600; }
+  .exercise-link { color: var(--accent); font-weight: 600; font-size: 0.88rem; margin-top: 4px; }
+  .exercise-card:hover .exercise-link { text-decoration: underline; }
+</style>

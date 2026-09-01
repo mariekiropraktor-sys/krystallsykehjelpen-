@@ -1,0 +1,40 @@
+---
+// Gjenbrukbar video-/steg-guide. Rendres som ett skall — innholdet
+// (tittel, steg-tekst, stegindikator, video/placeholder) fylles inn og
+// oppdateres av scriptet i hjemme/index.astro når brukeren velger en
+// øvelse og klikker "Neste steg", basert på steps-arrayet fra Sanity.
+// Ingen tekst her er hardkodet klinisk innhold.
+---
+
+<div class="videoguide" id="video-guide">
+  <div class="vg-header">
+    <h3 class="vg-title" id="vg-title"></h3>
+    <span class="vg-step" id="vg-step"></span>
+  </div>
+  <div class="vg-video" id="vg-video"></div>
+  <p class="vg-text" id="vg-text"></p>
+  <div class="vg-footer">
+    <div class="vg-dots" id="vg-dots"></div>
+    <button type="button" class="btn btn-primary" id="vg-next">Neste steg →</button>
+  </div>
+</div>
+
+<style>
+  .videoguide { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); padding: 32px; box-shadow: 0 8px 24px rgba(22, 56, 117, 0.06); }
+  .vg-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 10px; }
+  .vg-title { font-size: 1.25rem; margin: 0; }
+  .vg-step { font-size: 0.8rem; font-weight: 700; color: var(--navy-2); background: var(--beige); padding: 6px 14px; border-radius: 999px; }
+  .vg-video {
+    background: var(--sky); border-radius: var(--radius-sm); aspect-ratio: 16/9;
+    display: flex; align-items: center; justify-content: center; margin-bottom: 20px; overflow: hidden;
+  }
+  .vg-video img, .vg-video video { width: 100%; height: 100%; object-fit: cover; }
+  .vg-video svg { width: 50px; height: 50px; color: var(--navy); }
+  .vg-text { font-size: 0.95rem; line-height: 1.6; color: var(--ink-soft); margin: 0 0 22px; }
+  .vg-footer { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; }
+  .vg-dots { display: flex; gap: 6px; }
+  .vg-dots span { width: 8px; height: 8px; border-radius: 50%; background: var(--line); display: block; }
+  .vg-dots span.active { background: var(--accent); }
+  #vg-next[disabled] { opacity: 0.6; cursor: default; }
+  @media (max-width: 640px) { .videoguide { padding: 22px; } }
+</style>

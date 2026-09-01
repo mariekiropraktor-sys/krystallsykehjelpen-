@@ -41,8 +41,8 @@ const journeyCards = [
   {
     title: "Jeg har fått diagnosen",
     desc: "Forstå hva som skjer i det indre øret og hvordan behandlingen fungerer.",
-    href: "#",
-    comingSoon: true,
+    href: "/hjemme/",
+    comingSoon: false,
   },
   {
     title: "Jeg trenger en øvelse",
@@ -116,6 +116,23 @@ const journeyCards = [
             </div>
           </a>
         ))}
+      </div>
+
+      <div class="hjemme-section">
+        <div class="hjemme-content">
+          <span class="eyebrow">Krystallsykehjelpen hjemme</span>
+          <h3>Få hjelp hjemme – steg for steg</h3>
+          <p>Har du fått påvist krystallsyke? Krystallsykehjelpen hjemme guider deg videre med tydelige videoveiledninger, manøvrer og informasjon om hva du kan forvente etter behandling – og hva du kan gjøre dersom du fortsatt er svimmel.</p>
+          <a href="/hjemme/" class="btn btn-primary">Start Krystallsykehjelpen hjemme →</a>
+        </div>
+        <div class="hjemme-visual">
+          <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <circle cx="100" cy="70" r="34" stroke="var(--navy)" stroke-width="4" />
+            <path d="M60 130 Q100 100 140 130 L150 180 L50 180 Z" stroke="var(--navy)" stroke-width="4" fill="none" />
+            <path d="M40 95 Q100 60 160 95" stroke="var(--turquoise)" stroke-width="4" stroke-linecap="round" fill="none" />
+          </svg>
+          <span class="visual-caption">Bilde/video-still fra manøver – legges til senere</span>
+        </div>
       </div>
     </div>
   </section>
@@ -301,9 +318,32 @@ const journeyCards = [
   .section-alt.no-top .section-head { text-align: center; margin-left: auto; margin-right: auto; }
   .section-alt.no-top .section-head .heading-rule { margin-left: auto; margin-right: auto; }
 
-  .journey-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; }
-  @media (max-width: 980px) { .journey-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .journey-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
   @media (max-width: 560px) { .journey-grid { grid-template-columns: 1fr; } }
+
+  .hjemme-section {
+    background: var(--beige); border-radius: var(--radius); padding: 56px;
+    display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 48px; align-items: center;
+    margin-top: 40px;
+  }
+  .hjemme-content .eyebrow { font-size: 0.78rem; letter-spacing: 0.09em; text-transform: uppercase; color: var(--navy-2); font-weight: 700; margin: 0 0 14px; display: block; }
+  .hjemme-content h3 { font-family: var(--font-display); font-weight: 600; font-size: clamp(1.6rem, 2.8vw, 2.1rem); line-height: 1.15; margin: 0 0 16px; color: var(--navy); }
+  .hjemme-content p { font-size: 1rem; line-height: 1.6; color: var(--ink-soft); margin: 0 0 28px; max-width: 46ch; }
+  .hjemme-visual {
+    position: relative; background: var(--sky); border-radius: var(--radius-sm); aspect-ratio: 4/3.1;
+    display: flex; align-items: center; justify-content: center; overflow: hidden;
+  }
+  .hjemme-visual svg { width: 62%; height: 62%; }
+  .visual-caption {
+    position: absolute; bottom: 14px; left: 14px; background: rgba(255, 255, 255, 0.85);
+    color: var(--navy); font-size: 0.75rem; font-weight: 600; padding: 6px 12px; border-radius: 999px;
+  }
+  @media (max-width: 860px) {
+    .hjemme-section { grid-template-columns: 1fr; padding: 32px 24px; border-radius: var(--radius); gap: 28px; }
+    .hjemme-content p { max-width: none; }
+    .hjemme-visual { order: 2; aspect-ratio: 16/11; }
+    .hjemme-content { order: 1; }
+  }
   .journey-card {
     background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius);
     text-decoration: none; display: block; transition: transform 0.15s ease, box-shadow 0.15s ease;

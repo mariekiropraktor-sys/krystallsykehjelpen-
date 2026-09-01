@@ -1,0 +1,76 @@
+---
+// Gjenbrukbar rad for manøverlisten på /hjemme/. To varianter:
+// - Med sidevalg (sides har 2 elementer): raden folder ut et panel med
+//   «Høyre side» / «Venstre side» — hver knapp har sin egen
+//   data-exercise-payload (peker til riktig eksisterende Sanity-dokument).
+// - Uten sidevalg (single, f.eks. Brandt-Daroff): raden er selv triggeren.
+//
+// Ingen navigasjon til ny side — klikk populerer SafetyNotice/VideoGuide
+// via scriptet i hjemme/index.astro, akkurat som i fase 2.
+export interface Props {
+  title: string;
+  situasjon?: string;
+  duration?: string;
+  sides?: { label: string; payload: Record<string, unknown> }[];
+  payload?: Record<string, unknown>;
+}
+
+const { title, situasjon, duration, sides, payload } = Astro.props;
+const hasSides = Boolean(sides?.length);
+const panelId = `panel-${title.toLowerCase().replace(/[^a-z0-9æøå]+/g, "-")}`;
+---
+
+<div class="maneuver-row">
+  {hasSides ? (
+    <>
+      <button type="button" class="row-main" aria-expanded="false" aria-controls={panelId}>
+        <span class="l"><span class="row-title">{title}</span>{situasjon && <span class="sit">{situasjon}</span>}</span>
+        <span class="r">{duration && <span class="dur">{duration}</span>}<span class="go">Velg side ↓</span></span>
+      </button>
+      <div class="side-panel" id={panelId} hidden>
+        <p class="q">Hvilken side har du fått anbefalt?</p>
+        <div class="side-btns">
+          {sides!.map((side) => (
+            <button type="button" class="side-btn" data-exercise={JSON.stringify(side.payload)}>{side.label}</button>
+          ))}
+        </div>
+        <p class="side-note">Vet du ikke hvilken side du har fått anbefalt, bør du ikke gjette. <a href="/fa-hjelp/" class="link">Få hjelp til å finne ut av det →</a></p>
+      </div>
+    </>
+  ) : (
+    <button type="button" class="row-main single" data-exercise={JSON.stringify(payload)}>
+      <span class="l"><span class="row-title">{title}</span>{situasjon && <span class="sit">{situasjon}</span>}</span>
+      <span class="r">{duration && <span class="dur">{duration}</span>}<span class="go">Start veiledning →</span></span>
+    </button>
+  )}
+</div>
+
+<style>
+  .maneuver-row { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-sm); margin-bottom: 10px; overflow: hidden; transition: border-color 0.15s ease; }
+  .maneuver-row:hover { border-color: var(--accent); }
+
+  .row-main {
+    width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    padding: 16px 20px; background: none; border: none; cursor: pointer; font-family: var(--font-body); text-align: left;
+  }
+  .row-main .l { display: flex; flex-direction: column; gap: 2px; }
+  .row-title { font-family: var(--font-display); font-weight: 600; font-size: 1.05rem; color: var(--navy); }
+  .row-main .sit { font-size: 0.8rem; color: var(--ink-soft); }
+  .row-main .r { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
+  .row-main .dur { font-size: 0.8rem; color: var(--ink-soft); }
+  .row-main .go { color: var(--accent); font-weight: 600; font-size: 0.86rem; }
+
+  .side-panel { border-top: 1px solid var(--line); padding: 18px 20px 20px; background: var(--sky); }
+  .side-panel .q { font-size: 0.9rem; font-weight: 600; color: var(--navy); margin: 0 0 12px; }
+  .side-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+  .side-btn {
+    background: var(--paper); border: 1.5px solid var(--navy); color: var(--navy); font-weight: 600; font-size: 0.9rem;
+    padding: 11px 24px; border-radius: 999px; cursor: pointer; font-family: var(--font-body); min-height: 44px;
+  }
+  .side-btn:hover { background: var(--navy); color: #fff; }
+  .side-note { font-size: 0.8rem; color: var(--ink-soft); margin: 12px 0 0; line-height: 1.5; max-width: 52ch; }
+  .side-note .link { color: var(--accent); font-weight: 600; text-decoration: none; }
+  .side-note .link:hover { text-decoration: underline; }
+
+  @media (max-width: 640px) { .row-main { flex-direction: column; align-items: flex-start; gap: 8px; } }
+</style>

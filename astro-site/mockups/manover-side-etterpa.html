@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manøver først, side etterpå</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#163875; --navy-2:#1e4c96; --sky:#eff4fb; --accent:#2f79c9;
+    --beige:#f4eee3; --turkis:#5fc1d6; --white:#fff; --muted:#5a6b85;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:#fafbfc;font-family:'Public Sans',sans-serif;color:var(--navy);}
+  .page{max-width:880px;margin:0 auto;padding:0 20px 90px;}
+  .mockup-tag{background:var(--navy);color:#fff;font-size:12px;letter-spacing:.06em;
+    text-transform:uppercase;padding:6px 14px;border-radius:999px;display:inline-block;margin:32px 0 10px;}
+  .intro{font-size:14.5px;color:var(--muted);line-height:1.6;max-width:66ch;margin:0 0 8px;}
+
+  .head{display:flex;align-items:center;gap:12px;margin:56px 0 6px;}
+  .head .badge{background:var(--navy-2);color:#fff;font-size:12px;font-weight:700;
+    padding:5px 12px;border-radius:999px;}
+  .head h2{font-family:'Fraunces',serif;font-size:19px;font-weight:600;margin:0;}
+  .desc{font-size:13.5px;color:var(--muted);margin:0 0 16px;max-width:64ch;line-height:1.55;}
+
+  .frame{border:1px solid #dde4ee;border-radius:14px;background:var(--sky);
+    padding:34px 32px;box-shadow:0 6px 20px rgba(22,56,117,.06);}
+  .frame h3{font-family:'Fraunces',serif;font-weight:600;font-size:25px;margin:0 0 10px;}
+  .helper{font-size:14.5px;color:var(--muted);margin:0 0 24px;max-width:56ch;}
+
+  .row{background:#fff;border:1px solid #e2e9f4;border-radius:12px;margin-bottom:10px;
+    overflow:hidden;transition:border-color .15s;}
+  .row:hover{border-color:#c9d8ee;}
+  .row.open{border-color:var(--accent);border-width:1.5px;}
+  .row-main{display:flex;align-items:center;justify-content:space-between;gap:16px;
+    padding:16px 20px;cursor:pointer;}
+  .row-main .l{display:flex;flex-direction:column;gap:2px;}
+  .row-main h4{font-family:'Fraunces',serif;font-weight:600;font-size:16.5px;margin:0;color:var(--navy);}
+  .row-main .sit{font-size:12.5px;color:var(--muted);}
+  .row-main .r{display:flex;align-items:center;gap:14px;flex-shrink:0;}
+  .row-main .dur{font-size:12.5px;color:var(--muted);}
+  .row-main .go{color:var(--accent);font-weight:600;font-size:13.5px;}
+
+  .side-panel{border-top:1px solid #eef2f8;padding:18px 20px 20px;background:#f9fbfe;}
+  .side-panel .q{font-size:14px;font-weight:600;color:var(--navy);margin:0 0 12px;}
+  .side-btns{display:flex;gap:10px;flex-wrap:wrap;}
+  .side-btn{background:#fff;border:1.5px solid var(--navy);color:var(--navy);
+    font-weight:600;font-size:14px;padding:11px 24px;border-radius:999px;
+    text-decoration:none;cursor:pointer;font-family:'Public Sans',sans-serif;}
+  .side-btn:hover{background:var(--navy);color:#fff;}
+  .side-note{font-size:12.5px;color:var(--muted);margin:12px 0 0;line-height:1.5;max-width:52ch;}
+
+  .single{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;}
+
+  /* variant B: eget steg */
+  .stepB{background:#fff;border:1px solid #e2e9f4;border-radius:12px;padding:26px 28px;}
+  .stepB .back{color:var(--accent);font-weight:600;font-size:13.5px;text-decoration:none;
+    display:inline-block;margin-bottom:14px;}
+  .stepB h4{font-family:'Fraunces',serif;font-weight:600;font-size:21px;margin:0 0 8px;}
+  .stepB p{font-size:14px;color:var(--muted);margin:0 0 20px;line-height:1.55;max-width:52ch;}
+  .big-btns{display:flex;gap:14px;flex-wrap:wrap;}
+  .big-btn{flex:1;min-width:180px;background:#fff;border:1.5px solid #dbe3f0;border-radius:14px;
+    padding:22px 24px;text-decoration:none;cursor:pointer;font-family:'Public Sans',sans-serif;
+    text-align:left;transition:border-color .15s;}
+  .big-btn:hover{border-color:var(--accent);}
+  .big-btn b{font-family:'Fraunces',serif;font-weight:600;font-size:17px;color:var(--navy);display:block;}
+  .big-btn span{font-size:13px;color:var(--muted);display:block;margin-top:4px;}
+
+  .notes{margin:56px 0 0;padding:22px 26px;background:#fbfaf7;border:1px dashed #d8d0c0;
+    border-radius:14px;font-size:13.5px;color:var(--muted);line-height:1.65;}
+  .notes strong{color:var(--navy);}
+  .notes ul{margin:10px 0 0;padding-left:20px;}
+  .notes li{margin-bottom:7px;}
+
+  @media (max-width:700px){
+    .frame{padding:24px 20px;}
+    .row-main{flex-direction:column;align-items:flex-start;gap:8px;}
+    .big-btn{min-width:100%;}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <span class="mockup-tag">Manøver først, side etterpå</span>
+  <p class="intro">Ni kort blir til fem. Brandt-Daroff gjøres til begge sider og trenger ikke sidevalg. Sidevalget er formulert som «hvilken side har du fått anbefalt» — ikke som et spørsmål om hvor brukeren har krystallsyke.</p>
+
+  <!-- A -->
+  <div class="head"><span class="badge">Anbefalt</span><h2>Sidevalget folder seg ut i raden</h2></div>
+  <p class="desc">Brukeren trykker på manøveren, og sidevalget dukker opp rett under uten at siden bytter. Ingen navigasjon, ingen tilbakeknapp, og man ser fortsatt hele listen. Under er «Epleys manøver» åpnet.</p>
+
+  <div class="frame">
+    <h3>Hva har du fått anbefalt?</h3>
+    <p class="helper">Velg bare en manøver du har fått anbefalt etter undersøkelse.</p>
+
+    <div class="row open">
+      <div class="row-main">
+        <span class="l"><h4>Epleys manøver</h4><span class="sit">Bakre buegang</span></span>
+        <span class="r"><span class="dur">5–10 min</span><span class="go">Velg side ↓</span></span>
+      </div>
+      <div class="side-panel">
+        <p class="q">Hvilken side har du fått anbefalt?</p>
+        <div class="side-btns">
+          <button class="side-btn">Høyre side</button>
+          <button class="side-btn">Venstre side</button>
+        </div>
+        <p class="side-note">Vet du ikke hvilken side du har fått anbefalt, bør du ikke gjette. <a href="#" style="color:var(--accent);font-weight:600">Få hjelp til å finne ut av det →</a></p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="row-main">
+        <span class="l"><h4>Semont-manøver</h4><span class="sit">Bakre buegang</span></span>
+        <span class="r"><span class="dur">5 min</span><span class="go">Velg side →</span></span>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="row-main">
+        <span class="l"><h4>BBQ roll</h4><span class="sit">Horisontal buegang</span></span>
+        <span class="r"><span class="dur">5 min</span><span class="go">Velg side →</span></span>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="row-main">
+        <span class="l"><h4>Gufoni-manøver</h4><span class="sit">Horisontal buegang</span></span>
+        <span class="r"><span class="dur">5 min</span><span class="go">Velg side →</span></span>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="single">
+        <span class="l"><h4 style="font-family:'Fraunces',serif;font-weight:600;font-size:16.5px;margin:0;">Brandt-Daroff</h4><span class="sit" style="font-size:12.5px;color:var(--muted)">Habituering, begge sider</span></span>
+        <span class="r" style="display:flex;align-items:center;gap:14px"><span class="dur" style="font-size:12.5px;color:var(--muted)">2 min per omgang</span><span class="go" style="color:var(--accent);font-weight:600;font-size:13.5px">Start veiledning →</span></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- B -->
+  <div class="head"><span class="badge">Til sammenligning</span><h2>Sidevalget som eget steg</h2></div>
+  <p class="desc">Listen erstattes av et eget sidevalg når man har valgt manøver. Roligere skjermbilde med færre valg synlig samtidig, men krever en tilbakeknapp og ett ekstra trinn.</p>
+
+  <div class="frame">
+    <div class="stepB">
+      <a class="back" href="#">← Tilbake til manøvrene</a>
+      <h4>Epleys manøver</h4>
+      <p>Hvilken side har du fått anbefalt?</p>
+      <div class="big-btns">
+        <button class="big-btn"><b>Høyre side</b><span>Ca. 5–10 minutter</span></button>
+        <button class="big-btn"><b>Venstre side</b><span>Ca. 5–10 minutter</span></button>
+      </div>
+      <p style="font-size:12.5px;color:var(--muted);margin:16px 0 0;line-height:1.5;max-width:52ch">Vet du ikke hvilken side du har fått anbefalt, bør du ikke gjette. <a href="#" style="color:var(--accent);font-weight:600">Få hjelp til å finne ut av det →</a></p>
+    </div>
+  </div>
+
+  <div class="notes">
+    <strong>Merk – kun for gjennomgang:</strong>
+    <ul>
+      <li>Ingen Sanity-dokumenter slås sammen. De side-spesifikke dokumentene ligger som før — sidevalget peker bare til riktig ett av dem.</li>
+      <li><strong>Språket i sidevalget er viktig:</strong> «Hvilken side har du fått anbefalt?» — ikke «hvilken side har du krystallsyke i?». Det første viser til noe brukeren allerede har fått vite. Det andre ville gjort siden til et diagnoseverktøy.</li>
+      <li>Utgangen for den som ikke vet hvilken side, er lagt inn begge steder. Ordlyden bør være din.</li>
+      <li>Brandt-Daroff har ingen sider i Sanity og går rett til veiledningen. Sjekk at det stemmer med hvordan du bruker den klinisk.</li>
+    </ul>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,382 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import ManeuverRow from "../../components/ManeuverRow.astro";
+import SafetyNotice from "../../components/SafetyNotice.astro";
+import VideoGuide from "../../components/VideoGuide.astro";
+import { safeFetch } from "../../lib/safeFetch";
+
+// Fase 1 av 3 for /hjemme/ («Krystallsykehjelpen hjemme») — hero, «Før du
+// starter» og steg 1. Fase 2: steg 2 (manøverbibliotek), SafetyNotice og
+// VideoGuide, se hjemme-fase2-prompt.md. Komprimert i en egen oppgave
+// (manover-kompakt-prompt.md): 9 side-spesifikke Sanity-dokumenter grupperes
+// nå til 5 manøver-rader i grensesnittet, med sidevalg som folder ut i
+// raden — ingen dokumenter er endret, kun presentasjonen. Oppfølging/
+// restsvimmelhet-seksjon og rehab kommer i fase 3.
+
+// De ni faktiske side-spesifikke dokumentene (verifisert direkte mot Sanity
+// før koding, ikke gjettet — se sluttrapport).
+const EXERCISE_ORDER = [
+  "epley-hoyre",
+  "epley-venstre",
+  "semont-hoyre",
+  "semont-venstre",
+  "barbecue-rull-hoyre",
+  "barbecue-rull-venstre",
+  "gufoni-hoyre",
+  "gufoni-venstre",
+  "brandt-daroff",
+];
+
+const rawExercises = await safeFetch(
+  `*[_type == "exercise" && slug.current in $slugs]{
+    title, "slug": slug.current, exerciseType, canal, side, duration,
+    steps[]{ title, description, holdTime },
+    mediaFile{ asset->{ url, mimeType } }
+  }`,
+  { slugs: EXERCISE_ORDER },
+  [],
+);
+
+const CANAL_TITLES = {
+  bakre: "Bakre buegang",
+  horisontal: "Horisontal buegang",
+  fremre: "Fremre buegang",
+};
+
+const SIDE_LABELS = { hoyre: "Høyre side", venstre: "Venstre side" };
+
+// Gruppering til 5 manøvre bruker kun eksisterende felt (title, canal,
+// side, exerciseType) — ingen nye Sanity-felt. Tittel-mønsteret
+// "<Manøver> – høyre/venstre" er verifisert direkte i Sanity (se
+// sluttrapport), ikke gjettet. Dokumenter uten sidesuffiks (Brandt-Daroff)
+// blir sin egen gruppe uendret.
+function baseTitleFor(title) {
+  return title.replace(/ – (høyre|venstre)$/i, "");
+}
+
+const decorated = rawExercises
+  .slice()
+  .sort((a, b) => EXERCISE_ORDER.indexOf(a.slug) - EXERCISE_ORDER.indexOf(b.slug))
+  .map((ex) => {
+    const mediaUrl = ex.mediaFile?.asset?.url ?? null;
+    const isVideo = ex.mediaFile?.asset?.mimeType?.startsWith("video/") ?? false;
+    return {
+      ...ex,
+      mediaUrl,
+      isVideo,
+      payload: {
+        title: ex.title,
+        mediaUrl,
+        isVideo,
+        steps: (ex.steps ?? []).map((s) => ({ title: s.title, description: s.description })),
+      },
+    };
+  });
+
+const groupsMap = new Map();
+for (const ex of decorated) {
+  const key = baseTitleFor(ex.title);
+  if (!groupsMap.has(key)) groupsMap.set(key, []);
+  groupsMap.get(key).push(ex);
+}
+
+const GROUP_ORDER = ["Epley-manøver", "Semont-manøver", "Barbecue-rull (Lempert)", "Gufoni-manøver", "Brandt-Daroff-øvelser"];
+
+const maneuverGroups = GROUP_ORDER.map((key) => {
+  const docs = groupsMap.get(key) ?? [];
+  if (!docs.length) return null;
+
+  const first = docs[0];
+  const duration = docs.find((d) => d.duration)?.duration ?? null;
+  const isHabituering = first.exerciseType !== "reponering";
+  const situasjon = isHabituering ? "Habituering, begge sider" : (CANAL_TITLES[first.canal] ?? "");
+
+  if (docs.length > 1) {
+    return {
+      title: key,
+      situasjon,
+      duration,
+      sides: docs
+        .filter((d) => d.side)
+        .sort((a, b) => (a.side === "hoyre" ? -1 : 1))
+        .map((d) => ({ label: SIDE_LABELS[d.side] ?? d.side, payload: d.payload })),
+    };
+  }
+
+  return { title: key, situasjon, duration, payload: first.payload };
+}).filter(Boolean);
+
+const stepCards = [
+  {
+    num: "01",
+    title: "Jeg skal gjøre en manøver",
+    desc: "Finn videoveiledningen til manøveren du har fått anbefalt.",
+    href: "#steg2",
+    linkText: "Finn manøver →",
+    comingSoon: false,
+  },
+  {
+    num: "02",
+    title: "Jeg har behandlet krystallsyken – hva nå?",
+    desc: "Les hva som er vanlig etter behandling og hva du kan forvente de neste dagene.",
+    href: null,
+    linkText: "Se hva som skjer etterpå →",
+    comingSoon: true,
+  },
+  {
+    num: "03",
+    title: "Jeg er fortsatt svimmel",
+    desc: "Den kraftige posisjonssvimmelheten kan være borte selv om du fortsatt føler deg ustø eller svimmel.",
+    href: "/blogg/restsvimmelhet-etter-krystallsyke/",
+    linkText: "Få hjelp med restsvimmelhet →",
+    comingSoon: false,
+  },
+];
+---
+
+<Layout
+  title="Krystallsykehjelpen hjemme | Veiledning etter krystallsyke"
+  description="Har du fått påvist krystallsyke? Få trinnvis veiledning til manøvrer, informasjon om tiden etter behandling og hjelp ved restsvimmelhet."
+  activePath="/hjemme/"
+>
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <span class="eyebrow">Krystallsykehjelpen hjemme</span>
+        <h1>Krystallsykehjelpen hjemme</h1>
+        <p class="subheading">Fra diagnose til tryggere hverdag.</p>
+        <p class="ingress">Har du fått påvist krystallsyke? Her får du hjelp til å finne veiledningen du har fått anbefalt, gjennomføre behandlingen hjemme og forstå hva du bør gjøre videre.</p>
+        <div class="hero-ctas">
+          <a href="#steg1" class="btn btn-primary">Start veiledningen</a>
+          <a href="#hvordan" class="link-secondary">Hvordan fungerer det?</a>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <circle cx="100" cy="70" r="34" stroke="var(--navy)" stroke-width="4" />
+          <path d="M60 130 Q100 100 140 130 L150 180 L50 180 Z" stroke="var(--navy)" stroke-width="4" fill="none" />
+          <path d="M40 95 Q100 60 160 95" stroke="var(--turquoise)" stroke-width="4" stroke-linecap="round" fill="none" />
+        </svg>
+        <span class="visual-caption">Bilde/video-still legges til senere</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-alt no-top">
+    <div class="container">
+      <div class="prereq">
+        <h2>Før du starter</h2>
+        <p>Krystallsykehjelpen hjemme er laget for deg som allerede har fått vurdert svimmelheten din og fått påvist krystallsyke.</p>
+        <p>For å velge riktig manøver bør du vite hvilken side og buegang som er påvirket, eller hvilken manøver du har fått anbefalt.</p>
+        <p>Hvis du ikke vet dette, bør du ikke velge en tilfeldig manøver basert på symptomer alene.</p>
+        <div class="prereq-ctas">
+          <a href="#steg1" class="btn btn-outline">Jeg vet hvilken behandling jeg skal gjøre</a>
+          <a href="/fa-hjelp/" class="btn btn-outline">Jeg er usikker på diagnosen min</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="steg1" id="steg1">
+    <div class="container">
+      <span class="eyebrow">Steg 1</span>
+      <h2>Hva trenger du hjelp med?</h2>
+      <div class="choice-grid">
+        {stepCards.map((card) => (
+          <div class={`choice-card ${card.comingSoon ? "coming-soon" : ""}`}>
+            <span class="num">{card.num}</span>
+            <h3>{card.title}</h3>
+            <p>{card.desc}</p>
+            {card.comingSoon ? (
+              <span class="link muted">Kommer snart</span>
+            ) : (
+              <a href={card.href} class="link">{card.linkText}</a>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="steg2" id="steg2">
+    <div class="container">
+      <span class="eyebrow">Steg 2</span>
+      <h2>Hva har du fått anbefalt?</h2>
+      <p class="helper">Velg bare en manøver du har fått anbefalt etter undersøkelse.</p>
+      {maneuverGroups.length ? (
+        <div class="maneuver-list">
+          {maneuverGroups.map((group) => (
+            <ManeuverRow title={group.title} situasjon={group.situasjon} duration={group.duration} sides={group.sides} payload={group.payload} />
+          ))}
+        </div>
+      ) : (
+        <p class="exercise-empty">Manøverbiblioteket er ikke tilgjengelig akkurat nå. Prøv igjen om litt, eller <a href="/ovelsesbibliotek/" class="link">gå til øvelsesbiblioteket →</a></p>
+      )}
+    </div>
+  </section>
+
+  <section class="skjerm-b" id="skjerm-b">
+    <div class="container">
+      <SafetyNotice />
+      <VideoGuide />
+    </div>
+  </section>
+</Layout>
+
+<script>
+  // Kun lokal state i nettleseren (valgt manøver, gjeldende steg) — ingen
+  // data sendes til server, ingen lagring, ingen helseopplysninger.
+  const skjermB = document.getElementById("skjerm-b");
+  const vgTitle = document.getElementById("vg-title");
+  const vgStep = document.getElementById("vg-step");
+  const vgVideo = document.getElementById("vg-video");
+  const vgText = document.getElementById("vg-text");
+  const vgDots = document.getElementById("vg-dots");
+  const vgNext = document.getElementById("vg-next");
+
+  let currentSteps = [];
+  let currentIndex = 0;
+
+  function renderVideoArea(mediaUrl, isVideo) {
+    if (!vgVideo) return;
+    if (mediaUrl) {
+      vgVideo.innerHTML = isVideo
+        ? `<video src="${mediaUrl}" controls playsinline preload="metadata"></video>`
+        : `<img src="${mediaUrl}" alt="" />`;
+    } else {
+      vgVideo.innerHTML =
+        '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.5" /><path d="M10 8l6 4-6 4V8z" fill="currentColor" /></svg>';
+    }
+  }
+
+  function renderStep() {
+    const total = currentSteps.length;
+    if (vgStep) vgStep.textContent = total ? `Steg ${currentIndex + 1} av ${total}` : "";
+
+    const step = currentSteps[currentIndex];
+    if (vgText) {
+      vgText.textContent = step
+        ? [step.title, step.description].filter(Boolean).join(" — ")
+        : "Steginnhold for denne manøveren er ikke lagt inn ennå.";
+    }
+
+    if (vgDots) {
+      vgDots.innerHTML = "";
+      for (let i = 0; i < total; i++) {
+        const dot = document.createElement("span");
+        if (i === currentIndex) dot.classList.add("active");
+        vgDots.appendChild(dot);
+      }
+    }
+
+    if (vgNext) {
+      const isLast = total === 0 || currentIndex >= total - 1;
+      vgNext.textContent = isLast ? "Du har fullført manøveren" : "Neste steg →";
+      vgNext.disabled = isLast;
+    }
+  }
+
+  function selectExercise(el) {
+    let data;
+    try {
+      data = JSON.parse(el.getAttribute("data-exercise") ?? "{}");
+    } catch {
+      return;
+    }
+
+    if (vgTitle) vgTitle.textContent = data.title ?? "";
+    renderVideoArea(data.mediaUrl, data.isVideo);
+    currentSteps = Array.isArray(data.steps) ? data.steps : [];
+    currentIndex = 0;
+    renderStep();
+
+    skjermB?.classList.add("show");
+    skjermB?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  // Rader med sidevalg: klikk folder ut/inn panelet med Høyre/Venstre side.
+  document.querySelectorAll(".row-main[aria-expanded]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const panel = document.getElementById(btn.getAttribute("aria-controls") ?? "");
+      const isOpen = btn.getAttribute("aria-expanded") === "true";
+      btn.setAttribute("aria-expanded", isOpen ? "false" : "true");
+      if (panel) panel.hidden = isOpen;
+    });
+  });
+
+  // Sidevalg-knapper og manøvre uten sidevalg (f.eks. Brandt-Daroff) velger
+  // øvelsen direkte.
+  document.querySelectorAll(".side-btn, .row-main.single").forEach((el) => {
+    el.addEventListener("click", () => selectExercise(el));
+  });
+
+  vgNext?.addEventListener("click", () => {
+    if (currentIndex < currentSteps.length - 1) {
+      currentIndex++;
+      renderStep();
+    }
+  });
+</script>
+
+<style>
+  .hero { padding: 56px 0 24px; }
+  .hero-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 48px; align-items: center; }
+  @media (max-width: 860px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .hero-visual { order: -1; aspect-ratio: 16/11; }
+  }
+
+  .eyebrow { font-weight: 700; font-size: 0.78rem; letter-spacing: 0.09em; text-transform: uppercase; color: var(--navy-2); margin: 0 0 14px; display: block; }
+  .subheading { font-family: var(--font-display); font-weight: 500; font-style: italic; font-size: 1.18rem; color: var(--accent); margin: 0 0 20px; }
+  .ingress { font-size: 1.03rem; line-height: 1.65; color: var(--ink-soft); margin: 0 0 30px; max-width: 52ch; }
+  .hero-ctas { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+  .link-secondary { color: var(--accent); font-weight: 600; font-size: 0.94rem; text-decoration: none; }
+  .link-secondary:hover { text-decoration: underline; }
+
+  .hero-visual {
+    background: var(--sky); border-radius: var(--radius); aspect-ratio: 4/3.4;
+    display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden;
+  }
+  .hero-visual svg { width: 56%; height: 56%; }
+  .visual-caption {
+    position: absolute; bottom: 14px; left: 14px; background: rgba(255, 255, 255, 0.85);
+    color: var(--navy); font-size: 0.75rem; font-weight: 600; padding: 6px 12px; border-radius: 999px;
+  }
+
+  .section-alt { background: var(--paper); padding: 60px 0; }
+  .section-alt.no-top { padding-top: 0; padding-bottom: 0; }
+
+  .prereq { background: var(--beige); border-radius: var(--radius); padding: 44px; margin-bottom: 64px; }
+  .prereq h2 { margin: 0 0 14px; }
+  .prereq p { font-size: 0.97rem; line-height: 1.65; color: var(--ink-soft); margin: 0 0 12px; max-width: 66ch; }
+  .prereq-ctas { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 22px; }
+  @media (max-width: 640px) { .prereq { padding: 28px 22px; } }
+
+  .steg1 { padding-bottom: 72px; }
+  .steg1 h2 { margin: 0 0 36px; }
+  .choice-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+  @media (max-width: 860px) { .choice-grid { grid-template-columns: 1fr; } }
+
+  .choice-card {
+    background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 30px 26px; box-shadow: 0 8px 24px rgba(22, 56, 117, 0.06);
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .choice-card .num { font-family: var(--font-display); font-weight: 600; font-size: 0.85rem; color: var(--turquoise); }
+  .choice-card h3 { font-size: 1.05rem; margin: 0; }
+  .choice-card p { font-size: 0.9rem; line-height: 1.55; color: var(--ink-soft); margin: 0; flex-grow: 1; }
+  .choice-card .link { color: var(--navy-2); font-weight: 700; font-size: 0.9rem; text-decoration: none; }
+  .choice-card .link:hover { text-decoration: underline; }
+  .choice-card.coming-soon { opacity: 0.7; }
+  .choice-card .link.muted { color: var(--ink-soft); font-weight: 600; cursor: default; }
+
+  .steg2 { padding: 72px 0; background: var(--paper); scroll-margin-top: 24px; }
+  .steg2 h2 { margin: 0 0 10px; }
+  .helper { font-size: 0.95rem; color: var(--ink-soft); margin: 0 0 32px; max-width: 60ch; }
+  .maneuver-list { max-width: 760px; }
+  .exercise-empty { color: var(--ink-soft); }
+  .exercise-empty .link { color: var(--accent); font-weight: 600; text-decoration: none; }
+
+  .skjerm-b { padding: 0 0 72px; display: none; scroll-margin-top: 24px; }
+  .skjerm-b.show { display: block; }
+</style>

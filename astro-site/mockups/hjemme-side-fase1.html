@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mockup – /hjemme/ fase 1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#163875;
+    --navy-2:#1e4c96;
+    --sky:#eff4fb;
+    --accent:#2f79c9;
+    --beige:#f4eee3;
+    --turkis:#5fc1d6;
+    --white:#ffffff;
+    --text-muted:#5a6b85;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--white);font-family:'Public Sans',sans-serif;color:var(--navy);}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 24px;}
+  .mockup-tag{
+    background:var(--navy);color:#fff;font-size:12px;letter-spacing:.06em;text-transform:uppercase;
+    padding:6px 14px;border-radius:999px;display:inline-block;margin:32px 0 0;
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{padding:56px 0 64px;}
+  .hero-grid{display:grid;grid-template-columns:1.1fr 0.9fr;gap:48px;align-items:center;}
+  .eyebrow{
+    font-weight:700;font-size:12.5px;letter-spacing:.09em;text-transform:uppercase;
+    color:var(--navy-2);margin:0 0 14px;
+  }
+  h1{
+    font-family:'Fraunces',serif;font-weight:600;font-size:clamp(34px,4.4vw,48px);
+    line-height:1.08;margin:0 0 10px;color:var(--navy);
+  }
+  .subheading{
+    font-family:'Fraunces',serif;font-weight:500;font-style:italic;font-size:19px;
+    color:var(--accent);margin:0 0 20px;
+  }
+  .ingress{font-size:16.5px;line-height:1.65;color:#3c4a63;margin:0 0 30px;max-width:52ch;}
+  .hero-ctas{display:flex;align-items:center;gap:22px;flex-wrap:wrap;}
+  .btn-primary{
+    background:var(--navy);color:#fff;font-weight:600;font-size:15px;
+    padding:14px 26px;border-radius:12px;text-decoration:none;display:inline-block;
+  }
+  .link-secondary{color:var(--accent);font-weight:600;font-size:15px;text-decoration:none;}
+  .hero-visual{
+    background:var(--sky);border-radius:20px;aspect-ratio:4/3.4;
+    display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;
+  }
+  .hero-visual svg{width:56%;height:56%;}
+  .hero-visual .caption{
+    position:absolute;bottom:14px;left:14px;background:rgba(255,255,255,.85);
+    color:var(--navy);font-size:12px;font-weight:600;padding:6px 12px;border-radius:999px;
+  }
+
+  /* ---------- FØR DU STARTER ---------- */
+  .prereq{
+    background:var(--sky);border-radius:20px;padding:44px;margin-bottom:64px;
+  }
+  .prereq h2{
+    font-family:'Fraunces',serif;font-weight:600;font-size:24px;margin:0 0 14px;color:var(--navy);
+  }
+  .prereq p{font-size:15.5px;line-height:1.65;color:#3c4a63;margin:0 0 12px;max-width:66ch;}
+  .prereq-ctas{display:flex;gap:16px;flex-wrap:wrap;margin-top:22px;}
+  .btn-choice{
+    background:#fff;border:1.5px solid var(--navy);color:var(--navy);font-weight:600;font-size:14.5px;
+    padding:13px 22px;border-radius:12px;text-decoration:none;display:inline-block;
+  }
+  .btn-choice.muted{border-color:#c9d3e3;color:var(--navy-2);}
+
+  /* ---------- STEG 1 ---------- */
+  .steg1{margin-bottom:72px;}
+  .steg1 .eyebrow{margin-bottom:10px;}
+  .steg1 h2{
+    font-family:'Fraunces',serif;font-weight:600;font-size:clamp(26px,3vw,32px);
+    margin:0 0 36px;color:var(--navy);
+  }
+  .choice-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+  .choice-card{
+    background:#fff;border:1px solid #e7ecf4;border-radius:18px;padding:30px 26px;
+    box-shadow:0 8px 24px rgba(22,56,117,0.06);display:flex;flex-direction:column;gap:12px;
+  }
+  .choice-card .num{
+    font-family:'Fraunces',serif;font-weight:600;font-size:14px;color:var(--turkis);
+  }
+  .choice-card h3{
+    font-family:'Fraunces',serif;font-weight:600;font-size:19.5px;margin:0;color:var(--navy);
+  }
+  .choice-card p{font-size:14.5px;line-height:1.55;color:var(--text-muted);margin:0;flex-grow:1;}
+  .choice-card a.link{color:var(--accent);font-weight:600;font-size:14.5px;text-decoration:none;}
+
+  @media (max-width: 860px){
+    .hero-grid{grid-template-columns:1fr;}
+    .hero-visual{order:2;aspect-ratio:16/11;}
+    .hero{order:1;padding:36px 0 48px;}
+    .prereq{padding:28px 22px;}
+    .choice-grid{grid-template-columns:1fr;}
+  }
+
+  .notes{
+    margin:56px 0;padding:20px 24px;background:#fbfaf7;border:1px dashed #d8d0c0;
+    border-radius:14px;font-size:13.5px;color:var(--text-muted);line-height:1.6;
+  }
+  .notes strong{color:var(--navy);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="mockup-tag">Mockup – Fase 1 av /hjemme/ (hero + før du starter + steg 1)</span>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-grid">
+      <div>
+        <p class="eyebrow">Krystallsykehjelpen hjemme</p>
+        <h1>Krystallsykehjelpen hjemme</h1>
+        <p class="subheading">Fra diagnose til tryggere hverdag.</p>
+        <p class="ingress">Har du fått påvist krystallsyke? Her får du hjelp til å finne veiledningen du har fått anbefalt, gjennomføre behandlingen hjemme og forstå hva du bør gjøre videre.</p>
+        <div class="hero-ctas">
+          <a class="btn-primary" href="#steg1">Start veiledningen</a>
+          <a class="link-secondary" href="#hvordan">Hvordan fungerer det?</a>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="100" cy="70" r="34" stroke="#163875" stroke-width="4"/>
+          <path d="M60 130 Q100 100 140 130 L150 180 L50 180 Z" stroke="#163875" stroke-width="4" fill="none"/>
+          <path d="M40 95 Q100 60 160 95" stroke="#5fc1d6" stroke-width="4" stroke-linecap="round" fill="none"/>
+        </svg>
+        <span class="caption">Bilde/video-still legges til senere</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- FØR DU STARTER -->
+  <section class="prereq">
+    <h2>Før du starter</h2>
+    <p>Krystallsykehjelpen hjemme er laget for deg som allerede har fått vurdert svimmelheten din og fått påvist krystallsyke.</p>
+    <p>For å velge riktig manøver bør du vite hvilken side og buegang som er påvirket, eller hvilken manøver du har fått anbefalt.</p>
+    <p>Hvis du ikke vet dette, bør du ikke velge en tilfeldig manøver basert på symptomer alene.</p>
+    <div class="prereq-ctas">
+      <a class="btn-choice" href="#steg1">Jeg vet hvilken behandling jeg skal gjøre</a>
+      <a class="btn-choice muted" href="https://krystallsykehjelpen-3934.vercel.app/fa-hjelp/">Jeg er usikker på diagnosen min</a>
+    </div>
+  </section>
+
+  <!-- STEG 1 -->
+  <section class="steg1" id="steg1">
+    <p class="eyebrow">Steg 1</p>
+    <h2>Hva trenger du hjelp med?</h2>
+    <div class="choice-grid">
+      <div class="choice-card">
+        <span class="num">01</span>
+        <h3>Jeg skal gjøre en manøver</h3>
+        <p>Finn videoveiledningen til manøveren du har fått anbefalt.</p>
+        <a class="link" href="#">Finn manøver →</a>
+      </div>
+      <div class="choice-card">
+        <span class="num">02</span>
+        <h3>Jeg har behandlet krystallsyken – hva nå?</h3>
+        <p>Les hva som er vanlig etter behandling og hva du kan forvente de neste dagene.</p>
+        <a class="link" href="#">Se hva som skjer etterpå →</a>
+      </div>
+      <div class="choice-card">
+        <span class="num">03</span>
+        <h3>Jeg er fortsatt svimmel</h3>
+        <p>Den kraftige posisjonssvimmelheten kan være borte selv om du fortsatt føler deg ustø eller svimmel.</p>
+        <a class="link" href="#">Få hjelp med restsvimmelhet →</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="notes">
+    <strong>Merk – kun for gjennomgang:</strong> Dette er fase 1 av /hjemme/: hero, «Før du starter»-boks og de tre hovedvalgene i steg 1. Header/footer er ikke inkludert (gjenbrukes uendret). Numrene på valgkortene (01/02/03) er kun visuell rytme, ikke et påstått rekkefølgekrav — si ifra om de bør fjernes. «Jeg er usikker på diagnosen min» lenker nå til den eksisterende /fa-hjelp/-siden i stedet for en placeholder, siden den siden allerede dekker søk, klinikktime, video og hjemmebesøk. Fase 2 (manøverbibliotek, SafetyNotice, VideoGuide) og fase 3 (oppfølging, restsvimmelhet, rehab, «usikker»-seksjon som også peker til /fa-hjelp/) kommer som egne mockuper etter at denne er godkjent.
+  </div>
+</div>
+</body>
+</html>
