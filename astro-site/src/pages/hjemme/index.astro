@@ -123,15 +123,15 @@ const stepCards = [
     num: "02",
     title: "Jeg har behandlet krystallsyken – hva nå?",
     desc: "Les hva som er vanlig etter behandling og hva du kan forvente de neste dagene.",
-    href: null,
+    href: "#etterpa",
     linkText: "Se hva som skjer etterpå →",
-    comingSoon: true,
+    comingSoon: false,
   },
   {
     num: "03",
     title: "Jeg er fortsatt svimmel",
     desc: "Den kraftige posisjonssvimmelheten kan være borte selv om du fortsatt føler deg ustø eller svimmel.",
-    href: "/blogg/restsvimmelhet-etter-krystallsyke/",
+    href: "#restsvimmelhet",
     linkText: "Få hjelp med restsvimmelhet →",
     comingSoon: false,
   },
@@ -154,6 +154,7 @@ const hp =
       restsvimmelhetEyebrow, restsvimmelhetHeading, restsvimmelhetIntro, restsvimmelhetCards,
       restsvimmelhetCard4Heading, restsvimmelhetCard4Body, restsvimmelhetCard4Button1, restsvimmelhetCard4Button2,
       rehabEyebrow, rehabHeading, rehabIntro, rehabLead, rehabCtaHeading, rehabCtaBody, rehabCtaButton,
+      rehabGroup2Heading, rehabGroup2Lead,
       hjelpEyebrow, hjelpHeading, hjelpText1, hjelpText2, hjelpButton1, hjelpButton2, attributionText
     }`,
     {},
@@ -294,9 +295,16 @@ const restsvimmelhetData = {
 // Daroff er bevisst utelatt her — den vises allerede som egen rad i steg 2
 // (samme dokument, samme veiledningsflyt), og ville dukket opp to ganger på
 // samme side. Se sluttrapport for nøyaktig antall/begrunnelse.
+//
+// To grupper (øvelser vs. råd): habitueringSeksjon skiller IKKE rent langs
+// dette skillet (både "øvelser" og "råd" finnes i begge seksjonsverdiene).
+// `format` ("steps" vs "read") gir derimot et ekte, datadrevet skille som
+// treffer 5 av 6 dokumenter nøyaktig som spesifisert — se sluttrapport for
+// det ene avviket (gradvis-eksponering, som er lagret som "read"/lesestoff
+// uten stegdata, men var ønsket i øvelses-gruppen).
 const rehabExercisesRaw = await safeFetch(
   `*[_type == "exercise" && exerciseType == "habituering" && slug.current != "brandt-daroff"]{
-    title, "slug": slug.current, habitueringSeksjon, duration, lead,
+    title, "slug": slug.current, habitueringSeksjon, format, duration, lead,
     steps[]{ title, description },
     mediaFile{ asset->{ url, mimeType } }
   } | order(order asc)`,
@@ -304,7 +312,7 @@ const rehabExercisesRaw = await safeFetch(
   [],
 );
 
-const rehabExercises = rehabExercisesRaw.map((ex) => {
+function decorateExercise(ex) {
   const mediaUrl = ex.mediaFile?.asset?.url ?? null;
   const isVideo = ex.mediaFile?.asset?.mimeType?.startsWith("video/") ?? false;
   return {
@@ -321,7 +329,10 @@ const rehabExercises = rehabExercisesRaw.map((ex) => {
       steps: (ex.steps ?? []).map((s) => ({ title: s.title, description: s.description })),
     },
   };
-});
+}
+
+const rehabExerciseGroup = rehabExercisesRaw.filter((ex) => ex.format !== "read").map(decorateExercise);
+const rehabAdviceGroup = rehabExercisesRaw.filter((ex) => ex.format === "read").map(decorateExercise);
 
 const rehabData = {
   eyebrow: hp.rehabEyebrow ?? "Vestibulær rehabilitering",
@@ -331,6 +342,8 @@ const rehabData = {
   ctaHeading: hp.rehabCtaHeading ?? "Usikker på hvilke øvelser som passer for deg?",
   ctaBody: hp.rehabCtaBody ?? "I en videokonsultasjon kan øvelsene tilpasses situasjonen din, og du får veiledning i hvordan de skal gjøres.",
   ctaButton: hp.rehabCtaButton ?? "Bestill videokonsultasjon",
+  group2Heading: hp.rehabGroup2Heading ?? "Råd for hverdagen",
+  group2Lead: hp.rehabGroup2Lead ?? "Dette er ikke øvelser, men vaner og grep som kan gjøre hverdagen tryggere.",
 };
 
 const helpData = {
@@ -393,7 +406,6 @@ const attributionText =
 
   <section class="steg1" id="steg1">
     <div class="container">
-      <span class="eyebrow">Steg 1</span>
       <h2>Hva trenger du hjelp med?</h2>
       <div class="choice-grid">
         {stepCards.map((card) => (
@@ -414,7 +426,6 @@ const attributionText =
 
   <section class="steg2" id="steg2">
     <div class="container">
-      <span class="eyebrow">Steg 2</span>
       <h2>Hva har du fått anbefalt?</h2>
       <p class="helper">Velg bare en manøver du har fått anbefalt etter undersøkelse.</p>
       {maneuverGroups.length ? (
@@ -446,7 +457,7 @@ const attributionText =
     acuteWarning={followUpData.acuteWarning}
   />
 
-  <section class="restsvimmelhet">
+  <section class="restsvimmelhet" id="restsvimmelhet">
     <div class="container">
       <span class="eyebrow">{restsvimmelhetData.eyebrow}</span>
       <h2>{restsvimmelhetData.heading}</h2>
@@ -470,6 +481,8 @@ const attributionText =
           <a href="/fa-hjelp/" class="btn btn-outline btn-sm">{restsvimmelhetData.card4Button2}</a>
         </div>
       </div>
+
+      <p class="rest-read-more"><a href="/blogg/restsvimmelhet-etter-krystallsyke/" class="link">Les mer om restsvimmelhet →</a></p>
     </div>
   </section>
 
@@ -480,29 +493,55 @@ const attributionText =
       <p class="intro">{rehabData.intro}</p>
       <p class="lead">{rehabData.lead}</p>
 
-      {rehabExercises.length ? (
-        <div class="rehab-grid">
-          {rehabExercises.map((ex) => (
-            <ExerciseCard
-              title={ex.title}
-              situasjon={ex.situasjon}
-              lead={ex.lead}
-              duration={ex.duration}
-              mediaUrl={ex.mediaUrl}
-              isVideo={ex.isVideo}
-              payload={ex.payload}
-              compact
-              linkText="Se øvelse →"
-            />
-          ))}
-          <div class="rehab-cta">
-            <div>
-              <h3>{rehabData.ctaHeading}</h3>
-              <p>{rehabData.ctaBody}</p>
+      {rehabExerciseGroup.length || rehabAdviceGroup.length ? (
+        <>
+          {rehabExerciseGroup.length > 0 && (
+            <div class="rehab-grid">
+              {rehabExerciseGroup.map((ex) => (
+                <ExerciseCard
+                  title={ex.title}
+                  situasjon={ex.situasjon}
+                  lead={ex.lead}
+                  duration={ex.duration}
+                  mediaUrl={ex.mediaUrl}
+                  isVideo={ex.isVideo}
+                  payload={ex.payload}
+                  compact
+                  linkText="Se øvelse →"
+                />
+              ))}
+              <div class="rehab-cta">
+                <div>
+                  <h3>{rehabData.ctaHeading}</h3>
+                  <p>{rehabData.ctaBody}</p>
+                </div>
+                <a href="/tjenester/videokonsultasjon/" class="btn btn-primary">{rehabData.ctaButton}</a>
+              </div>
             </div>
-            <a href="/tjenester/videokonsultasjon/" class="btn btn-primary">{rehabData.ctaButton}</a>
-          </div>
-        </div>
+          )}
+
+          {rehabAdviceGroup.length > 0 && (
+            <div class="rehab-group2">
+              <h3>{rehabData.group2Heading}</h3>
+              <p class="lead">{rehabData.group2Lead}</p>
+              <div class="rehab-grid">
+                {rehabAdviceGroup.map((ex) => (
+                  <ExerciseCard
+                    title={ex.title}
+                    situasjon={ex.situasjon}
+                    lead={ex.lead}
+                    duration={ex.duration}
+                    mediaUrl={ex.mediaUrl}
+                    isVideo={ex.isVideo}
+                    payload={ex.payload}
+                    compact
+                    linkText="Se øvelse →"
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+        </>
       ) : (
         <p class="exercise-empty">Rehabiliteringsøvelsene er ikke tilgjengelige akkurat nå.</p>
       )}
@@ -684,7 +723,10 @@ const attributionText =
   .section-sky { background: var(--sky); }
 
   /* DEL 2: RESTSVIMMELHET */
-  .restsvimmelhet { background: var(--paper); padding: 72px 0; }
+  .restsvimmelhet { background: var(--paper); padding: 72px 0; scroll-margin-top: 24px; }
+  .rest-read-more { margin: 24px 0 0; }
+  .rest-read-more .link { color: var(--accent); font-weight: 600; font-size: 0.9rem; text-decoration: none; }
+  .rest-read-more .link:hover { text-decoration: underline; }
   .restsvimmelhet h2 { margin: 0 0 10px; }
   .restsvimmelhet-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-bottom: 20px; }
   @media (max-width: 700px) { .restsvimmelhet-grid { grid-template-columns: 1fr; } }
@@ -724,6 +766,10 @@ const attributionText =
   }
   .rehab-cta h3 { font-size: 1.05rem; margin: 0 0 6px; }
   .rehab-cta p { font-size: 0.88rem; color: var(--ink-soft); margin: 0; max-width: 46ch; }
+
+  .rehab-group2 { margin-top: 44px; }
+  .rehab-group2 h3 { font-size: 1.1rem; margin: 0 0 8px; }
+  .rehab-group2 .lead { margin-bottom: 20px; }
 
   /* Faglig avsender */
   .attribution-band { padding: 32px 0; text-align: center; }

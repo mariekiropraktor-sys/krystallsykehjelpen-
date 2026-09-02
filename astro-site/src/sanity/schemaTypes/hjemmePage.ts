@@ -221,6 +221,15 @@ export default defineType({
       initialValue: "I en videokonsultasjon kan øvelsene tilpasses situasjonen din, og du får veiledning i hvordan de skal gjøres.",
     }),
     defineField({ name: "rehabCtaButton", title: "CTA-boks – knappetekst", type: "string", group: "rehab", initialValue: "Bestill videokonsultasjon" }),
+    defineField({ name: "rehabGroup2Heading", title: "Gruppe 2 (råd) – overskrift", type: "string", group: "rehab", initialValue: "Råd for hverdagen" }),
+    defineField({
+      name: "rehabGroup2Lead",
+      title: "Gruppe 2 (råd) – ledetekst",
+      type: "text",
+      rows: 2,
+      group: "rehab",
+      initialValue: "Dette er ikke øvelser, men vaner og grep som kan gjøre hverdagen tryggere.",
+    }),
 
     // --- Del 4: Hjelp-seksjonen ---
     defineField({ name: "hjelpEyebrow", title: "Eyebrow", type: "string", group: "hjelp", initialValue: "Trenger du hjelp?" }),
