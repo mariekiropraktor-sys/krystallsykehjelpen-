@@ -6,9 +6,6 @@ import { blogPreviewClient, isPreviewingDrafts } from "../../../lib/blogPreviewC
 import { blocksToHtml, extractHeadings, estimateReadingTime } from "../../../lib/portableText";
 import { urlForImage } from "../../../lib/sanityImage";
 
-const bookingUrl =
-  "https://psno-patient-platform-fe.svc.pasientsky.no/embedded/planner/booking?serviceProviderId=54907264-049e-11eb-8fc8-26c6f94d64b7";
-
 export async function getStaticPaths() {
   try {
     // blogPreviewClient: i lokal dev med skrivetoken ser denne også
@@ -186,7 +183,7 @@ const faqJsonLd = post?.faq?.length && {
           <div class="cta-band">
             <h2>Usikker på om dette er krystallsyke?</h2>
             <p>Få bekreftet om det er krystallsyke, og hvilken side og buegang som er involvert.</p>
-            <a href={bookingUrl} class="btn cta-btn">Bestill undersøkelse →</a>
+            <a href="/fa-hjelp/" class="btn cta-btn">Få hjelp →</a>
           </div>
         </article>
 
