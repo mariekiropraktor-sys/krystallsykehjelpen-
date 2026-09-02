@@ -10,37 +10,63 @@ const bookingUrl =
   description="Velg riktig vei videre — søk i kunnskapsbasen, bestill konsultasjon på klinikken, video, eller forespør hjemmebesøk."
   activePath="/fa-hjelp/"
 >
-  <section class="hero hero-simple">
-    <div class="container">
-      <span class="eyebrow">Få hjelp</span>
-      <h1>Hva trenger du hjelp med akkurat nå?</h1>
-      <p class="lead">Velg alternativet som passer best — enten du vil finne svar selv, eller booke time direkte hos Marie.</p>
+  <section class="hero section-sky">
+    <div class="container hero-grid">
+      <div>
+        <span class="eyebrow">Få hjelp</span>
+        <h1>Hva trenger du hjelp med akkurat nå?</h1>
+        <p class="hero-lead">Enten du vil finne svar på egen hånd eller snakke med en fagperson — her er veiene videre.</p>
+      </div>
+      <div class="visual-frame">
+        <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <circle cx="88" cy="88" r="46" stroke="var(--navy)" stroke-width="5" />
+          <path d="M122 122 L165 165" stroke="var(--navy)" stroke-width="5" stroke-linecap="round" />
+          <path d="M68 88 Q88 68 108 88" stroke="var(--turquoise)" stroke-width="5" stroke-linecap="round" fill="none" />
+        </svg>
+      </div>
     </div>
-    <svg class="hero-wave" viewBox="0 0 1440 60" preserveAspectRatio="none">
-      <path d="M0,32 C360,72 1080,0 1440,32 L1440,60 L0,60 Z" fill="#ffffff" />
-    </svg>
   </section>
 
-  <section class="section-alt no-top">
+  <section class="section-alt">
     <div class="container">
-      <div class="help-grid">
+      <h2>Vil du finne ut mer selv?</h2>
+      <p class="lead">Gratis, uten å bestille time.</p>
+      <div class="help-grid grid-2">
         <a href="/sok/" class="card help-card">
-          <span class="help-tag">Finn svar selv</span>
+          <span class="help-tag">Søk</span>
           <div class="icon-circle">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
           </div>
           <h3>Søk deg frem til øvelse eller informasjon</h3>
-          <p>Usikker på om du trenger å bestille time? Søk på symptomer, diagnoser eller øvelser og finn svar med en gang.</p>
+          <p>Søk på symptomer, diagnoser eller øvelser og finn svar med en gang.</p>
           <span class="card-link">Gå til søk →</span>
         </a>
 
+        <a href="/hjemme/" class="card help-card">
+          <span class="help-tag">Har du diagnosen?</span>
+          <div class="icon-circle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4" /><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" /></svg>
+          </div>
+          <h3>Krystallsykehjelpen hjemme</h3>
+          <p>Har du allerede fått påvist krystallsyke? Få steg-for-steg-veiledning til manøveren du har fått anbefalt.</p>
+          <span class="card-link">Start veiledningen →</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-sky">
+    <div class="container">
+      <h2>Time hos Krystallsykehjelpen</h2>
+      <p class="lead">Marie holder til på Fetsund Kiropraktorsenter. Videokonsultasjon fungerer uansett hvor du bor.</p>
+      <div class="help-grid grid-3">
         <a href={bookingUrl} class="card help-card featured">
           <span class="help-tag">Mest booket</span>
           <div class="icon-circle">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 9h1M9 13h1M14 9h1M14 13h1" /></svg>
           </div>
-          <h3>Bestill konsultasjon på klinikken</h3>
-          <p>Grundig undersøkelse og behandling hos Marie på Fetsund Kiropraktorsenter. Anbefales ved første gangs undersøkelse.</p>
+          <h3>Konsultasjon på klinikken</h3>
+          <p>Grundig undersøkelse og behandling. Anbefales ved første gangs undersøkelse.</p>
           <span class="card-link">Bestill time →</span>
         </a>
 
@@ -49,7 +75,7 @@ const bookingUrl =
           <div class="icon-circle">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7l-7 5 7 5V7z" /><rect x="1" y="5" width="15" height="14" rx="2" /></svg>
           </div>
-          <h3>Bestill videokonsultasjon</h3>
+          <h3>Videokonsultasjon</h3>
           <p>Vurdering og veiledning digitalt, uten å måtte reise. Passer godt for oppfølging eller innledende vurdering.</p>
           <span class="card-link">Bestill time →</span>
         </a>
@@ -59,31 +85,67 @@ const bookingUrl =
           <div class="icon-circle">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l9-9 9 9M5 10v10h14V10" /></svg>
           </div>
-          <h3>Forespør hjemmebesøk</h3>
-          <p>Ved sterk svimmelhet kan det være vanskelig å reise. Send en forespørsel, så vurderer vi hjemmebesøk sammen.</p>
+          <h3>Hjemmebesøk</h3>
+          <p>Ved sterk svimmelhet kan det være vanskelig å reise. Send en forespørsel, så vurderer vi det sammen.</p>
           <span class="card-link">Send forespørsel →</span>
         </a>
       </div>
+    </div>
+  </section>
 
-      <div class="help-note">
-        Er du usikker på hva du trenger? <strong>Søk-alternativet</strong> er alltid et trygt sted å starte — det koster ingenting og gir deg en pekepinn før du eventuelt bestiller time.
+  <section class="section-beige">
+    <div class="container band">
+      <div>
+        <span class="eyebrow">Over hele landet</span>
+        <h2>Bor du ikke i nærheten?</h2>
+        <p class="band-text">Krystallsyke behandles av kiropraktorer, fysioterapeuter, manuellterapeuter og ØNH-leger over hele Norge. Søk opp behandlere nær deg — og se hvilke offentlige tilbud som finnes.</p>
+        <a href="/finn-behandler/" class="btn btn-primary">Finn behandler nær deg →</a>
       </div>
+      <div class="visual-frame">
+        <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M100 30 C72 30 52 51 52 78 C52 112 100 170 100 170 C100 170 148 112 148 78 C148 51 128 30 100 30 Z" stroke="var(--navy)" stroke-width="5" />
+          <circle cx="100" cy="78" r="18" stroke="var(--turquoise)" stroke-width="5" />
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-alt">
+    <div class="container">
+      <p class="closing">Er du usikker på hva du trenger? <strong>Søk</strong> er alltid et trygt sted å starte — det koster ingenting og gir deg en pekepinn før du eventuelt bestiller time.</p>
     </div>
   </section>
 </Layout>
 
 <style>
-  .hero-simple { padding: 56px 0 90px; position: relative; overflow: hidden; text-align: center; }
-  .hero-simple .container { max-width: 640px; }
-  .eyebrow { font-size: 0.82rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 10px; display: inline-block; }
-  .lead { font-size: 1.05rem; }
-  .hero-wave { position: absolute; bottom: -2px; left: 0; width: 100%; line-height: 0; }
+  .hero { padding: 64px 0; }
+  .hero-grid { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 44px; align-items: center; }
+  @media (max-width: 860px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .visual-frame { order: 2; aspect-ratio: 16/10; }
+  }
+  .eyebrow { font-size: 0.82rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--navy-2); font-weight: 700; margin-bottom: 10px; display: inline-block; }
+  .hero-lead { font-size: 1.02rem; line-height: 1.65; color: var(--ink-soft); margin: 0; max-width: 56ch; }
 
+  .visual-frame {
+    background: #fff; border-radius: var(--radius); aspect-ratio: 4/3;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .visual-frame svg { width: 50%; height: 50%; }
+
+  .section-sky { background: var(--sky); padding: 60px 0; }
+  .section-beige { background: var(--beige); padding: 60px 0; }
   .section-alt { background: var(--paper); padding: 60px 0; }
-  .section-alt.no-top { padding-top: 0; padding-bottom: 90px; }
 
-  .help-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
-  @media (max-width: 800px) { .help-grid { grid-template-columns: 1fr; } }
+  .section-sky h2, .section-alt h2, .section-beige h2 { margin: 0 0 8px; }
+  .lead { font-size: 0.95rem; color: var(--ink-soft); margin: 0 0 30px; }
+
+  .help-grid { display: grid; gap: 22px; }
+  .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  @media (max-width: 800px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  }
 
   .help-card {
     background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius);
@@ -114,9 +176,12 @@ const bookingUrl =
   .help-card.featured .card-link { color: var(--turquoise); }
   .help-card.featured .help-tag { color: var(--turquoise); }
 
-  .help-note {
-    max-width: 640px; margin: 48px auto 0; text-align: center;
-    background: var(--beige); border-radius: var(--radius); padding: 22px 28px; font-size: 0.9rem; color: #5a4a30;
+  .band { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 44px; align-items: center; }
+  @media (max-width: 860px) {
+    .band { grid-template-columns: 1fr; }
   }
-  .help-note strong { color: var(--navy); }
+  .band-text { font-size: 0.95rem; line-height: 1.65; color: var(--ink-soft); margin: 0 0 24px; max-width: 48ch; }
+
+  .closing { font-size: 0.95rem; line-height: 1.65; color: var(--ink-soft); max-width: 64ch; margin: 0; }
+  .closing strong { color: var(--navy); }
 </style>

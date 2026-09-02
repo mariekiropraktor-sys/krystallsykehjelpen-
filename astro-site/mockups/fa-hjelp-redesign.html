@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Få hjelp – redesignforslag</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#163875; --navy-2:#1e4c96; --sky:#eff4fb; --accent:#2f79c9;
+    --beige:#f4eee3; --turkis:#5fc1d6; --white:#fff; --muted:#5a6b85;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:#fff;font-family:'Public Sans',sans-serif;color:var(--navy);}
+  .wrap{max-width:1060px;margin:0 auto;padding:0 26px;}
+  .banner{background:var(--navy);color:#fff;padding:11px 26px;font-size:13px;text-align:center;}
+
+  section{padding:52px 0;}
+  section.sky{background:var(--sky);}
+  section.beige{background:var(--beige);}
+
+  .eyebrow{font-weight:700;font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;
+    color:var(--navy-2);margin:0 0 10px;}
+  h1{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(30px,4vw,42px);
+    line-height:1.1;margin:0 0 12px;}
+  h2{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(23px,2.7vw,29px);
+    line-height:1.2;margin:0 0 8px;}
+  .lead{font-size:15.5px;line-height:1.65;color:#3c4a63;margin:0 0 30px;max-width:58ch;}
+  .hero-p{font-size:16px;line-height:1.65;color:#3c4a63;margin:0;max-width:56ch;}
+
+  .hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:44px;align-items:center;}
+  .hero-visual{background:#fff;border-radius:20px;aspect-ratio:4/3;
+    display:flex;align-items:center;justify-content:center;}
+  section.sky .hero-visual{background:#fff;}
+  .hero-visual svg{width:50%;height:50%;}
+
+  .grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+
+  .c{background:#fff;border:1px solid #e7ecf4;border-radius:18px;padding:26px;
+    box-shadow:0 8px 24px rgba(22,56,117,.06);display:flex;flex-direction:column;gap:9px;}
+  section.sky .c{border-color:#dfe7f3;}
+  .c .tag{font-size:11px;font-weight:700;color:var(--turkis);text-transform:uppercase;letter-spacing:.05em;}
+  .c h3{font-family:'Fraunces',serif;font-weight:600;font-size:18.5px;margin:0;line-height:1.25;}
+  .c p{font-size:14.5px;color:var(--muted);line-height:1.55;margin:0;flex-grow:1;}
+  .c a{color:var(--accent);font-weight:600;font-size:14.5px;text-decoration:none;}
+
+  .band{display:grid;grid-template-columns:1.1fr .9fr;gap:44px;align-items:center;}
+  .band .visual{background:#fff;border-radius:18px;aspect-ratio:4/3;
+    display:flex;align-items:center;justify-content:center;}
+  .band .visual svg{width:48%;height:48%;}
+  .band p{font-size:15.5px;line-height:1.65;color:#3c4a63;margin:0 0 24px;max-width:46ch;}
+  .btn{background:var(--navy);color:#fff;font-weight:600;font-size:15px;padding:13px 26px;
+    border-radius:999px;text-decoration:none;display:inline-block;}
+
+  .closing{font-size:15px;line-height:1.65;color:#3c4a63;max-width:64ch;margin:0;}
+  .closing b{color:var(--navy);}
+
+  .notes{margin:0 0 70px;padding:22px 26px;background:#fbfaf7;border:1px dashed #d8d0c0;
+    border-radius:14px;font-size:13.5px;color:var(--muted);line-height:1.65;}
+  .notes strong{color:var(--navy);}
+  .notes ul{margin:10px 0 0;padding-left:20px;}
+  .notes li{margin-bottom:9px;}
+
+  @media (max-width:860px){
+    .hero-grid,.band{grid-template-columns:1fr;}
+    .hero-visual,.band .visual{order:2;aspect-ratio:16/10;}
+    .grid2,.grid3{grid-template-columns:1fr;}
+    section{padding:36px 0;}
+  }
+</style>
+</head>
+<body>
+
+<div class="banner">Redesignforslag for <strong>/fa-hjelp/</strong>. Header og footer er ikke med.</div>
+
+<!-- HERO -->
+<section class="sky">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <p class="eyebrow">Få hjelp</p>
+        <h1>Hva trenger du hjelp med akkurat nå?</h1>
+        <p class="hero-p">Enten du vil finne svar på egen hånd eller snakke med en fagperson — her er veiene videre.</p>
+      </div>
+      <div class="hero-visual">
+        <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="88" cy="88" r="46" stroke="#163875" stroke-width="5"/>
+          <path d="M122 122 L165 165" stroke="#163875" stroke-width="5" stroke-linecap="round"/>
+          <path d="M68 88 Q88 68 108 88" stroke="#5fc1d6" stroke-width="5" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINN SVAR SELV -->
+<section>
+  <div class="wrap">
+    <h2>Vil du finne ut mer selv?</h2>
+    <p class="lead">Gratis, uten å bestille time.</p>
+    <div class="grid2">
+      <div class="c">
+        <span class="tag">Søk</span>
+        <h3>Søk deg frem til øvelse eller informasjon</h3>
+        <p>Søk på symptomer, diagnoser eller øvelser og finn svar med en gang.</p>
+        <a href="/sok/">Gå til søk →</a>
+      </div>
+      <div class="c">
+        <span class="tag">Har du diagnosen?</span>
+        <h3>Krystallsykehjelpen hjemme</h3>
+        <p>Har du allerede fått påvist krystallsyke? Få steg-for-steg-veiledning til manøveren du har fått anbefalt.</p>
+        <a href="/hjemme/">Start veiledningen →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOS KRYSTALLSYKEHJELPEN -->
+<section class="sky">
+  <div class="wrap">
+    <h2>Time hos Krystallsykehjelpen</h2>
+    <p class="lead">Marie holder til på Fetsund Kiropraktorsenter. Videokonsultasjon fungerer uansett hvor du bor.</p>
+    <div class="grid3">
+      <div class="c">
+        <span class="tag">Mest booket</span>
+        <h3>Konsultasjon på klinikken</h3>
+        <p>Grundig undersøkelse og behandling. Anbefales ved første gangs undersøkelse.</p>
+        <a href="#">Bestill time →</a>
+      </div>
+      <div class="c">
+        <span class="tag">Hjemmefra</span>
+        <h3>Videokonsultasjon</h3>
+        <p>Vurdering og veiledning digitalt, uten å måtte reise. Passer godt for oppfølging eller innledende vurdering.</p>
+        <a href="/tjenester/videokonsultasjon/">Bestill time →</a>
+      </div>
+      <div class="c">
+        <span class="tag">Kommer til deg</span>
+        <h3>Hjemmebesøk</h3>
+        <p>Ved sterk svimmelhet kan det være vanskelig å reise. Send en forespørsel, så vurderer vi det sammen.</p>
+        <a href="/kontakt/?emne=hjemmebesok">Send forespørsel →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINN BEHANDLER -->
+<section class="beige">
+  <div class="wrap">
+    <div class="band">
+      <div>
+        <p class="eyebrow">Over hele landet</p>
+        <h2>Bor du ikke i nærheten?</h2>
+        <p>Krystallsyke behandles av kiropraktorer, fysioterapeuter, manuellterapeuter og ØNH-leger over hele Norge. Søk opp behandlere nær deg — og se hvilke offentlige tilbud som finnes.</p>
+        <a class="btn" href="/finn-behandler/">Finn behandler nær deg →</a>
+      </div>
+      <div class="visual">
+        <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M100 30 C72 30 52 51 52 78 C52 112 100 170 100 170 C100 170 148 112 148 78 C148 51 128 30 100 30 Z" stroke="#163875" stroke-width="5"/>
+          <circle cx="100" cy="78" r="18" stroke="#5fc1d6" stroke-width="5"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AVSLUTNING -->
+<section>
+  <div class="wrap">
+    <p class="closing">Er du usikker på hva du trenger? <b>Søk</b> er alltid et trygt sted å starte — det koster ingenting og gir deg en pekepinn før du eventuelt bestiller time.</p>
+  </div>
+</section>
+
+<div class="wrap">
+  <div class="notes">
+    <strong>Hva som er endret, og hvorfor:</strong>
+    <ul>
+      <li><strong>Fire likestilte kort er blitt tre grupper.</strong> Før lå søk, klinikk, video og hjemmebesøk side om side som om de var samme type valg. Nå skilles «finn ut selv» fra «time hos Marie» fra «behandler et annet sted». Det gjør siden ærligere — leseren ser tydelig hva som er dine tjenester og hva som er nøytral hjelp.</li>
+      <li><strong>Krystallsykehjelpen hjemme ligger under «finn ut selv»</strong>, ikke som egen beige boks. Den hører hjemme sammen med søk, siden begge er gratis selvbetjening. Overskriften på kortet stiller forutsetningen — «Har du diagnosen?» — så ingen begynner med manøvrer uten grunnlag.</li>
+      <li><strong>Finn behandler har fått hele bredden</strong> i en beige seksjon. Det er det eneste alternativet som gjelder hele landet, og det er kjernen i ambisjonen om en nasjonal ressurs. Det fortjener mer plass enn et kort.</li>
+      <li><strong>Bakgrunnsrytme og visuelle ankere er lagt til</strong>, så siden matcher forsiden og /hjemme/. Illustrasjonene er enkle plassholdere — de kan byttes ut med foto senere.</li>
+    </ul>
+    <strong>Én ting du bør vurdere:</strong> «Finn behandler nær deg» peker til en side som er tom inntil de 65 behandlerne er bekreftet og publisert. Å fremheve den så tydelig før den har innhold, kan skuffe. Alternativet er å vente med denne seksjonen til katalogen har noe å vise.
+  </div>
+</div>
+
+</body>
+</html>
