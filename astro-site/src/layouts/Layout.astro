@@ -7,9 +7,10 @@ export interface Props {
   title: string;
   description: string;
   activePath?: string;
+  image?: string;
 }
 
-const { title, description, activePath = "" } = Astro.props;
+const { title, description, activePath = "", image } = Astro.props;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 ---
 
@@ -30,8 +31,10 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
   <meta property="og:url" content={canonicalURL} />
   <meta property="og:locale" content="nb_NO" />
   <meta property="og:site_name" content="Krystallsykehjelpen" />
+  {image && <meta property="og:image" content={image} />}
 
   <meta name="twitter:card" content="summary_large_image" />
+  {image && <meta name="twitter:image" content={image} />}
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link

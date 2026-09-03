@@ -44,8 +44,54 @@ export default defineType({
     defineField({
       name: "body",
       title: "Tekst",
+      description:
+        "Vanlig brødtekst, pluss tre innsettbare blokktyper (sjekkliste, faktaboks, advarselsboks) — bruk «+»-menyen i editoren for å sette dem inn hvor som helst i teksten.",
       type: "array",
-      of: [{ type: "block" }],
+      of: [
+        { type: "block" },
+        {
+          type: "object",
+          name: "checklistBox",
+          title: "Sjekkliste",
+          fields: [
+            defineField({ name: "title", title: "Overskrift", type: "string" }),
+            defineField({ name: "items", title: "Punkter", type: "array", of: [{ type: "string" }] }),
+          ],
+          preview: {
+            select: { title: "title" },
+            prepare: ({ title }) => ({ title: title || "Sjekkliste" }),
+          },
+        },
+        {
+          type: "object",
+          name: "factBox",
+          title: "Faktaboks",
+          fields: [
+            defineField({ name: "label", title: "Etikett", type: "string", initialValue: "Kort forklart" }),
+            defineField({ name: "text", title: "Tekst", type: "text", rows: 4 }),
+            defineField({ name: "illustration", title: "Illustrasjon (valgfri)", type: "image" }),
+          ],
+          preview: {
+            select: { title: "label", subtitle: "text" },
+            prepare: ({ title, subtitle }) => ({ title: title || "Faktaboks", subtitle }),
+          },
+        },
+        {
+          type: "object",
+          name: "warningBox",
+          title: "Advarselsboks (i teksten)",
+          description: "Navy-2 ramme på hvitt — ikke rødt. Kan settes inn hvor som helst i teksten, i motsetning til Faresignalboks-feltet lenger ned.",
+          fields: [
+            defineField({ name: "title", title: "Overskrift", type: "string" }),
+            defineField({ name: "items", title: "Punkter", type: "array", of: [{ type: "string" }] }),
+            defineField({ name: "callout", title: "Fremhevet linje (valgfri)", type: "text", rows: 2 }),
+          ],
+          preview: {
+            select: { title: "title" },
+            prepare: ({ title }) => ({ title: title || "Advarselsboks" }),
+          },
+        },
+      ],
     }),
     defineField({
       name: "warningBox",
@@ -106,7 +152,21 @@ export default defineType({
     defineField({
       name: "coverImage",
       title: "Toppbilde",
+      description: "Vises på artikkelen (under ingressen), som forhåndsvisning i bloggoversikten, og som delingsbilde (og:image).",
       type: "image",
+    }),
+    defineField({
+      name: "coverImageAlt",
+      title: "Alt-tekst for toppbilde",
+      description: "Påkrevd hvis toppbilde er satt.",
+      type: "string",
+      validation: (Rule) =>
+        Rule.custom((value, context) => {
+          if (context.document?.coverImage && !value) {
+            return "Alt-tekst er påkrevd når toppbilde er satt";
+          }
+          return true;
+        }),
     }),
     defineField({
       name: "author",

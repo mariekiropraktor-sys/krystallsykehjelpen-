@@ -1,6 +1,5 @@
 ---
 import Layout from "../../../layouts/Layout.astro";
-import MediaPlaceholder from "../../../components/MediaPlaceholder.astro";
 import { safeFetch } from "../../../lib/safeFetch";
 import { blogPreviewClient, isPreviewingDrafts } from "../../../lib/blogPreviewClient";
 import { blocksToHtml, extractHeadings, estimateReadingTime } from "../../../lib/portableText";
@@ -26,11 +25,22 @@ const { slug } = Astro.params;
 
 const QUERY = `*[_type == "blogPost" && slug.current == $slug][0]{
   title, publishedDate, excerpt, category, shortSummary, body, warningBox,
-  faq, sources, relatedLinks, coverImage, metaTitle, metaDescription,
-  "author": author->{ name, title, photo }
+  faq, sources, relatedLinks, coverImage, coverImageAlt, metaTitle, metaDescription
 }`;
 
 const post = await safeFetch(QUERY, { slug }, null, blogPreviewClient);
+
+// Signaturen nederst i artikkelen viser alltid Marie — samme portrett i
+// alle artikler, uavhengig av hvilken praktiker som ev. er registrert som
+// forfatter på det enkelte innlegget. Gjenbruker det eksisterende
+// portrettet fra practitioner-dokumentet (samme bilde som ellers på siten)
+// i stedet for å legge til et nytt bildefelt.
+const signaturePractitioner = await safeFetch(
+  `*[_id == "practitioner-marie-hermansen"][0]{ photo }`,
+  {},
+  null,
+);
+const signaturePhotoUrl = signaturePractitioner ? urlForImage(signaturePractitioner.photo, 112) : undefined;
 
 function formatDate(dateString) {
   if (!dateString) return "";
@@ -68,6 +78,7 @@ const faqJsonLd = post?.faq?.length && {
   title={post ? `${post.metaTitle || post.title} | Krystallsykehjelpen` : "Blogginnlegg | Krystallsykehjelpen"}
   description={post?.metaDescription || post?.excerpt || "Blogginnlegg fra Krystallsykehjelpen."}
   activePath="/blogg/"
+  image={coverUrl}
 >
   {isPreviewingDrafts && (
     <div class="preview-banner">Forhåndsvisning (upubliserte utkast er synlige — kun lokalt)</div>
@@ -89,28 +100,25 @@ const faqJsonLd = post?.faq?.length && {
       </div>
 
       <section class="hero">
-        <div class="container hero-grid">
-          <div>
-            {post.category && <span class="badge badge-type">{post.category}</span>}
-            <h1>{post.title}</h1>
-            {post.excerpt && <p class="lead">{post.excerpt}</p>}
-            <div class="meta-row">
-              {post.publishedDate && <span class="meta-item">{formatDate(post.publishedDate)}</span>}
-              <span class="meta-item">{readingTime} min lesetid</span>
-            </div>
-          </div>
-          <div class="hero-media">
-            {coverUrl ? (
-              <img src={coverUrl} alt={post.title} class="hero-photo" />
-            ) : (
-              <MediaPlaceholder label={post.title} />
-            )}
+        <div class="container hero-text">
+          {post.category && <span class="badge badge-type">{post.category}</span>}
+          <h1>{post.title}</h1>
+          {post.excerpt && <p class="lead">{post.excerpt}</p>}
+          <div class="meta-row">
+            {post.publishedDate && <span class="meta-item">{formatDate(post.publishedDate)}</span>}
+            <span class="meta-item">{readingTime} min lesetid</span>
           </div>
         </div>
         <svg class="hero-wave" viewBox="0 0 1440 60" preserveAspectRatio="none">
           <path d="M0,32 C360,72 1080,0 1440,32 L1440,60 L0,60 Z" fill="#ffffff" />
         </svg>
       </section>
+
+      {coverUrl && (
+        <div class="container">
+          <img src={coverUrl} alt={post.coverImageAlt || post.title} class="hero-image-full" />
+        </div>
+      )}
 
       <div class="container article-layout">
         <article class="post-main">
@@ -144,17 +152,6 @@ const faqJsonLd = post?.faq?.length && {
             </div>
           ) : null}
 
-          {post.author?.name && (
-            <div class="author-row">
-              {urlForImage(post.author.photo, 80) && (
-                <img src={urlForImage(post.author.photo, 80)} alt={post.author.name} class="author-photo" />
-              )}
-              <div>
-                <strong>Faglig gjennomgått av {post.author.title?.toLowerCase() ?? "kiropraktor"} {post.author.name}</strong>
-              </div>
-            </div>
-          )}
-
           {post.sources?.length ? (
             <div class="sources">
               <h2>Faglige kilder</h2>
@@ -184,6 +181,16 @@ const faqJsonLd = post?.faq?.length && {
             <h2>Usikker på om dette er krystallsyke?</h2>
             <p>Få bekreftet om det er krystallsyke, og hvilken side og buegang som er involvert.</p>
             <a href="/fa-hjelp/" class="btn cta-btn">Få hjelp →</a>
+          </div>
+
+          <div class="signature">
+            {signaturePhotoUrl && (
+              <img src={signaturePhotoUrl} alt="Marie Hermansen" class="signature-photo" />
+            )}
+            <div>
+              <div class="signature-name">Marie Hermansen</div>
+              <div class="signature-role">Kiropraktor og faglig ansvarlig for Krystallsykehjelpen</div>
+            </div>
           </div>
         </article>
 
@@ -229,17 +236,20 @@ const faqJsonLd = post?.faq?.length && {
   .breadcrumb a:hover { text-decoration: underline; }
 
   .hero { padding: 40px 0 70px; position: relative; overflow: hidden; }
-  .hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
-  @media (max-width: 800px) { .hero-grid { grid-template-columns: 1fr; } }
+  .hero-text { max-width: 720px; }
   .badge { display: inline-block; font-size: 0.72rem; font-weight: 700; padding: 5px 12px; border-radius: 20px; letter-spacing: 0.02em; margin-bottom: 12px; }
   .badge-type { background: var(--navy); color: #fff; }
   .hero h1 { margin-bottom: 12px; }
   .hero .lead { font-size: 1.05rem; color: var(--ink-soft); }
   .meta-row { display: flex; gap: 18px; margin-top: 16px; flex-wrap: wrap; }
   .meta-item { font-size: 0.85rem; font-weight: 600; color: var(--navy); }
-  .hero-media { position: relative; }
-  .hero-photo { width: 100%; border-radius: var(--radius); aspect-ratio: 4/3; object-fit: cover; box-shadow: 0 20px 50px rgba(22,56,117,0.12); }
   .hero-wave { position: absolute; bottom: -2px; left: 0; width: 100%; line-height: 0; }
+
+  .hero-image-full {
+    width: 100%; max-width: 900px; display: block; margin: 0 auto 40px;
+    border-radius: var(--radius); aspect-ratio: 16/9; object-fit: cover;
+    box-shadow: 0 20px 50px rgba(22,56,117,0.12);
+  }
 
   .article-layout { display: grid; grid-template-columns: 1fr 240px; gap: 48px; align-items: start; padding-bottom: 80px; }
   @media (max-width: 900px) { .article-layout { grid-template-columns: 1fr; } }
@@ -262,6 +272,26 @@ const faqJsonLd = post?.faq?.length && {
 
   .red-flag { background: #ffe9eb; color: #7a1720; padding: 16px 18px; border-radius: 8px; margin: 28px 0; }
 
+  .post-body .checklist-box { background: var(--sky); border-radius: var(--radius); padding: 24px 26px; margin: 28px 0; }
+  .post-body .checklist-box h3 { margin: 0 0 14px; font-size: 1.05rem; color: var(--navy); }
+  .post-body .checklist-items { list-style: none; margin: 0; padding: 0; }
+  .post-body .checklist-items li { display: flex; align-items: flex-start; gap: 12px; font-size: 1rem; line-height: 1.55; color: var(--ink); margin-bottom: 10px; }
+  .post-body .checklist-items li:last-child { margin-bottom: 0; }
+  .post-body .checklist-mark { flex-shrink: 0; width: 18px; height: 18px; margin-top: 3px; border: 2px solid var(--turquoise); border-radius: 4px; }
+
+  .post-body .fact-box { background: var(--beige); border-radius: var(--radius); padding: 26px; margin: 28px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: center; }
+  @media (max-width: 640px) { .post-body .fact-box { grid-template-columns: 1fr; } }
+  .post-body .fact-box-full { grid-template-columns: 1fr; }
+  .post-body .fact-box-label { display: block; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--navy-2); margin-bottom: 8px; }
+  .post-body .fact-box-content p { margin: 0; font-size: 1rem; line-height: 1.6; color: var(--ink); }
+  .post-body .fact-box-illustration img { width: 100%; border-radius: var(--radius-sm); display: block; }
+
+  .post-body .warning-box { background: #fff; border: 2px solid var(--navy-2); border-radius: var(--radius-sm); padding: 22px 24px; margin: 28px 0; }
+  .post-body .warning-box h3 { margin: 0 0 12px; font-size: 1.05rem; color: var(--navy); }
+  .post-body .warning-box ul { margin: 0; padding-left: 20px; }
+  .post-body .warning-box li { font-size: 0.98rem; line-height: 1.6; color: var(--ink); margin-bottom: 6px; }
+  .post-body .warning-box-callout { background: var(--sky); border-radius: var(--radius-sm); padding: 12px 16px; margin: 16px 0 0; font-size: 0.94rem; font-weight: 600; color: var(--navy); }
+
   .faq-section { margin: 36px 0; }
   .faq-section h2 { font-size: 1.3rem; margin-bottom: 8px; }
   .accordion-item { border-bottom: 1px solid var(--line); }
@@ -277,9 +307,10 @@ const faqJsonLd = post?.faq?.length && {
   .accordion-item.open .accordion-panel { max-height: 300px; }
   .accordion-panel p { padding: 0 4px 16px; margin: 0; color: var(--ink-soft); }
 
-  .author-row { display: flex; align-items: center; gap: 12px; margin: 30px 0; padding: 16px; background: var(--sky); border-radius: var(--radius); }
-  .author-photo { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; }
-  .author-row strong { color: var(--navy); font-weight: 600; font-size: 0.92rem; }
+  .signature { display: flex; align-items: center; gap: 14px; margin: 28px 0 12px; }
+  .signature-photo { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+  .signature-name { color: var(--navy); font-weight: 700; font-size: 0.98rem; }
+  .signature-role { color: var(--ink-soft); font-size: 0.85rem; margin-top: 2px; }
 
   .sources { margin: 30px 0; }
   .sources h2 { font-size: 1.1rem; margin-bottom: 10px; }

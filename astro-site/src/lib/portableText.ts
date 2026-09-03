@@ -1,7 +1,11 @@
-// Enkel, avhengighetsfri renderer for portable text-blokker fra Sanity.
-// Støtter kun det innholdet sidetekstene faktisk bruker: normal-blokker med
-// fet/kursiv-markering. Overskrifter (h2/h3 osv.) rendres av .astro-malene
-// selv via `heading`-feltet, ikke herfra.
+// Renderer for portable text-blokker fra Sanity. Håndterer vanlige
+// tekstblokker (fet/kursiv-markering, overskrifter, punktlister) samt tre
+// innsettbare custom-blokktyper fra blogPost.body: checklistBox, factBox og
+// warningBox (se src/sanity/schemaTypes/blogPost.ts). Bruker urlForImage()
+// for factBox sin illustrasjon — ikke lenger avhengighetsfri, men fortsatt
+// uten eksterne pakker utover resten av prosjektet.
+
+import { urlForImage } from "./sanityImage";
 
 type PortableSpan = {
   _type: "span";
@@ -14,6 +18,15 @@ type PortableBlock = {
   style?: string;
   listItem?: string;
   children?: PortableSpan[];
+  // checklistBox / warningBox
+  title?: string;
+  items?: string[];
+  // factBox
+  label?: string;
+  text?: string;
+  illustration?: unknown;
+  // warningBox
+  callout?: string;
 };
 
 function escapeHtml(value: string): string {
@@ -53,6 +66,36 @@ export function inlineHtmlFromBlock(block?: PortableBlock): string {
     .join("");
 }
 
+// De tre innsettbare custom-blokktypene fra blogPost.body (se
+// src/sanity/schemaTypes/blogPost.ts) — hver bygger sitt eget HTML-fragment.
+// Stil defineres i .post-body-scopet CSS i blogg/[slug]/index.astro
+// (fungerer selv om markupen settes inn via set:html, siden CSS-scoping i
+// Astro matcher på .post-body-ansestoren, ikke hvert enkelt barn).
+function renderChecklistBox(block: PortableBlock): string {
+  const title = block.title ? `<h3>${escapeHtml(block.title)}</h3>` : "";
+  const items = (block.items ?? [])
+    .map((item) => `<li><span class="checklist-mark" aria-hidden="true"></span>${escapeHtml(item)}</li>`)
+    .join("");
+  return `<div class="checklist-box">${title}<ul class="checklist-items">${items}</ul></div>`;
+}
+
+function renderFactBox(block: PortableBlock): string {
+  const label = escapeHtml(block.label || "Kort forklart");
+  const text = block.text ? `<p>${escapeHtml(block.text)}</p>` : "";
+  const illustrationUrl = urlForImage(block.illustration, 400);
+  const illustrationHtml = illustrationUrl
+    ? `<div class="fact-box-illustration"><img src="${illustrationUrl}" alt="" /></div>`
+    : "";
+  return `<div class="fact-box${illustrationUrl ? "" : " fact-box-full"}"><div class="fact-box-content"><span class="fact-box-label">${label}</span>${text}</div>${illustrationHtml}</div>`;
+}
+
+function renderWarningBox(block: PortableBlock): string {
+  const title = block.title ? `<h3>${escapeHtml(block.title)}</h3>` : "";
+  const items = block.items?.length ? `<ul>${block.items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>` : "";
+  const callout = block.callout ? `<p class="warning-box-callout">${escapeHtml(block.callout)}</p>` : "";
+  return `<div class="warning-box">${title}${items}${callout}</div>`;
+}
+
 // Rendrer en full portable text-array til HTML, inkludert blokk-nivå
 // struktur (h2/h3-overskrifter og punktlister) — for lengre artikkelinnhold
 // (f.eks. blogPost.body) der inlineHtmlFromBlock() alene ikke er nok, fordi
@@ -63,6 +106,21 @@ export function blocksToHtml(blocks?: PortableBlock[]): string {
   let i = 0;
   while (i < blocks.length) {
     const block = blocks[i];
+    if (block._type === "checklistBox") {
+      html += renderChecklistBox(block);
+      i++;
+      continue;
+    }
+    if (block._type === "factBox") {
+      html += renderFactBox(block);
+      i++;
+      continue;
+    }
+    if (block._type === "warningBox") {
+      html += renderWarningBox(block);
+      i++;
+      continue;
+    }
     if (block._type !== "block") {
       i++;
       continue;
