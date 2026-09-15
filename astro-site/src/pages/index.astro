@@ -126,12 +126,11 @@ const journeyCards = [
           <a href="/hjemme/" class="btn btn-primary">Start Krystallsykehjelpen hjemme →</a>
         </div>
         <div class="hjemme-visual">
-          <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <circle cx="100" cy="70" r="34" stroke="var(--navy)" stroke-width="4" />
-            <path d="M60 130 Q100 100 140 130 L150 180 L50 180 Z" stroke="var(--navy)" stroke-width="4" fill="none" />
-            <path d="M40 95 Q100 60 160 95" stroke="var(--turquoise)" stroke-width="4" stroke-linecap="round" fill="none" />
-          </svg>
-          <span class="visual-caption">Bilde/video-still fra manøver – legges til senere</span>
+          <img
+            src="/forsiden-hjemme.jpg"
+            alt="Illustrasjon av en person som hjelper partneren sin med hodeposisjonering hjemme, med en videokonsultasjon med en fagperson synlig på en bærbar PC i bakgrunnen"
+            class="hjemme-photo"
+          />
         </div>
       </div>
     </div>
@@ -330,18 +329,18 @@ const journeyCards = [
   .hjemme-content h3 { font-family: var(--font-display); font-weight: 600; font-size: clamp(1.6rem, 2.8vw, 2.1rem); line-height: 1.15; margin: 0 0 16px; color: var(--navy); }
   .hjemme-content p { font-size: 1rem; line-height: 1.6; color: var(--ink-soft); margin: 0 0 28px; max-width: 46ch; }
   .hjemme-visual {
-    position: relative; background: var(--sky); border-radius: var(--radius-sm); aspect-ratio: 4/3.1;
-    display: flex; align-items: center; justify-content: center; overflow: hidden;
+    position: relative; background: var(--sky); border-radius: var(--radius-sm);
+    box-shadow: 0 16px 36px rgba(22, 56, 117, 0.08); overflow: hidden;
   }
-  .hjemme-visual svg { width: 62%; height: 62%; }
-  .visual-caption {
-    position: absolute; bottom: 14px; left: 14px; background: rgba(255, 255, 255, 0.85);
-    color: var(--navy); font-size: 0.75rem; font-weight: 600; padding: 6px 12px; border-radius: 999px;
+  .hjemme-photo { width: 100%; height: 100%; display: block; aspect-ratio: 4/3.1; object-fit: cover; border-radius: var(--radius-sm); }
+  .hjemme-content .btn {
+    width: auto; white-space: nowrap; display: inline-flex;
   }
   @media (max-width: 860px) {
     .hjemme-section { grid-template-columns: 1fr; padding: 32px 24px; border-radius: var(--radius); gap: 28px; }
     .hjemme-content p { max-width: none; }
-    .hjemme-visual { order: 2; aspect-ratio: 16/11; }
+    .hjemme-visual { order: 2; }
+    .hjemme-photo { aspect-ratio: 16/11; }
     .hjemme-content { order: 1; }
   }
   .journey-card {
