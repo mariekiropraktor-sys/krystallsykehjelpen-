@@ -27,10 +27,6 @@ function formatDate(dateString) {
   return new Date(dateString).toLocaleDateString("nb-NO", { year: "numeric", month: "long", day: "numeric" });
 }
 
-// Kort 2 og 4 peker til artikler som ikke finnes ennå (forstå-diagnosen og
-// restsvimmelhet-etter-krystallsyke) — avklart med Marie: bygg kortene med
-// "#" midlertidig, tydelig merket, i stedet for å gjette en URL eller peke
-// til en unøyaktig erstatningsside.
 const journeyCards = [
   {
     title: "Jeg tror jeg har krystallsyke",
@@ -53,8 +49,8 @@ const journeyCards = [
   {
     title: "Jeg er fortsatt svimmel",
     desc: "Restsymptomer etter krystallsyke er vanlig — les hva som kan hjelpe.",
-    href: "#",
-    comingSoon: true,
+    href: "/blogg/restsvimmelhet-etter-krystallsyke/",
+    comingSoon: false,
   },
 ];
 ---
