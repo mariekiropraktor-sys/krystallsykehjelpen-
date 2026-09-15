@@ -379,12 +379,11 @@ const attributionText =
         </div>
       </div>
       <div class="hero-visual">
-        <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <circle cx="100" cy="70" r="34" stroke="var(--navy)" stroke-width="4" />
-          <path d="M60 130 Q100 100 140 130 L150 180 L50 180 Z" stroke="var(--navy)" stroke-width="4" fill="none" />
-          <path d="M40 95 Q100 60 160 95" stroke="var(--turquoise)" stroke-width="4" stroke-linecap="round" fill="none" />
-        </svg>
-        <span class="visual-caption">Bilde/video-still legges til senere</span>
+        <img
+          src="/hjemme-hero-illustrasjon.jpg"
+          alt="Kvinne som sitter avslappet i sofaen og følger en digital veiledning på nettbrett, med illustrasjon av det indre øret og tre steg i en manøver merket av med et hakemerke"
+          class="hero-photo"
+        />
       </div>
     </div>
   </section>
@@ -662,7 +661,8 @@ const attributionText =
   .hero-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 48px; align-items: center; }
   @media (max-width: 860px) {
     .hero-grid { grid-template-columns: 1fr; }
-    .hero-visual { order: -1; aspect-ratio: 16/11; }
+    .hero-visual { order: -1; }
+    .hero-photo { aspect-ratio: 16/11; }
   }
 
   .eyebrow { font-weight: 700; font-size: 0.78rem; letter-spacing: 0.09em; text-transform: uppercase; color: var(--navy-2); margin: 0 0 14px; display: block; }
@@ -673,14 +673,10 @@ const attributionText =
   .link-secondary:hover { text-decoration: underline; }
 
   .hero-visual {
-    background: var(--sky); border-radius: var(--radius); aspect-ratio: 4/3.4;
-    display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden;
+    background: var(--sky); border-radius: var(--radius);
+    box-shadow: 0 16px 36px rgba(22, 56, 117, 0.08); overflow: hidden;
   }
-  .hero-visual svg { width: 56%; height: 56%; }
-  .visual-caption {
-    position: absolute; bottom: 14px; left: 14px; background: rgba(255, 255, 255, 0.85);
-    color: var(--navy); font-size: 0.75rem; font-weight: 600; padding: 6px 12px; border-radius: 999px;
-  }
+  .hero-photo { width: 100%; height: 100%; display: block; aspect-ratio: 4/3.4; object-fit: cover; border-radius: var(--radius); }
 
   .section-alt { background: var(--paper); padding: 60px 0; }
   .section-alt.no-top { padding-top: 0; padding-bottom: 0; }
