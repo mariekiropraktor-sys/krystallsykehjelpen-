@@ -17,12 +17,12 @@ const bookingUrl =
         <h1>Hva trenger du hjelp med akkurat nå?</h1>
         <p class="hero-lead">Enten du vil finne svar på egen hånd eller snakke med en fagperson — her er veiene videre.</p>
       </div>
-      <div class="visual-frame">
-        <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <circle cx="88" cy="88" r="46" stroke="var(--navy)" stroke-width="5" />
-          <path d="M122 122 L165 165" stroke="var(--navy)" stroke-width="5" stroke-linecap="round" />
-          <path d="M68 88 Q88 68 108 88" stroke="var(--turquoise)" stroke-width="5" stroke-linecap="round" fill="none" />
-        </svg>
+      <div class="hero-media">
+        <img
+          src="/fa-hjelp-hero.jpg"
+          alt="Kvinne som kjenner på svimmelhet, med illustrasjon av det indre øret og vei videre til en fagperson"
+          class="hero-photo"
+        />
       </div>
     </div>
   </section>
@@ -99,7 +99,10 @@ const bookingUrl =
         <span class="eyebrow">Over hele landet</span>
         <h2>Bor du ikke i nærheten?</h2>
         <p class="band-text">Krystallsyke behandles av kiropraktorer, fysioterapeuter, manuellterapeuter og ØNH-leger over hele Norge. Søk opp behandlere nær deg — og se hvilke offentlige tilbud som finnes.</p>
-        <a href="/finn-behandler/" class="btn btn-primary">Finn behandler nær deg →</a>
+        <div class="band-actions">
+          <a href="/finn-behandler/" class="btn btn-primary">Finn behandler nær deg →</a>
+          <a href="/tjenester/videokonsultasjon/" class="btn btn-primary">Bestill videokonsultasjon →</a>
+        </div>
       </div>
       <div class="visual-frame">
         <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -132,6 +135,9 @@ const bookingUrl =
     display: flex; align-items: center; justify-content: center;
   }
   .visual-frame svg { width: 50%; height: 50%; }
+
+  .hero-media { border-radius: var(--radius); overflow: hidden; }
+  .hero-photo { width: 100%; height: 100%; display: block; aspect-ratio: 4/3; object-fit: cover; }
 
   .section-sky { background: var(--sky); padding: 60px 0; }
   .section-beige { background: var(--beige); padding: 60px 0; }
@@ -181,6 +187,7 @@ const bookingUrl =
     .band { grid-template-columns: 1fr; }
   }
   .band-text { font-size: 0.95rem; line-height: 1.65; color: var(--ink-soft); margin: 0 0 24px; max-width: 48ch; }
+  .band-actions { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
 
   .closing { font-size: 0.95rem; line-height: 1.65; color: var(--ink-soft); max-width: 64ch; margin: 0; }
   .closing strong { color: var(--navy); }
