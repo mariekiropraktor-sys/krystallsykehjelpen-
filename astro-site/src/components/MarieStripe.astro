@@ -10,20 +10,24 @@ const { bg = "beige" } = Astro.props;
 
 <section class={`marie-stripe marie-stripe-${bg}`}>
   <div class="container marie-stripe-inner">
-    <picture>
-      <source srcset="/marie-hermansen.webp" type="image/webp" />
-      <img
-        src="/marie-hermansen.jpg"
-        alt="Marie Hermansen, kiropraktor og grunnlegger av Krystallsykehjelpen"
-        width="480"
-        height="480"
-        loading="lazy"
-        class="marie-stripe-photo"
-      />
-    </picture>
-    <div class="marie-stripe-text">
+    <div class="marie-stripe-photo-wrap">
+      <picture>
+        <source srcset="/marie-hermansen.webp" type="image/webp" />
+        <img
+          src="/marie-hermansen.jpg"
+          alt="Marie Hermansen, kiropraktor og grunnlegger av Krystallsykehjelpen"
+          width="480"
+          height="480"
+          loading="lazy"
+          class="marie-stripe-photo"
+        />
+      </picture>
+    </div>
+    <div class="marie-stripe-top">
       <span class="marie-stripe-label">Hvem står bak</span>
       <h2 class="marie-stripe-heading">Marie Hermansen, kiropraktor</h2>
+    </div>
+    <div class="marie-stripe-bottom">
       <p class="marie-stripe-body">
         Jeg startet Krystallsykehjelpen for at flere skal få riktig hjelp mot svimmelhet, uansett hvor i landet de bor.
       </p>
@@ -33,19 +37,29 @@ const { bg = "beige" } = Astro.props;
 </section>
 
 <style>
-  .marie-stripe { padding: 48px 0; }
+  .marie-stripe { padding: 30px 0; }
   .marie-stripe-beige { background: var(--beige); }
   .marie-stripe-sky { background: var(--sky); }
 
   .marie-stripe-inner {
-    display: flex;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      "photo top"
+      "bottom bottom";
+    column-gap: 16px;
+    row-gap: 14px;
     align-items: center;
-    gap: 28px;
   }
 
+  .marie-stripe-photo-wrap { grid-area: photo; }
+  .marie-stripe-top { grid-area: top; }
+  .marie-stripe-bottom { grid-area: bottom; }
+
   .marie-stripe-photo {
-    width: 120px;
-    height: 120px;
+    width: 72px;
+    height: 72px;
+    aspect-ratio: 1 / 1;
     border-radius: 50%;
     object-fit: cover;
     border: 3px solid var(--turquoise);
@@ -60,15 +74,15 @@ const { bg = "beige" } = Astro.props;
     letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--accent);
-    margin-bottom: 6px;
+    margin-bottom: 4px;
   }
 
   .marie-stripe-heading {
     font-family: var(--font-display);
     color: var(--navy);
-    font-size: 1.3rem;
+    font-size: 1.1rem;
     font-weight: 600;
-    margin: 0 0 8px;
+    margin: 0;
   }
 
   .marie-stripe-body {
@@ -76,7 +90,7 @@ const { bg = "beige" } = Astro.props;
     color: var(--navy);
     font-size: 0.98rem;
     line-height: 1.6;
-    margin: 0 0 12px;
+    margin: 0 0 10px;
     max-width: 56ch;
   }
 
@@ -88,7 +102,21 @@ const { bg = "beige" } = Astro.props;
   }
   .marie-stripe-link:hover { text-decoration: underline; }
 
-  @media (max-width: 640px) {
-    .marie-stripe-photo { width: 84px; height: 84px; }
+  @media (min-width: 768px) {
+    .marie-stripe-inner {
+      grid-template-columns: auto 1fr;
+      grid-template-areas:
+        "photo top"
+        "photo bottom";
+      column-gap: 28px;
+      row-gap: 6px;
+      max-width: 760px;
+      align-items: center;
+    }
+
+    .marie-stripe-photo { width: 112px; height: 112px; }
+
+    .marie-stripe-heading { font-size: 1.3rem; }
+    .marie-stripe-bottom { margin-top: 4px; }
   }
 </style>
