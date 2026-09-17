@@ -1,0 +1,164 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+const bookingUrl =
+  "https://psno-patient-platform-fe.svc.pasientsky.no/embedded/planner/booking?serviceProviderId=54907264-049e-11eb-8fc8-26c6f94d64b7";
+
+const workAreas = [
+  "Krystallsyke (BPPV)",
+  "Vestibulær migrene",
+  "PPPD",
+  "Nakkerelatert svimmelhet",
+  "Vestibulær rehabilitering",
+];
+
+const outsideClinic = [
+  { src: "/marie-loping.jpg", label: "Løping" },
+  { src: "/marie-hest.jpg", label: "Hest" },
+  { src: "/hunden.jpg", label: "Hunden min" },
+];
+---
+
+<Layout
+  title="Om Marie | Krystallsykehjelpen"
+  description="Møt Marie Hermansen, kiropraktoren bak Krystallsykehjelpen — bakgrunn, fagfelt og hvorfor hun startet klinikken."
+  activePath="/mott-marie/"
+  hideMarie
+>
+  <section class="hero section-sky">
+    <div class="container hero-grid">
+      <div>
+        <span class="eyebrow">
+          <svg class="crystal-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round" aria-hidden="true">
+            <path d="M24 4 L40 18 L24 44 L8 18 Z" />
+            <path d="M8 18 L40 18" />
+            <path d="M16 18 L24 4" />
+            <path d="M32 18 L24 4" />
+            <path d="M16 18 L24 44" />
+            <path d="M32 18 L24 44" />
+          </svg>
+          Om Marie
+        </span>
+        <h1>Kiropraktoren bak Krystallsykehjelpen</h1>
+        <p class="hero-lead">
+          Jeg er Marie Hermansen, kiropraktor med over ti års erfaring innen svimmelhet og vestibulær rehabilitering. Her kan du lese om veien hit — og hvorfor jeg brenner for at flere skal få riktig hjelp.
+        </p>
+        <a href={bookingUrl} class="btn btn-primary">Bestill time hos meg</a>
+      </div>
+      <div class="hero-media">
+        <img src="/marie-portrett.png" alt="Marie Hermansen, kiropraktor og grunnlegger av Krystallsykehjelpen" class="hero-photo" />
+      </div>
+    </div>
+  </section>
+
+  <section class="section-alt">
+    <div class="container story-grid">
+      <div class="story-text">
+        <p>
+          Jeg er kiropraktor med over ti års erfaring, og driver Fetsund Kiropraktorsenter, som jeg startet i 2019. I praksisen min møter jeg hver uke pasienter med krystallsyke (BPPV), vestibulær migrene, PPPD og nakkerelatert svimmelhet — tilstander som ofte er invalidiserende, men som i de fleste tilfeller kan behandles effektivt når de blir riktig kartlagt.
+        </p>
+        <p>
+          Det var gjennom min rolle i etterutdanningsutvalget til Norsk Kiropraktorforening at jeg for alvor fordypet meg i det vestibulære fagfeltet. Jo mer jeg lærte, jo tydeligere ble det for meg hvor mange som går unødvendig lenge med svimmelhet — ofte feildiagnostisert, ofte uten å vite at det finnes konkrete øvelser og manøvre som kan gi rask bedring. Krystallsykehjelpen ble til for å gjøre denne kunnskapen tilgjengelig for flere, ikke bare for pasientene som finner veien til klinikken min.
+        </p>
+        <p>
+          Jeg tror på grundig kartlegging, tydelig forklaring og behandling som er forankret i det som faktisk hjelper — ikke raske løsninger. Alt medisinsk innhold på denne siden er skrevet og kvalitetssikret av meg, basert på klinisk erfaring og oppdatert kunnskap på feltet.
+        </p>
+      </div>
+      <div class="work-card">
+        <h3>Jeg jobber mye med</h3>
+        <ul class="work-list">
+          {workAreas.map((area) => (
+            <li><span class="work-mark" aria-hidden="true"></span>{area}</li>
+          ))}
+        </ul>
+        <div class="work-meta">
+          <p>Medlem av Norsk Kiropraktorforening.</p>
+          <p>Sitter i foreningens etterutdanningsutvalg.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-beige">
+    <div class="container">
+      <h2>Utenom klinikken</h2>
+      <div class="outside-grid">
+        {outsideClinic.map((item) => (
+          <div class="outside-item">
+            <img src={item.src} alt={item.label} class="outside-photo" />
+            <span class="outside-caption">{item.label}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="navy-section final-cta">
+    <div class="container">
+      <h2>Vil du bestille time?</h2>
+      <p>Book en konsultasjon hos meg på Fetsund Kiropraktorsenter, eller les mer om hvordan Krystallsykehjelpen kan hjelpe deg videre.</p>
+      <a href={bookingUrl} class="btn btn-beige">Bestill time</a>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .hero { padding: 64px 0; }
+  .hero-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 44px; align-items: center; }
+  @media (max-width: 860px) {
+    .hero-grid { grid-template-columns: 1fr; grid-template-areas: "media" "text"; }
+    .hero-media { grid-area: media; }
+  }
+  .section-sky { background: var(--sky); }
+
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 0.82rem; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--accent); font-weight: 700; margin-bottom: 10px;
+  }
+  .crystal-icon { width: 14px; height: 14px; color: var(--accent); flex-shrink: 0; }
+  .hero-lead { font-size: 1.02rem; line-height: 1.65; color: var(--ink-soft); margin: 0 0 24px; max-width: 56ch; }
+
+  .hero-media { border-radius: var(--radius); overflow: hidden; box-shadow: 0 20px 50px rgba(22, 56, 117, 0.12); }
+  .hero-photo { width: 100%; height: 100%; display: block; aspect-ratio: 4/5; object-fit: cover; }
+
+  .section-alt { background: var(--paper); padding: 70px 0; }
+  .story-grid { display: grid; grid-template-columns: 1.3fr 0.9fr; gap: 44px; align-items: start; }
+  @media (max-width: 860px) {
+    .story-grid { grid-template-columns: 1fr; }
+  }
+  .story-text p { font-size: 1.02rem; line-height: 1.7; color: var(--ink); margin: 0 0 22px; }
+  .story-text p:last-child { margin-bottom: 0; }
+
+  .work-card { background: var(--sky); border-radius: var(--radius); padding: 28px 26px; }
+  .work-card h3 { margin: 0 0 16px; font-size: 1.05rem; }
+  .work-list { list-style: none; margin: 0 0 20px; padding: 0; }
+  .work-list li { display: flex; align-items: center; gap: 12px; font-size: 0.98rem; color: var(--ink); margin-bottom: 12px; }
+  .work-list li:last-child { margin-bottom: 0; }
+  .work-mark { flex-shrink: 0; width: 9px; height: 9px; border-radius: 50%; background: var(--turquoise); }
+  .work-meta { border-top: 1px solid var(--line); padding-top: 16px; }
+  .work-meta p { font-size: 0.85rem; color: var(--ink-soft); margin: 0 0 4px; }
+  .work-meta p:last-child { margin-bottom: 0; }
+
+  .section-beige { background: var(--beige); padding: 70px 0; }
+  .section-beige h2 { margin-bottom: 28px; }
+
+  .outside-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; max-width: 520px; }
+  .outside-item { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .outside-photo {
+    width: 100%; aspect-ratio: 1/1; border-radius: 50%; object-fit: cover;
+    border: 4px solid #fff; box-shadow: 0 16px 36px rgba(22, 56, 117, 0.12);
+  }
+  .outside-caption { font-size: 0.9rem; font-weight: 600; color: var(--navy); text-align: center; }
+  @media (min-width: 640px) {
+    .outside-grid { gap: 28px; }
+  }
+
+  .navy-section { background: var(--navy); color: #fff; }
+  .navy-section h2 { color: #fff; }
+  .navy-section p { color: rgba(255, 255, 255, 0.8); }
+  .final-cta { text-align: center; padding: 70px 0; }
+  .final-cta .container { max-width: 640px; }
+  .final-cta h2 { margin-bottom: 14px; }
+  .final-cta p { margin-bottom: 28px; font-size: 1rem; line-height: 1.6; }
+</style>

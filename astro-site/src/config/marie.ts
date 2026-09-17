@@ -1,1 +1,1 @@
-export const MARIE_URL = "/om-krystallsykehjelpen/";
+export const MARIE_URL = "/mott-marie/";
