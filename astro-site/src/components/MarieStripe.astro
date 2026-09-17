@@ -1,0 +1,94 @@
+---
+import { MARIE_URL } from "../config/marie";
+
+export interface Props {
+  bg?: "beige" | "sky";
+}
+
+const { bg = "beige" } = Astro.props;
+---
+
+<section class={`marie-stripe marie-stripe-${bg}`}>
+  <div class="container marie-stripe-inner">
+    <picture>
+      <source srcset="/marie-hermansen.webp" type="image/webp" />
+      <img
+        src="/marie-hermansen.jpg"
+        alt="Marie Hermansen, kiropraktor og grunnlegger av Krystallsykehjelpen"
+        width="480"
+        height="480"
+        loading="lazy"
+        class="marie-stripe-photo"
+      />
+    </picture>
+    <div class="marie-stripe-text">
+      <span class="marie-stripe-label">Hvem står bak</span>
+      <h2 class="marie-stripe-heading">Marie Hermansen, kiropraktor</h2>
+      <p class="marie-stripe-body">
+        Jeg startet Krystallsykehjelpen for at flere skal få riktig hjelp mot svimmelhet, uansett hvor i landet de bor.
+      </p>
+      <a href={MARIE_URL} class="marie-stripe-link">Møt Marie →</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .marie-stripe { padding: 48px 0; }
+  .marie-stripe-beige { background: var(--beige); }
+  .marie-stripe-sky { background: var(--sky); }
+
+  .marie-stripe-inner {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+  }
+
+  .marie-stripe-photo {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--turquoise);
+    flex-shrink: 0;
+    display: block;
+  }
+
+  .marie-stripe-label {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+
+  .marie-stripe-heading {
+    font-family: var(--font-display);
+    color: var(--navy);
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin: 0 0 8px;
+  }
+
+  .marie-stripe-body {
+    font-family: var(--font-body);
+    color: var(--navy);
+    font-size: 0.98rem;
+    line-height: 1.6;
+    margin: 0 0 12px;
+    max-width: 56ch;
+  }
+
+  .marie-stripe-link {
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 0.94rem;
+    text-decoration: none;
+  }
+  .marie-stripe-link:hover { text-decoration: underline; }
+
+  @media (max-width: 640px) {
+    .marie-stripe-photo { width: 84px; height: 84px; }
+  }
+</style>

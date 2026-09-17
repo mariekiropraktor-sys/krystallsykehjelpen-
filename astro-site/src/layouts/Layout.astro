@@ -1,6 +1,7 @@
 ---
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
+import MarieStripe from "../components/MarieStripe.astro";
 import "../styles/global.css";
 
 export interface Props {
@@ -8,9 +9,11 @@ export interface Props {
   description: string;
   activePath?: string;
   image?: string;
+  hideMarie?: boolean;
+  marieBg?: "beige" | "sky";
 }
 
-const { title, description, activePath = "", image } = Astro.props;
+const { title, description, activePath = "", image, hideMarie = false, marieBg = "beige" } = Astro.props;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 ---
 
@@ -49,6 +52,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
   <main>
     <slot />
   </main>
+  {!hideMarie && <MarieStripe bg={marieBg} />}
   <Footer />
 </body>
 </html>

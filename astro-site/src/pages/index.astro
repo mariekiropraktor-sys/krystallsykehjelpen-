@@ -59,6 +59,7 @@ const journeyCards = [
   title="Krystallsykehjelpen | Behandling av krystallsyke i Fetsund"
   description="Sliter du med svimmelhet eller krystallsyke (BPPV)? Vi tilbyr klinikk-, hjemme- og telefonkonsultasjoner i Fetsund. Bestill time i dag."
   activePath="/"
+  marieBg="sky"
 >
   <!-- 1. Hero -->
   <section class="hero">
@@ -214,37 +215,6 @@ const journeyCards = [
     </div>
   </section>
 
-  <!-- 7. Faglig ansvar / Marie -->
-  <section>
-    <div class="container">
-      <div class="bio-card">
-        <img src={urlForImage(sections["marie-bio"]?.mediaAsset, 240) ?? "/marie-portrait.jpg"} alt="Marie, kiropraktor hos Krystallsykehjelpen" class="bio-photo" />
-        <div>
-          <h3>{sections["marie-bio"]?.heading ?? "Marie – spesialisert på svimmelhet"}</h3>
-          <blockquote class="pull-quote">«Krystallsyke er ufarlig, men skremmende når man ikke vet hva det er. Målet mitt er at du skal forstå hva som skjer — og få hjelp raskt.»</blockquote>
-          <p set:html={sections["marie-bio"]?.body?.[0]
-            ? inlineHtmlFromBlock(sections["marie-bio"].body[0])
-            : "Kiropraktor med spesialkompetanse på utredning og behandling av svimmelhet og krystallsyke."} />
-          <a href="/om-krystallsykehjelpen/" class="card-link">Les mer om Krystallsykehjelpen →</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 8. Nyhetsbrev — ingen backend finnes ennå (verken Web3Forms eller
-       annet skjemaoppsett i prosjektet). Rent frontend-skjema uten
-       innsendingslogikk, flagget i implementasjonsrapporten. -->
-  <section class="section-alt">
-    <div class="container newsletter">
-      <h2>Hold deg oppdatert</h2>
-      <p>Få nye artikler om krystallsyke og svimmelhet rett i innboksen.</p>
-      <form class="newsletter-form" onsubmit="event.preventDefault();">
-        <input type="email" name="email" placeholder="Din e-postadresse" required />
-        <button type="submit" class="btn btn-primary">Meld meg på</button>
-      </form>
-      <p class="newsletter-note">Ingen innsendingslogikk er koblet til ennå — se implementasjonsrapporten.</p>
-    </div>
-  </section>
 </Layout>
 
 <style>
@@ -395,22 +365,4 @@ const journeyCards = [
   .cta-band p { margin: 0; }
   @media (max-width: 700px) { .cta-band { flex-direction: column; align-items: flex-start; } }
 
-  .bio-card { background: var(--sky); border-radius: var(--radius); padding: 26px; display: flex; gap: 22px; align-items: center; }
-  .bio-photo { width: 84px; height: 84px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
-  .bio-card h3 { margin-bottom: 4px; }
-  .bio-card p { margin-bottom: 6px; }
-  .pull-quote {
-    margin: 0 0 14px; padding-left: 16px; border-left: 3px solid var(--turquoise);
-    font-family: var(--font-display); font-style: italic; color: var(--navy); font-size: 1.02rem;
-  }
-  @media (max-width: 600px) { .bio-card { flex-direction: column; text-align: center; } .pull-quote { border-left: none; padding-left: 0; } }
-
-  .newsletter { max-width: 560px; text-align: center; }
-  .newsletter h2 { margin-bottom: 8px; }
-  .newsletter-form { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; justify-content: center; }
-  .newsletter-form input {
-    flex: 1 1 240px; padding: 12px 16px; border-radius: 999px; border: 1px solid var(--line);
-    font-family: var(--font-body); font-size: 0.94rem;
-  }
-  .newsletter-note { font-size: 0.76rem; color: var(--ink-soft); margin-top: 10px; }
 </style>

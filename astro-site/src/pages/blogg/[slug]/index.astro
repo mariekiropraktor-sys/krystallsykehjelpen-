@@ -4,6 +4,7 @@ import { safeFetch } from "../../../lib/safeFetch";
 import { blogPreviewClient, isPreviewingDrafts } from "../../../lib/blogPreviewClient";
 import { blocksToHtml, extractHeadings, estimateReadingTime } from "../../../lib/portableText";
 import { urlForImage } from "../../../lib/sanityImage";
+import Forfattersignatur from "../../../components/Forfattersignatur.astro";
 
 export async function getStaticPaths() {
   try {
@@ -29,18 +30,6 @@ const QUERY = `*[_type == "blogPost" && slug.current == $slug][0]{
 }`;
 
 const post = await safeFetch(QUERY, { slug }, null, blogPreviewClient);
-
-// Signaturen nederst i artikkelen viser alltid Marie — samme portrett i
-// alle artikler, uavhengig av hvilken praktiker som ev. er registrert som
-// forfatter på det enkelte innlegget. Gjenbruker det eksisterende
-// portrettet fra practitioner-dokumentet (samme bilde som ellers på siten)
-// i stedet for å legge til et nytt bildefelt.
-const signaturePractitioner = await safeFetch(
-  `*[_id == "practitioner-marie-hermansen"][0]{ photo }`,
-  {},
-  null,
-);
-const signaturePhotoUrl = signaturePractitioner ? urlForImage(signaturePractitioner.photo, 112) : undefined;
 
 function formatDate(dateString) {
   if (!dateString) return "";
@@ -79,6 +68,7 @@ const faqJsonLd = post?.faq?.length && {
   description={post?.metaDescription || post?.excerpt || "Blogginnlegg fra Krystallsykehjelpen."}
   activePath="/blogg/"
   image={coverUrl}
+  hideMarie
 >
   {isPreviewingDrafts && (
     <div class="preview-banner">Forhåndsvisning (upubliserte utkast er synlige — kun lokalt)</div>
@@ -177,20 +167,12 @@ const faqJsonLd = post?.faq?.length && {
             </div>
           ) : null}
 
+          <Forfattersignatur />
+
           <div class="cta-band">
             <h2>Usikker på om dette er krystallsyke?</h2>
             <p>Få bekreftet om det er krystallsyke, og hvilken side og buegang som er involvert.</p>
             <a href="/fa-hjelp/" class="btn cta-btn">Få hjelp →</a>
-          </div>
-
-          <div class="signature">
-            {signaturePhotoUrl && (
-              <img src={signaturePhotoUrl} alt="Marie Hermansen" class="signature-photo" />
-            )}
-            <div>
-              <div class="signature-name">Marie Hermansen</div>
-              <div class="signature-role">Kiropraktor og faglig ansvarlig for Krystallsykehjelpen</div>
-            </div>
           </div>
         </article>
 
@@ -307,10 +289,6 @@ const faqJsonLd = post?.faq?.length && {
   .accordion-item.open .accordion-panel { max-height: 300px; }
   .accordion-panel p { padding: 0 4px 16px; margin: 0; color: var(--ink-soft); }
 
-  .signature { display: flex; align-items: center; gap: 14px; margin: 28px 0 12px; }
-  .signature-photo { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
-  .signature-name { color: var(--navy); font-weight: 700; font-size: 0.98rem; }
-  .signature-role { color: var(--ink-soft); font-size: 0.85rem; margin-top: 2px; }
 
   .sources { margin: 30px 0; }
   .sources h2 { font-size: 1.1rem; margin-bottom: 10px; }

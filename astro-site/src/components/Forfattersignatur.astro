@@ -1,0 +1,56 @@
+---
+import { MARIE_URL } from "../config/marie";
+---
+
+<div class="forfattersignatur">
+  <picture>
+    <source srcset="/marie-hermansen-240.webp" type="image/webp" />
+    <img
+      src="/marie-hermansen-240.jpg"
+      alt="Marie Hermansen, kiropraktor og grunnlegger av Krystallsykehjelpen"
+      width="240"
+      height="240"
+      loading="lazy"
+      class="forfattersignatur-photo"
+    />
+  </picture>
+  <p class="forfattersignatur-text">
+    Faglig skrevet av <a href={MARIE_URL} class="forfattersignatur-name">Marie Hermansen</a>, kiropraktor med spesialkompetanse på svimmelhet
+  </p>
+</div>
+
+<style>
+  .forfattersignatur {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: #fff;
+    border-top: 1px solid var(--sky);
+    padding: 24px 0;
+    margin: 28px 0 0;
+  }
+
+  .forfattersignatur-photo {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    display: block;
+  }
+
+  .forfattersignatur-text {
+    font-family: var(--font-body);
+    font-size: 0.92rem;
+    color: var(--ink-soft);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .forfattersignatur-name {
+    color: var(--accent);
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .forfattersignatur-name:hover { text-decoration: underline; }
+</style>

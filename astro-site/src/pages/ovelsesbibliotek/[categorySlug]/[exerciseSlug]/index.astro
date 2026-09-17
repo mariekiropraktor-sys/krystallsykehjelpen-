@@ -6,6 +6,7 @@ import { safeFetch } from "../../../../lib/safeFetch";
 import { inlineHtmlFromBlock } from "../../../../lib/portableText";
 import { urlForImage } from "../../../../lib/sanityImage";
 import { HABITUERING_SECTIONS } from "../../../../lib/habitueringSections";
+import Forfattersignatur from "../../../../components/Forfattersignatur.astro";
 
 export async function getStaticPaths() {
   try {
@@ -85,6 +86,7 @@ const isVideo = exercise?.mediaFile?.asset?.mimeType?.startsWith("video/");
   title={exercise ? `${exercise.title} | Øvelsesbibliotek | Krystallsykehjelpen` : "Øvelsesbibliotek | Krystallsykehjelpen"}
   description={exercise?.lead ?? "Øvelsesbibliotek – Krystallsykehjelpen."}
   activePath="/ovelsesbibliotek/"
+  hideMarie
 >
   {exercise ? (
     <>
@@ -240,6 +242,8 @@ const isVideo = exercise?.mediaFile?.asset?.mimeType?.startsWith("video/");
             </div>
           </div>
         ) : null}
+
+        <Forfattersignatur />
 
         <div class="cta-band">
           <h2>Usikker på om dette er riktig øvelse for deg?</h2>

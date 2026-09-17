@@ -1,0 +1,31 @@
+---
+// Nyhetsbrev — ingen backend finnes ennå (verken Web3Forms eller annet
+// skjemaoppsett i prosjektet). Rent frontend-skjema uten innsendingslogikk.
+// Ikke brukt på noen side for øyeblikket — ta inn igjen med
+// `import NewsletterSection from "../components/NewsletterSection.astro";`
+// og `<NewsletterSection />` der den skal vises.
+---
+
+<section class="section-alt">
+  <div class="container newsletter">
+    <h2>Hold deg oppdatert</h2>
+    <p>Få nye artikler om krystallsyke og svimmelhet rett i innboksen.</p>
+    <form class="newsletter-form" onsubmit="event.preventDefault();">
+      <input type="email" name="email" placeholder="Din e-postadresse" required />
+      <button type="submit" class="btn btn-primary">Meld meg på</button>
+    </form>
+    <p class="newsletter-note">Ingen innsendingslogikk er koblet til ennå — se implementasjonsrapporten.</p>
+  </div>
+</section>
+
+<style>
+  .section-alt { background: var(--paper); padding: 60px 0; }
+  .newsletter { max-width: 560px; text-align: center; }
+  .newsletter h2 { margin-bottom: 8px; }
+  .newsletter-form { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; justify-content: center; }
+  .newsletter-form input {
+    flex: 1 1 240px; padding: 12px 16px; border-radius: 999px; border: 1px solid var(--line);
+    font-family: var(--font-body); font-size: 0.94rem;
+  }
+  .newsletter-note { font-size: 0.76rem; color: var(--ink-soft); margin-top: 10px; }
+</style>
