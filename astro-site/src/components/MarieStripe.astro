@@ -47,7 +47,7 @@ const { bg = "beige" } = Astro.props;
     grid-template-areas:
       "photo top"
       "bottom bottom";
-    column-gap: 16px;
+    column-gap: 20px;
     row-gap: 14px;
     align-items: center;
   }
@@ -57,8 +57,8 @@ const { bg = "beige" } = Astro.props;
   .marie-stripe-bottom { grid-area: bottom; }
 
   .marie-stripe-photo {
-    width: 72px;
-    height: 72px;
+    width: 88px;
+    height: 88px;
     aspect-ratio: 1 / 1;
     border-radius: 50%;
     object-fit: cover;
@@ -108,13 +108,13 @@ const { bg = "beige" } = Astro.props;
       grid-template-areas:
         "photo top"
         "photo bottom";
-      column-gap: 28px;
+      column-gap: 32px;
       row-gap: 6px;
       max-width: 760px;
       align-items: center;
     }
 
-    .marie-stripe-photo { width: 112px; height: 112px; }
+    .marie-stripe-photo { width: 136px; height: 136px; }
 
     .marie-stripe-heading { font-size: 1.3rem; }
     .marie-stripe-bottom { margin-top: 4px; }
