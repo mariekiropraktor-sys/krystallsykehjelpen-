@@ -1,16 +1,35 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import { safeFetch } from "../../lib/safeFetch";
 
 const bookingUrl =
   "https://psno-patient-platform-fe.svc.pasientsky.no/embedded/planner/booking?serviceProviderId=54907264-049e-11eb-8fc8-26c6f94d64b7";
 
-const workAreas = [
-  "Krystallsyke (BPPV)",
-  "Vestibulær migrene",
-  "PPPD",
-  "Nakkerelatert svimmelhet",
-  "Vestibulær rehabilitering",
-];
+// Sanity returnerer `null` (ikke en feil) når dokumentet ikke finnes ennå —
+// safeFetch fanger kun kastede feil, så `null` må håndteres eksplisitt her,
+// akkurat som hp-mønsteret i src/pages/hjemme/index.astro.
+const om =
+  (await safeFetch(
+    `*[_id == "omMariePage"][0]{
+      storyParagraph1, storyParagraph2, storyParagraph3, focusAreas,
+      membershipLine1, membershipLine2,
+      educationHeading, educationText,
+      firstVisitHeading, firstVisitText,
+      whyHeading, whyText
+    }`,
+    {},
+    null,
+  )) ?? {};
+
+const workAreas = om.focusAreas?.length
+  ? om.focusAreas
+  : [
+      "Krystallsyke (BPPV)",
+      "Vestibulær migrene",
+      "PPPD",
+      "Nakkerelatert svimmelhet",
+      "Vestibulær rehabilitering",
+    ];
 
 const outsideClinic = [
   { src: "/marie-loping.jpg", label: "Løping" },
@@ -55,13 +74,13 @@ const outsideClinic = [
     <div class="container story-grid">
       <div class="story-text">
         <p>
-          Jeg er kiropraktor med over ti års erfaring, og driver Fetsund Kiropraktorsenter, som jeg startet i 2019. I praksisen min møter jeg hver uke pasienter med krystallsyke (BPPV), vestibulær migrene, PPPD og nakkerelatert svimmelhet — tilstander som ofte er invalidiserende, men som i de fleste tilfeller kan behandles effektivt når de blir riktig kartlagt.
+          {om.storyParagraph1 ?? "Jeg er kiropraktor med over ti års erfaring, og driver Fetsund Kiropraktorsenter, som jeg startet i 2019. I praksisen min møter jeg hver uke pasienter med krystallsyke (BPPV), vestibulær migrene, PPPD og nakkerelatert svimmelhet — tilstander som ofte er invalidiserende, men som i de fleste tilfeller kan behandles effektivt når de blir riktig kartlagt."}
         </p>
         <p>
-          Det var gjennom min rolle i etterutdanningsutvalget til Norsk Kiropraktorforening at jeg for alvor fordypet meg i det vestibulære fagfeltet. Jo mer jeg lærte, jo tydeligere ble det for meg hvor mange som går unødvendig lenge med svimmelhet — ofte feildiagnostisert, ofte uten å vite at det finnes konkrete øvelser og manøvre som kan gi rask bedring. Krystallsykehjelpen ble til for å gjøre denne kunnskapen tilgjengelig for flere, ikke bare for pasientene som finner veien til klinikken min.
+          {om.storyParagraph2 ?? "Det var gjennom min rolle i etterutdanningsutvalget til Norsk Kiropraktorforening at jeg for alvor fordypet meg i det vestibulære fagfeltet. Jo mer jeg lærte, jo tydeligere ble det for meg hvor mange som går unødvendig lenge med svimmelhet — ofte feildiagnostisert, ofte uten å vite at det finnes konkrete øvelser og manøvre som kan gi rask bedring. Krystallsykehjelpen ble til for å gjøre denne kunnskapen tilgjengelig for flere, ikke bare for pasientene som finner veien til klinikken min."}
         </p>
         <p>
-          Jeg tror på grundig kartlegging, tydelig forklaring og behandling som er forankret i det som faktisk hjelper — ikke raske løsninger. Alt medisinsk innhold på denne siden er skrevet og kvalitetssikret av meg, basert på klinisk erfaring og oppdatert kunnskap på feltet.
+          {om.storyParagraph3 ?? "Jeg tror på grundig kartlegging, tydelig forklaring og behandling som er forankret i det som faktisk hjelper — ikke raske løsninger. Alt medisinsk innhold på denne siden er skrevet og kvalitetssikret av meg, basert på klinisk erfaring og oppdatert kunnskap på feltet."}
         </p>
       </div>
       <div class="work-card">
@@ -72,9 +91,32 @@ const outsideClinic = [
           ))}
         </ul>
         <div class="work-meta">
-          <p>Medlem av Norsk Kiropraktorforening.</p>
-          <p>Sitter i foreningens etterutdanningsutvalg.</p>
+          <p>{om.membershipLine1 ?? "Medlem av Norsk Kiropraktorforening."}</p>
+          <p>{om.membershipLine2 ?? "Sitter i foreningens etterutdanningsutvalg."}</p>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-alt">
+    <div class="container more-story">
+      <div class="more-block">
+        <h3>{om.educationHeading ?? "Utdanning og bakgrunn"}</h3>
+        <p>
+          {om.educationText ?? "Jeg er utdannet kiropraktor fra University of South Wales i 2017, og har siden den gang bygget videre kompetanse spesifikt innen vestibulær rehabilitering. Det er denne fordypningen — sammen med årene i klinikk — som ligger til grunn for alt jeg skriver og anbefaler på Krystallsykehjelpen."}
+        </p>
+      </div>
+      <div class="more-block">
+        <h3>{om.firstVisitHeading ?? "Hva skjer på en førstetime"}</h3>
+        <p>
+          {om.firstVisitText ?? "Møter du meg for første gang, starter vi alltid med en grundig samtale om hvordan svimmelheten oppleves for deg — når den kommer, hva som utløser den, og hva du har prøvd tidligere. Deretter gjør jeg konkrete undersøkelser for å kartlegge hva som faktisk skjer i det vestibulære systemet ditt, slik at behandlingen treffer riktig fra start. Du skal alltid forlate klinikken med en klar forklaring på hva jeg fant, og en plan for veien videre."}
+        </p>
+      </div>
+      <div class="more-block">
+        <h3>{om.whyHeading ?? "Hvorfor dette engasjerer meg"}</h3>
+        <p>
+          {om.whyText ?? "Svimmelhet er en av de tilstandene jeg møter mest frustrasjon rundt. Mange har gått i årevis med symptomer som er avfeid, feiltolket, eller aldri egentlig undersøkt — og det tar en pris, både fysisk og mentalt, å ikke stole på egen kropp. Det er den følelsen jeg ønsker å fjerne hos hver eneste pasient som kommer til meg: at noen endelig tar symptomene på alvor, forstår hva som skjer, og vet hvordan det skal behandles."}
+        </p>
       </div>
     </div>
   </section>
@@ -97,7 +139,10 @@ const outsideClinic = [
     <div class="container">
       <h2>Vil du bestille time?</h2>
       <p>Book en konsultasjon hos meg på Fetsund Kiropraktorsenter, eller les mer om hvordan Krystallsykehjelpen kan hjelpe deg videre.</p>
-      <a href={bookingUrl} class="btn btn-beige">Bestill time</a>
+      <div class="final-cta-actions">
+        <a href={bookingUrl} class="btn btn-beige">Bestill time</a>
+        <a href="/tjenester/videokonsultasjon/" class="btn btn-ghost-navy">Bestill videokonsultasjon</a>
+      </div>
     </div>
   </section>
 </Layout>
@@ -140,6 +185,10 @@ const outsideClinic = [
   .work-meta p { font-size: 0.85rem; color: var(--ink-soft); margin: 0 0 4px; }
   .work-meta p:last-child { margin-bottom: 0; }
 
+  .more-story { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 40px; }
+  .more-block h3 { color: var(--navy); margin: 0 0 12px; }
+  .more-block p { font-size: 1.02rem; line-height: 1.7; color: var(--ink); margin: 0; }
+
   .section-beige { background: var(--beige); padding: 70px 0; }
   .section-beige h2 { margin-bottom: 28px; }
 
@@ -161,4 +210,12 @@ const outsideClinic = [
   .final-cta .container { max-width: 640px; }
   .final-cta h2 { margin-bottom: 14px; }
   .final-cta p { margin-bottom: 28px; font-size: 1rem; line-height: 1.6; }
+
+  .final-cta-actions { display: flex; justify-content: center; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .btn-ghost-navy { background: transparent; border: 1.5px solid #fff; color: #fff; }
+  .btn-ghost-navy:hover { background: rgba(255, 255, 255, 0.1); }
+  @media (max-width: 500px) {
+    .final-cta-actions { flex-direction: column; }
+    .final-cta-actions .btn { width: 100%; justify-content: center; }
+  }
 </style>

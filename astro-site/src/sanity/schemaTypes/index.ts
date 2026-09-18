@@ -6,6 +6,7 @@ import blogPost from "./blogPost";
 import faqItem from "./faqItem";
 import practitioner from "./practitioner";
 import hjemmePage from "./hjemmePage";
+import omMariePage from "./omMariePage";
 
 export const schemaTypes = [
   siteSettings,
@@ -16,4 +17,5 @@ export const schemaTypes = [
   faqItem,
   practitioner,
   hjemmePage,
+  omMariePage,
 ];
