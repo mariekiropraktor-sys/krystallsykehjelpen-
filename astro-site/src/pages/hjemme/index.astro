@@ -112,7 +112,6 @@ const maneuverGroups = GROUP_ORDER.map((key) => {
 
 const stepCards = [
   {
-    num: "01",
     title: "Jeg skal gjøre en manøver",
     desc: "Finn videoveiledningen til manøveren du har fått anbefalt.",
     href: "#steg2",
@@ -120,7 +119,6 @@ const stepCards = [
     comingSoon: false,
   },
   {
-    num: "02",
     title: "Jeg har behandlet krystallsyken – hva nå?",
     desc: "Les hva som er vanlig etter behandling og hva du kan forvente de neste dagene.",
     href: "#etterpa",
@@ -128,7 +126,6 @@ const stepCards = [
     comingSoon: false,
   },
   {
-    num: "03",
     title: "Jeg er fortsatt svimmel",
     desc: "Den kraftige posisjonssvimmelheten kan være borte selv om du fortsatt føler deg ustø eller svimmel.",
     href: "#restsvimmelhet",
@@ -338,7 +335,7 @@ const rehabData = {
   eyebrow: hp.rehabEyebrow ?? "Vestibulær rehabilitering",
   heading: hp.rehabHeading ?? "Når balansen trenger litt tid",
   intro: hp.rehabIntro ?? "Etter at krystallsyken er behandlet, kan noen ha nytte av gradvis trening av balanse, hodebevegelser og bevegelsestoleranse.",
-  lead: hp.rehabLead ?? "Velg øvelsene som kjennes ubehagelige å gjøre. Det er de bevegelsene kroppen trenger å bli vant til igjen.",
+  lead: hp.rehabLead ?? "Blant øvelsene under: velg dem som kjennes ubehagelige å gjøre. Det er de bevegelsene kroppen trenger å bli vant til igjen.",
   ctaHeading: hp.rehabCtaHeading ?? "Usikker på hvilke øvelser som passer for deg?",
   ctaBody: hp.rehabCtaBody ?? "I en videokonsultasjon kan øvelsene tilpasses situasjonen din, og du får veiledning i hvordan de skal gjøres.",
   ctaButton: hp.rehabCtaButton ?? "Bestill videokonsultasjon",
@@ -375,7 +372,6 @@ const attributionText =
         <p class="ingress">Har du fått påvist krystallsyke? Her får du hjelp til å finne veiledningen du har fått anbefalt, gjennomføre behandlingen hjemme og forstå hva du bør gjøre videre.</p>
         <div class="hero-ctas">
           <a href="#steg1" class="btn btn-primary">Start veiledningen</a>
-          <a href="#hvordan" class="link-secondary">Hvordan fungerer det?</a>
         </div>
       </div>
       <div class="hero-visual">
@@ -409,7 +405,6 @@ const attributionText =
       <div class="choice-grid">
         {stepCards.map((card) => (
           <div class={`choice-card ${card.comingSoon ? "coming-soon" : ""}`}>
-            <span class="num">{card.num}</span>
             <h3>{card.title}</h3>
             <p>{card.desc}</p>
             {card.comingSoon ? (
@@ -669,8 +664,6 @@ const attributionText =
   .subheading { font-family: var(--font-display); font-weight: 500; font-style: italic; font-size: 1.18rem; color: var(--accent); margin: 0 0 20px; }
   .ingress { font-size: 1.03rem; line-height: 1.65; color: var(--ink-soft); margin: 0 0 30px; max-width: 52ch; }
   .hero-ctas { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
-  .link-secondary { color: var(--accent); font-weight: 600; font-size: 0.94rem; text-decoration: none; }
-  .link-secondary:hover { text-decoration: underline; }
 
   .hero-visual {
     background: var(--sky); border-radius: var(--radius);
@@ -697,7 +690,6 @@ const attributionText =
     padding: 30px 26px; box-shadow: 0 8px 24px rgba(22, 56, 117, 0.06);
     display: flex; flex-direction: column; gap: 12px;
   }
-  .choice-card .num { font-family: var(--font-display); font-weight: 600; font-size: 0.85rem; color: var(--turquoise); }
   .choice-card h3 { font-size: 1.05rem; margin: 0; }
   .choice-card p { font-size: 0.9rem; line-height: 1.55; color: var(--ink-soft); margin: 0; flex-grow: 1; }
   .choice-card .link { color: var(--navy-2); font-weight: 700; font-size: 0.9rem; text-decoration: none; }

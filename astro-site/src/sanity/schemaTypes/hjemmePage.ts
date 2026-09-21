@@ -209,7 +209,7 @@ export default defineType({
       type: "text",
       rows: 2,
       group: "rehab",
-      initialValue: "Velg øvelsene som kjennes ubehagelige å gjøre. Det er de bevegelsene kroppen trenger å bli vant til igjen.",
+      initialValue: "Blant øvelsene under: velg dem som kjennes ubehagelige å gjøre. Det er de bevegelsene kroppen trenger å bli vant til igjen.",
     }),
     defineField({ name: "rehabCtaHeading", title: "CTA-boks – overskrift", type: "string", group: "rehab", initialValue: "Usikker på hvilke øvelser som passer for deg?" }),
     defineField({
