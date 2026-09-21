@@ -1,13 +1,18 @@
 ---
-// Gjenbrukbar manøver-/øvelseskort. Trigger for exercise-valg (ikke en
-// vanlig lenke) — se scriptet i hjemme/index.astro, som lytter etter klikk
-// og populerer SafetyNotice/VideoGuide via `data-exercise`.
+// Gjenbrukbar manøver-/øvelseskort.
+//
+// To bruksmåter:
+// - `href` satt: rendres som en vanlig lenke (<a>) til en
+//   /ovelsesbibliotek/-side — nåværende bruk, se hjemme/index.astro sin
+//   rehab-seksjon (progressiv omstrukturering: instruksjonene vises på
+//   /ovelsesbibliotek/, ikke duplisert inline på /hjemme/ lenger).
+// - `href` ikke satt: rendres som en <button> med `data-exercise` (eldre
+//   mønster for inline video-/steg-visning) — beholdt for bakoverkompatibilitet,
+//   ikke aktivt brukt noe sted akkurat nå.
 //
 // `compact`: uten video-thumbnail. Lagt til i en egen oppgave
 // (manover-kompakt-prompt.md) etter at manøverlisten i steg 2 ble bygget om
-// til rad-baserte ManeuverRow i stedet — ExerciseCard brukes derfor ikke
-// lenger til selve manøverlisten, men gjenbrukes her (kompakt) til
-// rehabiliteringsøvelsene i fase 3, der en kortgrid fortsatt gir mening.
+// til rad-baserte ManeuverRow i stedet.
 export interface Props {
   title: string;
   situasjon?: string;
@@ -15,15 +20,18 @@ export interface Props {
   duration?: string;
   mediaUrl?: string | null;
   isVideo?: boolean;
-  payload: Record<string, unknown>;
+  payload?: Record<string, unknown>;
+  href?: string;
   compact?: boolean;
   linkText?: string;
 }
 
-const { title, situasjon, lead, duration, mediaUrl, isVideo, payload, compact = false, linkText = "Start veiledning →" } = Astro.props;
+const { title, situasjon, lead, duration, mediaUrl, isVideo, payload, href, compact = false, linkText = "Start veiledning →" } = Astro.props;
+const Tag = href ? "a" : "button";
+const tagProps = href ? { href } : { type: "button", "data-exercise": JSON.stringify(payload ?? {}) };
 ---
 
-<button type="button" class={`exercise-card ${compact ? "compact" : ""}`} data-exercise={JSON.stringify(payload)}>
+<Tag class={`exercise-card ${compact ? "compact" : ""}`} {...tagProps}>
   {!compact && (
     <span class="exercise-thumb">
       {mediaUrl ? (
@@ -43,7 +51,7 @@ const { title, situasjon, lead, duration, mediaUrl, isVideo, payload, compact = 
     {duration && <span class="exercise-meta">{duration}</span>}
     <span class="exercise-link">{linkText}</span>
   </span>
-</button>
+</Tag>
 
 <style>
   .exercise-card {

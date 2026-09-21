@@ -1,153 +1,47 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import ManeuverRow from "../../components/ManeuverRow.astro";
-import SafetyNotice from "../../components/SafetyNotice.astro";
-import VideoGuide from "../../components/VideoGuide.astro";
 import ExerciseCard from "../../components/ExerciseCard.astro";
-import FollowUpQuestion from "../../components/FollowUpQuestion.astro";
 import HelpCTA from "../../components/HelpCTA.astro";
 import { safeFetch } from "../../lib/safeFetch";
 import { HABITUERING_SECTIONS } from "../../lib/habitueringSections";
 
-// Fase 1 av 3 for /hjemme/ («Krystallsykehjelpen hjemme») — hero, «Før du
-// starter» og steg 1. Fase 2: steg 2 (manøverbibliotek), SafetyNotice og
-// VideoGuide, se hjemme-fase2-prompt.md. Komprimert i en egen oppgave
-// (manover-kompakt-prompt.md): 9 side-spesifikke Sanity-dokumenter grupperes
-// nå til 5 manøver-rader i grensesnittet, med sidevalg som folder ut i
-// raden — ingen dokumenter er endret, kun presentasjonen. Oppfølging/
-// restsvimmelhet-seksjon og rehab kommer i fase 3.
+// ===== Progressiv, ett-steg-av-gangen-omstrukturering av /hjemme/ =====
+// Erstatter den tidligere ene, lange siden (alle utfall stablet under
+// hverandre) med en forgrenet flyt der kun ett steg/spørsmål vises om
+// gangen. Selve manøver-/øvelsesinstruksjonene ligger IKKE lenger
+// duplisert her — resultatsteget i sti A og rehab-kortene lenker videre
+// til /ovelsesbibliotek/, som er kilden til sannhet for instruksjonene.
+//
+// Arkitektur: alle skjermer ligger i DOM-en (rendret av Astro/Sanity som
+// vanlig), men kun én er synlig om gangen — styrt av scriptet nederst via
+// `[hidden]` og en enkel historikk-stack (for fungerende «← Tilbake» uansett
+// hvilken vei besøkende kom inn i et steg fra). Startskjermen (id="steg1")
+// er alltid synlig som utgangspunkt; alle andre skjermer har `hidden` satt
+// i markupen og vises kun via JS.
+//
+// Retired i denne omstruktureringen (komponentfilene er IKKE slettet, kun
+// avviklet fra denne siden — se sluttrapport):
+// - Den gamle «steg 2»-manøverlisten (ManeuverRow, alle 9 dokumenter i én
+//   liste) — erstattet av sti A sitt direkte side+kanal-treff.
+// - SafetyNotice/VideoGuide (inline video-steg-visning) — instruksjonene
+//   vises nå på /ovelsesbibliotek/ i stedet for duplisert her.
+// - FollowUpQuestion sitt rike 5-alternativs «Hva skjer nå?»-panel
+//   (inkl. det detaljerte akutt-varselet med slag-sjekkliste) — erstattet
+//   av sti B sitt enkle ja/nei-spørsmål. Sanity-feltene bak det gamle
+//   panelet (followUp*, panel*, acuteWarning*) er IKKE fjernet fra
+//   skjemaet eller slettet i Studio, kun ikke lenger hentet/vist her.
 
-// De ni faktiske side-spesifikke dokumentene (verifisert direkte mot Sanity
-// før koding, ikke gjettet — se sluttrapport).
-const EXERCISE_ORDER = [
-  "epley-hoyre",
-  "epley-venstre",
-  "semont-hoyre",
-  "semont-venstre",
-  "barbecue-rull-hoyre",
-  "barbecue-rull-venstre",
-  "gufoni-hoyre",
-  "gufoni-venstre",
-  "brandt-daroff",
-];
-
-const rawExercises = await safeFetch(
-  `*[_type == "exercise" && slug.current in $slugs]{
-    title, "slug": slug.current, exerciseType, canal, side, duration,
-    steps[]{ title, description, holdTime },
-    mediaFile{ asset->{ url, mimeType } }
-  }`,
-  { slugs: EXERCISE_ORDER },
-  [],
-);
-
-const CANAL_TITLES = {
-  bakre: "Bakre buegang",
-  horisontal: "Horisontal buegang",
-  fremre: "Fremre buegang",
-};
-
-const SIDE_LABELS = { hoyre: "Høyre side", venstre: "Venstre side" };
-
-// Gruppering til 5 manøvre bruker kun eksisterende felt (title, canal,
-// side, exerciseType) — ingen nye Sanity-felt. Tittel-mønsteret
-// "<Manøver> – høyre/venstre" er verifisert direkte i Sanity (se
-// sluttrapport), ikke gjettet. Dokumenter uten sidesuffiks (Brandt-Daroff)
-// blir sin egen gruppe uendret.
-function baseTitleFor(title) {
-  return title.replace(/ – (høyre|venstre)$/i, "");
-}
-
-const decorated = rawExercises
-  .slice()
-  .sort((a, b) => EXERCISE_ORDER.indexOf(a.slug) - EXERCISE_ORDER.indexOf(b.slug))
-  .map((ex) => {
-    const mediaUrl = ex.mediaFile?.asset?.url ?? null;
-    const isVideo = ex.mediaFile?.asset?.mimeType?.startsWith("video/") ?? false;
-    return {
-      ...ex,
-      mediaUrl,
-      isVideo,
-      payload: {
-        title: ex.title,
-        mediaUrl,
-        isVideo,
-        steps: (ex.steps ?? []).map((s) => ({ title: s.title, description: s.description })),
-      },
-    };
-  });
-
-const groupsMap = new Map();
-for (const ex of decorated) {
-  const key = baseTitleFor(ex.title);
-  if (!groupsMap.has(key)) groupsMap.set(key, []);
-  groupsMap.get(key).push(ex);
-}
-
-const GROUP_ORDER = ["Epley-manøver", "Semont-manøver", "Barbecue-rull (Lempert)", "Gufoni-manøver", "Brandt-Daroff-øvelser"];
-
-const maneuverGroups = GROUP_ORDER.map((key) => {
-  const docs = groupsMap.get(key) ?? [];
-  if (!docs.length) return null;
-
-  const first = docs[0];
-  const duration = docs.find((d) => d.duration)?.duration ?? null;
-  const isHabituering = first.exerciseType !== "reponering";
-  const situasjon = isHabituering ? "Habituering, begge sider" : (CANAL_TITLES[first.canal] ?? "");
-
-  if (docs.length > 1) {
-    return {
-      title: key,
-      situasjon,
-      duration,
-      sides: docs
-        .filter((d) => d.side)
-        .sort((a, b) => (a.side === "hoyre" ? -1 : 1))
-        .map((d) => ({ label: SIDE_LABELS[d.side] ?? d.side, payload: d.payload })),
-    };
-  }
-
-  return { title: key, situasjon, duration, payload: first.payload };
-}).filter(Boolean);
-
-const stepCards = [
-  {
-    title: "Jeg skal gjøre en manøver",
-    desc: "Finn videoveiledningen til manøveren du har fått anbefalt.",
-    href: "#steg2",
-    linkText: "Finn manøver →",
-    comingSoon: false,
-  },
-  {
-    title: "Jeg har behandlet krystallsyken – hva nå?",
-    desc: "Les hva som er vanlig etter behandling og hva du kan forvente de neste dagene.",
-    href: "#etterpa",
-    linkText: "Se hva som skjer etterpå →",
-    comingSoon: false,
-  },
-  {
-    title: "Jeg er fortsatt svimmel",
-    desc: "Den kraftige posisjonssvimmelheten kan være borte selv om du fortsatt føler deg ustø eller svimmel.",
-    href: "#restsvimmelhet",
-    linkText: "Få hjelp med restsvimmelhet →",
-    comingSoon: false,
-  },
-];
-
-// ===== Fase 3: oppfølging, restsvimmelhet, rehabilitering, hjelp =====
-// Alle pasientrettede tekster under kommer fra hjemmePage-singletonet i
-// Sanity (opprett/publiser i Studio: "Hjemme-siden (fase 3-innhold)").
-// DEFAULTS speiler nøyaktig initialValue i
-// src/sanity/schemaTypes/hjemmePage.ts, slik at siden viser riktig
-// godkjent tekst selv om dokumentet aldri publiseres.
-// Sanity returnerer `null` (ikke en feil) når dokumentet ikke finnes ennå —
-// safeFetch fanger kun kastede feil, så `null` må håndteres eksplisitt her.
 const hp =
   (await safeFetch(
     `*[_id == "hjemmePage"][0]{
-      followUpEyebrow, followUpHeading, followUpIntro, followUpQuestion, followUpDivider,
-      panelMuchBetter, panelSlightlyBetter, panelNoChange, panelWorse, panelStillUnsteady,
-      acuteWarningHeading, acuteWarningIntro, acuteWarningList, acuteWarningCheck,
+      flowStartHeading, flowStartSubheading,
+      flowCard1Title, flowCard1Subtitle, flowCard2Title, flowCard2Subtitle, flowCard3Title, flowCard3Subtitle,
+      flowBackLabel,
+      flowAStep1Question, flowAStep1Subtext, flowASideOptions,
+      flowAStep2Question, flowAStep2Subtext, flowACanalOptions,
+      flowASafetyHeading, flowASafetyText, flowAResultCtaLabel, flowAResultBackLabel,
+      flowBStep1Question, flowBYesNoOptions, flowBYesText, flowBYesCtaLabel, flowBNoText, flowBNoCtaLabel,
+      flowCStep1Question, flowCDurationOptions,
       restsvimmelhetEyebrow, restsvimmelhetHeading, restsvimmelhetIntro, restsvimmelhetCards,
       restsvimmelhetCard4Heading, restsvimmelhetCard4Body, restsvimmelhetCard4Button1, restsvimmelhetCard4Button2,
       rehabEyebrow, rehabHeading, rehabIntro, rehabLead, rehabCtaHeading, rehabCtaBody, rehabCtaButton,
@@ -158,103 +52,113 @@ const hp =
     null,
   )) ?? {};
 
-const PANEL_DEFAULTS = {
-  panelMuchBetter: {
-    optionLabel: "Mye bedre",
-    optionSublabel: "Svimmelheten er borte eller nesten borte",
-    panelHeading: "Så bra at det går riktig vei",
-    panelBody:
-      "Når svimmelheten gir seg etter behandling, er det et godt tegn. Noen kjenner seg helt bra med én gang, mens andre kan merke litt ustøhet eller uvanthet en periode etterpå. Det betyr ikke nødvendigvis at noe er galt.",
-    button1Label: "Hva kan jeg forvente etter behandling?",
-    button2Label: "",
-  },
-  panelSlightlyBetter: {
-    optionLabel: "Litt bedre",
-    optionSublabel: "Noe bedring, men fortsatt tydelige symptomer",
-    panelHeading: "Det tyder på at manøveren virket",
-    panelBody:
-      "Delvis bedring er et godt tegn. Symptomene trenger ikke å forsvinne med én gang.\n\nEr du ikke helt bra dagen etter, kan du gjøre manøveren på nytt.",
-    button1Label: "Gjør manøveren på nytt",
-    button2Label: "Hva kan jeg forvente?",
-  },
-  panelNoChange: {
-    optionLabel: "Ingen forskjell",
-    optionSublabel: "Symptomene er omtrent som før behandlingen",
-    panelHeading: "Noen kjenner ikke bedring med én gang",
-    panelBody:
-      "Det er ikke uvanlig at det ikke merkes forskjell etter første forsøk. Manøveren må ofte gjentas før krystallene kommer på plass.\n\nDu kan gjenta den morgen og kveld i to til tre dager. Hvis du fortsatt ikke merker bedring etter det, kan en ny vurdering være lurt.",
-    button1Label: "Gjør manøveren på nytt",
-    button2Label: "Få en ny vurdering",
-  },
-  panelWorse: {
-    optionLabel: "Verre",
-    optionSublabel: "Symptomene har økt eller endret seg",
-    panelHeading: "Det er ikke uvanlig å kjenne seg verre rett etter en manøver",
-    panelBody:
-      "Når krystallene flytter på seg, forstyrrer det balansesystemet før det faller til ro igjen. Mange kjenner seg mer svimle eller ustø den første tiden etter en manøver. Det betyr ikke i seg selv at noe har gått galt.\n\nHvis det ikke gir seg, eller svimmelheten kjennes annerledes enn den du kjenner igjen fra krystallsyken, bør du ikke fortsette med flere manøvrer på egen hånd. Da er en ny vurdering bedre.",
-    button1Label: "Få hjelp",
-    button2Label: "",
-  },
-  panelStillUnsteady: {
-    optionLabel: "Fortsatt ustø",
-    optionSublabel: "Den kraftige svimmelheten er borte, men jeg er fortsatt ustø",
-    panelHeading: "Dette er en vanlig opplevelse",
-    panelBody:
-      "At den kraftige, kortvarige svimmelheten er borte mens en mer generell ustøhet blir igjen, er noe mange kjenner igjen etter behandling.\n\nUnder finner du rehabiliterings- og habitueringsøvelser du kan gjøre hjemme.",
-    button1Label: "Se øvelsene",
-    button2Label: "",
-  },
+const flowData = {
+  startHeading: hp.flowStartHeading ?? "Hva trenger du hjelp med?",
+  startSubheading: hp.flowStartSubheading ?? "Velg det som passer situasjonen din. Vi guider deg videre – ett steg av gangen.",
+  card1Title: hp.flowCard1Title ?? "Jeg har fått diagnosen – hva nå?",
+  card1Subtitle: hp.flowCard1Subtitle ?? "Finn riktig øvelse for din situasjon",
+  card2Title: hp.flowCard2Title ?? "Jeg har behandlet krystallsyken – hva nå?",
+  card2Subtitle: hp.flowCard2Subtitle ?? "Se hva som skjer etterpå",
+  card3Title: hp.flowCard3Title ?? "Jeg er fortsatt svimmel",
+  card3Subtitle: hp.flowCard3Subtitle ?? "Få hjelp til å forstå hvorfor",
+  backLabel: hp.flowBackLabel ?? "← Tilbake",
+  aStep1Question: hp.flowAStep1Question ?? "Hvilken side ble du diagnostisert på?",
+  aStep1Subtext: hp.flowAStep1Subtext ?? "Dette står vanligvis i diagnosen fra behandleren din.",
+  aSideOptions: hp.flowASideOptions?.length ? hp.flowASideOptions : ["Venstre", "Høyre"],
+  aStep2Question: hp.flowAStep2Question ?? "Hvilken buegang (kanal)?",
+  aStep2Subtext: hp.flowAStep2Subtext ?? "Usikker? Velg «Bakre» – det er den vanligste.",
+  aCanalOptions: hp.flowACanalOptions?.length ? hp.flowACanalOptions : ["Bakre buegang", "Laterale buegang", "Fremre buegang"],
+  aSafetyHeading: hp.flowASafetyHeading ?? "Viktig",
+  aSafetyText: hp.flowASafetyText ?? "Avbryt og kontakt behandler ved sterke smerter, synsforstyrrelser eller andre uvante symptomer.",
+  aResultCtaLabel: hp.flowAResultCtaLabel ?? "Se full veiledning →",
+  aResultBackLabel: hp.flowAResultBackLabel ?? "Tilbake til start",
+  bStep1Question: hp.flowBStep1Question ?? "Har symptomene kommet tilbake etter behandling?",
+  bYesNoOptions: hp.flowBYesNoOptions?.length ? hp.flowBYesNoOptions : ["Ja", "Nei"],
+  bYesText: hp.flowBYesText ?? "Det er ikke uvanlig at krystallene løsner igjen. Da kan du finne riktig manøver for situasjonen din på nytt, samme fremgangsmåte som sist.",
+  bYesCtaLabel: hp.flowBYesCtaLabel ?? "Finn riktig øvelse →",
+  bNoText: hp.flowBNoText ?? "Bra! Da handler veien videre mest om gode vaner og gradvis eksponering, slik at balansesystemet venner seg til bevegelse igjen og risikoen for tilbakefall går ned.",
+  bNoCtaLabel: hp.flowBNoCtaLabel ?? "Se øvelser og råd →",
+  cStep1Question: hp.flowCStep1Question ?? "Hvor lenge har du kjent deg svimmel etter behandling?",
+  cDurationOptions: hp.flowCDurationOptions?.length ? hp.flowCDurationOptions : ["Under 1 uke", "1–4 uker", "Mer enn 4 uker"],
 };
 
-function resolvePanel(key, background, buttonTargets, showAcuteWarning) {
-  const data = { ...PANEL_DEFAULTS[key], ...hp[key] };
-  const buttons = [
-    data.button1Label ? { label: data.button1Label, href: buttonTargets[0] } : null,
-    data.button2Label ? { label: data.button2Label, href: buttonTargets[1] } : null,
-  ].filter(Boolean);
+// --- Sti A: finn riktig øvelse basert på side + kanal ---
+// canal-verdiene i Sanity (bakre/horisontal/fremre) mappes posisjonelt til
+// flowData.aCanalOptions (indeks 0/1/2 — se beskrivelse på feltet i Studio).
+// Ved flere treff per kanal+side (Epley og Semont finnes begge for bakre
+// buegang; Barbecue-rull og Gufoni for horisontal) velges laveste `order`
+// som primærtreff — dette speiler Maries egen tekst i Sanity direkte:
+// Epleys lead-tekst kaller den «den mest brukte og best dokumenterte»,
+// Semont kaller seg et alternativ; Gufoni er tekstet som «alternativ
+// manøver» til Barbecue-rull. Ingen klinisk vurdering er gjettet her.
+const CANAL_VALUES = ["bakre", "horisontal", "fremre"];
+const SIDE_VALUES = ["venstre", "hoyre"];
+
+const reponeringRaw = await safeFetch(
+  `*[_type == "exercise" && exerciseType == "reponering"]{
+    title, "slug": slug.current, canal, side, lead, aftercare, order,
+    "categorySlug": category->slug.current
+  } | order(order asc)`,
+  {},
+  [],
+);
+
+function findMatch(canalValue, sideValue) {
+  return (
+    reponeringRaw.find((ex) => ex.canal === canalValue && ex.side === sideValue) ??
+    reponeringRaw.find((ex) => ex.canal === canalValue && !ex.side) ??
+    null
+  );
+}
+
+const MATCH_TABLE = {};
+for (const canalValue of CANAL_VALUES) {
+  for (const sideValue of SIDE_VALUES) {
+    const match = findMatch(canalValue, sideValue);
+    MATCH_TABLE[`${canalValue}-${sideValue}`] = match
+      ? {
+          title: match.title,
+          lead: match.lead ?? "",
+          tips: (match.aftercare ?? []).slice(0, 3),
+          href: match.categorySlug ? `/ovelsesbibliotek/${match.categorySlug}/${match.slug}/?fra=hjemme` : `/ovelsesbibliotek/`,
+        }
+      : null;
+  }
+}
+
+// --- Rehab (habituering) — Brandt-Daroff er nå med (den gamle
+// «steg 2»-listen som viste den separat, er retired, se over) ---
+const rehabExercisesRaw = await safeFetch(
+  `*[_type == "exercise" && exerciseType == "habituering"]{
+    title, "slug": slug.current, habitueringSeksjon, format, duration, lead
+  } | order(order asc)`,
+  {},
+  [],
+);
+
+function decorateExercise(ex) {
   return {
-    key,
-    optionLabel: data.optionLabel,
-    optionSublabel: data.optionSublabel,
-    panelHeading: data.panelHeading,
-    panelBody: data.panelBody,
-    background,
-    buttons,
-    showAcuteWarning,
+    title: ex.title,
+    situasjon: HABITUERING_SECTIONS[ex.habitueringSeksjon]?.title ?? "",
+    lead: ex.lead,
+    duration: ex.duration,
+    href: `/ovelsesbibliotek/${ex.habitueringSeksjon}/${ex.slug}/?fra=hjemme`,
   };
 }
 
-const followUpData = {
-  eyebrow: hp.followUpEyebrow ?? "Etter behandlingen",
-  heading: hp.followUpHeading ?? "Hva skjer nå?",
-  intro:
-    hp.followUpIntro ??
-    "Det er ikke uvanlig å kjenne seg litt annerledes etter behandling av krystallsyke. Noen blir raskt bedre, mens andre kan være ustø eller lettere svimle en periode.",
-  question: hp.followUpQuestion ?? "Hvordan har du det nå?",
-  divider: hp.followUpDivider ?? "eller kjenner du deg igjen i dette?",
-  panels: [
-    resolvePanel("panelMuchBetter", "white", ["/krystallsyken/"], false),
-    resolvePanel("panelSlightlyBetter", "white", ["#steg2", "/krystallsyken/"], false),
-    resolvePanel("panelNoChange", "white", ["#steg2", "/fa-hjelp/"], false),
-    resolvePanel("panelWorse", "beige", ["/fa-hjelp/"], true),
-    resolvePanel("panelStillUnsteady", "white", ["#rehab"], false),
-  ],
-  acuteWarning: {
-    heading: hp.acuteWarningHeading ?? "Noen symptomer krever øyeblikkelig hjelp",
-    intro:
-      hp.acuteWarningIntro ??
-      "Svimmelhet sammen med noen av disse tegnene kan skyldes noe annet enn krystallsyke, og kan være symptomer på hjerneslag:",
-    list: hp.acuteWarningList?.length
-      ? hp.acuteWarningList
-      : [
-          "Lammelse eller kraftsvikt i ansikt, arm eller bein",
-          "Problemer med å snakke eller forstå det andre sier",
-          "Plutselige synsforstyrrelser eller dobbeltsyn",
-          "Uvanlig kraftig hodepine",
-          "Nummenhet i ansiktet eller på én side av kroppen",
-        ],
-    check: hp.acuteWarningCheck ?? "Klarer personen å prate, smile og løfte begge armene? Svikter noe av dette — ring 113.",
-  },
+const rehabExerciseGroup = rehabExercisesRaw.filter((ex) => ex.format !== "read").map(decorateExercise);
+const rehabAdviceGroup = rehabExercisesRaw.filter((ex) => ex.format === "read").map(decorateExercise);
+
+const rehabData = {
+  eyebrow: hp.rehabEyebrow ?? "Vestibulær rehabilitering",
+  heading: hp.rehabHeading ?? "Når balansen trenger litt tid",
+  intro: hp.rehabIntro ?? "Etter at krystallsyken er behandlet, kan noen ha nytte av gradvis trening av balanse, hodebevegelser og bevegelsestoleranse.",
+  lead: hp.rehabLead ?? "Blant øvelsene under: velg dem som kjennes ubehagelige å gjøre. Det er de bevegelsene kroppen trenger å bli vant til igjen.",
+  ctaHeading: hp.rehabCtaHeading ?? "Usikker på hvilke øvelser som passer for deg?",
+  ctaBody: hp.rehabCtaBody ?? "I en videokonsultasjon kan øvelsene tilpasses situasjonen din, og du får veiledning i hvordan de skal gjøres.",
+  ctaButton: hp.rehabCtaButton ?? "Bestill videokonsultasjon",
+  group2Heading: hp.rehabGroup2Heading ?? "Råd for hverdagen",
+  group2Lead: hp.rehabGroup2Lead ?? "Dette er ikke øvelser, men vaner og grep som kan gjøre hverdagen tryggere.",
 };
 
 const restsvimmelhetData = {
@@ -285,62 +189,6 @@ const restsvimmelhetData = {
     "Svimmelhet som kommer når du legger deg ned eller snur deg i sengen, er typisk for krystallsyke. Det kan bety at krystallene ikke har kommet helt på plass ennå.\n\nManøveren kan gjentas morgen og kveld i to til tre dager. Hvis du ikke merker bedring i løpet av den tiden, kan en ny vurdering være lurt.",
   card4Button1: hp.restsvimmelhetCard4Button1 ?? "Gjør manøveren på nytt",
   card4Button2: hp.restsvimmelhetCard4Button2 ?? "Få en ny vurdering",
-};
-
-// Rehab-øvelser: eksisterende exercise-dokumenter, filtrert på
-// exerciseType == "habituering" (ikke reposisjoneringsmanøvrer). Brandt-
-// Daroff er bevisst utelatt her — den vises allerede som egen rad i steg 2
-// (samme dokument, samme veiledningsflyt), og ville dukket opp to ganger på
-// samme side. Se sluttrapport for nøyaktig antall/begrunnelse.
-//
-// To grupper (øvelser vs. råd): habitueringSeksjon skiller IKKE rent langs
-// dette skillet (både "øvelser" og "råd" finnes i begge seksjonsverdiene).
-// `format` ("steps" vs "read") gir derimot et ekte, datadrevet skille som
-// treffer 5 av 6 dokumenter nøyaktig som spesifisert — se sluttrapport for
-// det ene avviket (gradvis-eksponering, som er lagret som "read"/lesestoff
-// uten stegdata, men var ønsket i øvelses-gruppen).
-const rehabExercisesRaw = await safeFetch(
-  `*[_type == "exercise" && exerciseType == "habituering" && slug.current != "brandt-daroff"]{
-    title, "slug": slug.current, habitueringSeksjon, format, duration, lead,
-    steps[]{ title, description },
-    mediaFile{ asset->{ url, mimeType } }
-  } | order(order asc)`,
-  {},
-  [],
-);
-
-function decorateExercise(ex) {
-  const mediaUrl = ex.mediaFile?.asset?.url ?? null;
-  const isVideo = ex.mediaFile?.asset?.mimeType?.startsWith("video/") ?? false;
-  return {
-    title: ex.title,
-    situasjon: HABITUERING_SECTIONS[ex.habitueringSeksjon]?.title ?? "",
-    lead: ex.lead,
-    duration: ex.duration,
-    mediaUrl,
-    isVideo,
-    payload: {
-      title: ex.title,
-      mediaUrl,
-      isVideo,
-      steps: (ex.steps ?? []).map((s) => ({ title: s.title, description: s.description })),
-    },
-  };
-}
-
-const rehabExerciseGroup = rehabExercisesRaw.filter((ex) => ex.format !== "read").map(decorateExercise);
-const rehabAdviceGroup = rehabExercisesRaw.filter((ex) => ex.format === "read").map(decorateExercise);
-
-const rehabData = {
-  eyebrow: hp.rehabEyebrow ?? "Vestibulær rehabilitering",
-  heading: hp.rehabHeading ?? "Når balansen trenger litt tid",
-  intro: hp.rehabIntro ?? "Etter at krystallsyken er behandlet, kan noen ha nytte av gradvis trening av balanse, hodebevegelser og bevegelsestoleranse.",
-  lead: hp.rehabLead ?? "Blant øvelsene under: velg dem som kjennes ubehagelige å gjøre. Det er de bevegelsene kroppen trenger å bli vant til igjen.",
-  ctaHeading: hp.rehabCtaHeading ?? "Usikker på hvilke øvelser som passer for deg?",
-  ctaBody: hp.rehabCtaBody ?? "I en videokonsultasjon kan øvelsene tilpasses situasjonen din, og du får veiledning i hvordan de skal gjøres.",
-  ctaButton: hp.rehabCtaButton ?? "Bestill videokonsultasjon",
-  group2Heading: hp.rehabGroup2Heading ?? "Råd for hverdagen",
-  group2Lead: hp.rehabGroup2Lead ?? "Dette er ikke øvelser, men vaner og grep som kan gjøre hverdagen tryggere.",
 };
 
 const helpData = {
@@ -399,148 +247,206 @@ const attributionText =
     </div>
   </section>
 
-  <section class="steg1" id="steg1">
-    <div class="container">
-      <h2>Hva trenger du hjelp med?</h2>
-      <div class="choice-grid">
-        {stepCards.map((card) => (
-          <div class={`choice-card ${card.comingSoon ? "coming-soon" : ""}`}>
-            <h3>{card.title}</h3>
-            <p>{card.desc}</p>
-            {card.comingSoon ? (
-              <span class="link muted">Kommer snart</span>
-            ) : (
-              <a href={card.href} class="link">{card.linkText}</a>
-            )}
-          </div>
-        ))}
+  <div id="hjemme-flow">
+    <!-- Startskjerm — alltid synlig, ingenting annet under kortene. -->
+    <section class="steg1" id="steg1" data-screen="start">
+      <div class="container">
+        <h2>{flowData.startHeading}</h2>
+        <p class="start-subheading">{flowData.startSubheading}</p>
+        <div class="choice-grid">
+          <button type="button" class="choice-card" data-goto="a1">
+            <h3>{flowData.card1Title}</h3>
+            <p>{flowData.card1Subtitle}</p>
+            <span class="link">Kom i gang →</span>
+          </button>
+          <button type="button" class="choice-card" data-goto="b1">
+            <h3>{flowData.card2Title}</h3>
+            <p>{flowData.card2Subtitle}</p>
+            <span class="link">Kom i gang →</span>
+          </button>
+          <button type="button" class="choice-card" data-goto="c1">
+            <h3>{flowData.card3Title}</h3>
+            <p>{flowData.card3Subtitle}</p>
+            <span class="link">Kom i gang →</span>
+          </button>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="steg2" id="steg2">
-    <div class="container">
-      <h2>Hva har du fått anbefalt?</h2>
-      <p class="helper">Velg bare en manøver du har fått anbefalt etter undersøkelse.</p>
-      {maneuverGroups.length ? (
-        <div class="maneuver-list">
-          {maneuverGroups.map((group) => (
-            <ManeuverRow title={group.title} situasjon={group.situasjon} duration={group.duration} sides={group.sides} payload={group.payload} />
+    <!-- Sti A, steg 1: side -->
+    <section class="flow-screen section-alt" data-screen="a1" hidden>
+      <div class="container flow-narrow">
+        <button type="button" class="flow-back" data-back>{flowData.backLabel}</button>
+        <h2>{flowData.aStep1Question}</h2>
+        <p class="flow-subtext">{flowData.aStep1Subtext}</p>
+        <div class="answer-grid" id="a1-buttons">
+          {flowData.aSideOptions.map((label, i) => (
+            <button type="button" class="answer-btn" data-value={SIDE_VALUES[i]}>{label}</button>
           ))}
         </div>
-      ) : (
-        <p class="exercise-empty">Manøverbiblioteket er ikke tilgjengelig akkurat nå. Prøv igjen om litt, eller <a href="/ovelsesbibliotek/" class="link">gå til øvelsesbiblioteket →</a></p>
-      )}
-    </div>
-  </section>
-
-  <section class="skjerm-b" id="skjerm-b">
-    <div class="container">
-      <SafetyNotice />
-      <VideoGuide />
-    </div>
-  </section>
-
-  <FollowUpQuestion
-    eyebrow={followUpData.eyebrow}
-    heading={followUpData.heading}
-    intro={followUpData.intro}
-    question={followUpData.question}
-    divider={followUpData.divider}
-    panels={followUpData.panels}
-    acuteWarning={followUpData.acuteWarning}
-  />
-
-  <section class="restsvimmelhet" id="restsvimmelhet">
-    <div class="container">
-      <span class="eyebrow">{restsvimmelhetData.eyebrow}</span>
-      <h2>{restsvimmelhetData.heading}</h2>
-      <p class="intro">{restsvimmelhetData.intro}</p>
-
-      <div class="restsvimmelhet-grid">
-        {restsvimmelhetData.cards.map((card) => (
-          <a href="#rehab" class="rest-card">
-            <h3>{card.heading}</h3>
-            <p>{card.body}</p>
-            <span class="link">Se øvelser →</span>
-          </a>
-        ))}
       </div>
+    </section>
 
-      <div class="rest-card-wide">
-        <h3>{restsvimmelhetData.card4Heading}</h3>
-        {restsvimmelhetData.card4Body.split("\n\n").map((para) => <p>{para}</p>)}
-        <div class="rest-card-ctas">
-          <a href="#steg2" class="btn btn-outline btn-sm">{restsvimmelhetData.card4Button1}</a>
-          <a href="/fa-hjelp/" class="btn btn-outline btn-sm">{restsvimmelhetData.card4Button2}</a>
+    <!-- Sti A, steg 2: kanal -->
+    <section class="flow-screen section-alt" data-screen="a2" hidden data-match-table={JSON.stringify(MATCH_TABLE)}>
+      <div class="container flow-narrow">
+        <button type="button" class="flow-back" data-back>{flowData.backLabel}</button>
+        <h2>{flowData.aStep2Question}</h2>
+        <p class="flow-subtext">{flowData.aStep2Subtext}</p>
+        <div class="answer-grid" id="a2-buttons">
+          {flowData.aCanalOptions.map((label, i) => (
+            <button type="button" class="answer-btn" data-value={CANAL_VALUES[i]}>{label}</button>
+          ))}
         </div>
       </div>
+    </section>
 
-      <p class="rest-read-more"><a href="/blogg/restsvimmelhet-etter-krystallsyke/" class="link">Les mer om restsvimmelhet →</a></p>
-    </div>
-  </section>
+    <!-- Sti A, resultat -->
+    <section class="flow-screen section-alt" data-screen="a-result" hidden>
+      <div class="container flow-narrow">
+        <button type="button" class="flow-back" data-back>{flowData.backLabel}</button>
+        <div class="result-card">
+          <h2 id="a-result-title"></h2>
+          <p id="a-result-lead"></p>
+          <ul class="result-tips" id="a-result-tips"></ul>
+          <div class="safety-box">
+            <h3>{flowData.aSafetyHeading}</h3>
+            <p>{flowData.aSafetyText}</p>
+          </div>
+          <div class="result-ctas">
+            <a href="/ovelsesbibliotek/" id="a-result-cta" class="btn btn-primary">{flowData.aResultCtaLabel}</a>
+            <button type="button" class="link" data-reset="start">{flowData.aResultBackLabel}</button>
+          </div>
+        </div>
+      </div>
+    </section>
 
-  <section class="rehab section-sky" id="rehab">
-    <div class="container">
-      <span class="eyebrow">{rehabData.eyebrow}</span>
-      <h2>{rehabData.heading}</h2>
-      <p class="intro">{rehabData.intro}</p>
-      <p class="lead">{rehabData.lead}</p>
+    <!-- Sti B: ja/nei, avdekkes på samme skjerm -->
+    <section class="flow-screen section-alt" data-screen="b1" hidden>
+      <div class="container flow-narrow">
+        <button type="button" class="flow-back" data-back>{flowData.backLabel}</button>
+        <h2>{flowData.bStep1Question}</h2>
+        <div class="answer-grid answer-grid-yesno" id="b1-buttons">
+          <button type="button" class="answer-btn" data-reveal="b-yes">{flowData.bYesNoOptions[0] ?? "Ja"}</button>
+          <button type="button" class="answer-btn" data-reveal="b-no">{flowData.bYesNoOptions[1] ?? "Nei"}</button>
+        </div>
+        <div class="reveal-panel" data-reveal-panel="b-yes" hidden>
+          <p>{flowData.bYesText}</p>
+          <button type="button" class="btn btn-outline btn-sm" data-goto="a1">{flowData.bYesCtaLabel}</button>
+        </div>
+        <div class="reveal-panel" data-reveal-panel="b-no" hidden>
+          <p>{flowData.bNoText}</p>
+          <button type="button" class="btn btn-outline btn-sm" data-goto="rehab">{flowData.bNoCtaLabel}</button>
+        </div>
+      </div>
+    </section>
 
-      {rehabExerciseGroup.length || rehabAdviceGroup.length ? (
-        <>
-          {rehabExerciseGroup.length > 0 && (
-            <div class="rehab-grid">
-              {rehabExerciseGroup.map((ex) => (
-                <ExerciseCard
-                  title={ex.title}
-                  situasjon={ex.situasjon}
-                  lead={ex.lead}
-                  duration={ex.duration}
-                  mediaUrl={ex.mediaUrl}
-                  isVideo={ex.isVideo}
-                  payload={ex.payload}
-                  compact
-                  linkText="Se øvelse →"
-                />
-              ))}
-              <div class="rehab-cta">
-                <div>
-                  <h3>{rehabData.ctaHeading}</h3>
-                  <p>{rehabData.ctaBody}</p>
-                </div>
-                <a href="/tjenester/videokonsultasjon/" class="btn btn-primary">{rehabData.ctaButton}</a>
-              </div>
-            </div>
-          )}
+    <!-- Sti C, steg 1: varighet -->
+    <section class="flow-screen section-alt" data-screen="c1" hidden>
+      <div class="container flow-narrow">
+        <button type="button" class="flow-back" data-back>{flowData.backLabel}</button>
+        <h2>{flowData.cStep1Question}</h2>
+        <div class="answer-grid" id="c1-buttons">
+          {flowData.cDurationOptions.map((label) => (
+            <button type="button" class="answer-btn" data-goto="c2">{label}</button>
+          ))}
+        </div>
+      </div>
+    </section>
 
-          {rehabAdviceGroup.length > 0 && (
-            <div class="rehab-group2">
-              <h3>{rehabData.group2Heading}</h3>
-              <p class="lead">{rehabData.group2Lead}</p>
+    <!-- Sti C, steg 2: eksisterende restsvimmelhet-innhold -->
+    <section class="flow-screen restsvimmelhet" data-screen="c2" hidden>
+      <div class="container">
+        <button type="button" class="flow-back" data-back>{flowData.backLabel}</button>
+        <span class="eyebrow">{restsvimmelhetData.eyebrow}</span>
+        <h2>{restsvimmelhetData.heading}</h2>
+        <p class="intro">{restsvimmelhetData.intro}</p>
+
+        <div class="restsvimmelhet-grid">
+          {restsvimmelhetData.cards.map((card) => (
+            <button type="button" class="rest-card" data-goto="rehab">
+              <h3>{card.heading}</h3>
+              <p>{card.body}</p>
+              <span class="link">Se øvelser →</span>
+            </button>
+          ))}
+        </div>
+
+        <div class="rest-card-wide">
+          <h3>{restsvimmelhetData.card4Heading}</h3>
+          {restsvimmelhetData.card4Body.split("\n\n").map((para) => <p>{para}</p>)}
+          <div class="rest-card-ctas">
+            <button type="button" class="btn btn-outline btn-sm" data-goto="a1">{restsvimmelhetData.card4Button1}</button>
+            <a href="/fa-hjelp/" class="btn btn-outline btn-sm">{restsvimmelhetData.card4Button2}</a>
+          </div>
+        </div>
+
+        <p class="rest-read-more"><a href="/blogg/restsvimmelhet-etter-krystallsyke/" class="link">Les mer om restsvimmelhet →</a></p>
+      </div>
+    </section>
+
+    <!-- Rehab — nås fra sti B (Nei) og sti C (steg 2) -->
+    <section class="flow-screen rehab section-sky" data-screen="rehab" hidden>
+      <div class="container">
+        <button type="button" class="flow-back" data-back>{flowData.backLabel}</button>
+        <span class="eyebrow">{rehabData.eyebrow}</span>
+        <h2>{rehabData.heading}</h2>
+        <p class="intro">{rehabData.intro}</p>
+        <p class="lead">{rehabData.lead}</p>
+
+        {rehabExerciseGroup.length || rehabAdviceGroup.length ? (
+          <>
+            {rehabExerciseGroup.length > 0 && (
               <div class="rehab-grid">
-                {rehabAdviceGroup.map((ex) => (
+                {rehabExerciseGroup.map((ex) => (
                   <ExerciseCard
                     title={ex.title}
                     situasjon={ex.situasjon}
                     lead={ex.lead}
                     duration={ex.duration}
-                    mediaUrl={ex.mediaUrl}
-                    isVideo={ex.isVideo}
-                    payload={ex.payload}
+                    payload={{}}
+                    href={ex.href}
                     compact
                     linkText="Se øvelse →"
                   />
                 ))}
+                <div class="rehab-cta">
+                  <div>
+                    <h3>{rehabData.ctaHeading}</h3>
+                    <p>{rehabData.ctaBody}</p>
+                  </div>
+                  <a href="/tjenester/videokonsultasjon/" class="btn btn-primary">{rehabData.ctaButton}</a>
+                </div>
               </div>
-            </div>
-          )}
-        </>
-      ) : (
-        <p class="exercise-empty">Rehabiliteringsøvelsene er ikke tilgjengelige akkurat nå.</p>
-      )}
-    </div>
-  </section>
+            )}
+
+            {rehabAdviceGroup.length > 0 && (
+              <div class="rehab-group2">
+                <h3>{rehabData.group2Heading}</h3>
+                <p class="lead">{rehabData.group2Lead}</p>
+                <div class="rehab-grid">
+                  {rehabAdviceGroup.map((ex) => (
+                    <ExerciseCard
+                      title={ex.title}
+                      situasjon={ex.situasjon}
+                      lead={ex.lead}
+                      duration={ex.duration}
+                      payload={{}}
+                      href={ex.href}
+                      compact
+                      linkText="Se øvelse →"
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+          </>
+        ) : (
+          <p class="exercise-empty">Rehabiliteringsøvelsene er ikke tilgjengelige akkurat nå.</p>
+        )}
+      </div>
+    </section>
+  </div>
 
   <HelpCTA
     eyebrow={helpData.eyebrow}
@@ -557,97 +463,107 @@ const attributionText =
 </Layout>
 
 <script>
-  // Kun lokal state i nettleseren (valgt manøver, gjeldende steg) — ingen
-  // data sendes til server, ingen lagring, ingen helseopplysninger.
-  const skjermB = document.getElementById("skjerm-b");
-  const vgTitle = document.getElementById("vg-title");
-  const vgStep = document.getElementById("vg-step");
-  const vgVideo = document.getElementById("vg-video");
-  const vgText = document.getElementById("vg-text");
-  const vgDots = document.getElementById("vg-dots");
-  const vgNext = document.getElementById("vg-next");
+  // Ren klient-side skjermnavigasjon — ingen data lagres eller sendes til
+  // server. En enkel historikk-stack gir fungerende «← Tilbake» uansett
+  // hvilken vei besøkende kom inn i et steg fra (flyten forgrener seg).
+  const screens = document.querySelectorAll("[data-screen]");
+  const history = ["start"];
 
-  let currentSteps = [];
-  let currentIndex = 0;
-
-  function renderVideoArea(mediaUrl, isVideo) {
-    if (!vgVideo) return;
-    if (mediaUrl) {
-      vgVideo.innerHTML = isVideo
-        ? `<video src="${mediaUrl}" controls playsinline preload="metadata"></video>`
-        : `<img src="${mediaUrl}" alt="" />`;
-    } else {
-      vgVideo.innerHTML =
-        '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.5" /><path d="M10 8l6 4-6 4V8z" fill="currentColor" /></svg>';
-    }
+  function showScreen(name) {
+    screens.forEach((el) => {
+      el.hidden = el.getAttribute("data-screen") !== name;
+    });
+    document.getElementById("hjemme-flow")?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
-  function renderStep() {
-    const total = currentSteps.length;
-    if (vgStep) vgStep.textContent = total ? `Steg ${currentIndex + 1} av ${total}` : "";
-
-    const step = currentSteps[currentIndex];
-    if (vgText) {
-      vgText.textContent = step
-        ? [step.title, step.description].filter(Boolean).join(" — ")
-        : "Steginnhold for denne manøveren er ikke lagt inn ennå.";
-    }
-
-    if (vgDots) {
-      vgDots.innerHTML = "";
-      for (let i = 0; i < total; i++) {
-        const dot = document.createElement("span");
-        if (i === currentIndex) dot.classList.add("active");
-        vgDots.appendChild(dot);
-      }
-    }
-
-    if (vgNext) {
-      const isLast = total === 0 || currentIndex >= total - 1;
-      vgNext.textContent = isLast ? "Du har fullført manøveren" : "Neste steg →";
-      vgNext.disabled = isLast;
-    }
+  function goTo(name) {
+    history.push(name);
+    showScreen(name);
   }
 
-  function selectExercise(el) {
-    let data;
-    try {
-      data = JSON.parse(el.getAttribute("data-exercise") ?? "{}");
-    } catch {
-      return;
-    }
-
-    if (vgTitle) vgTitle.textContent = data.title ?? "";
-    renderVideoArea(data.mediaUrl, data.isVideo);
-    currentSteps = Array.isArray(data.steps) ? data.steps : [];
-    currentIndex = 0;
-    renderStep();
-
-    skjermB?.classList.add("show");
-    skjermB?.scrollIntoView({ behavior: "smooth", block: "start" });
+  function goBack() {
+    if (history.length > 1) history.pop();
+    showScreen(history[history.length - 1]);
   }
 
-  // Rader med sidevalg: klikk folder ut/inn panelet med Høyre/Venstre side.
-  document.querySelectorAll(".row-main[aria-expanded]").forEach((btn) => {
+  function resetTo(name) {
+    history.length = 0;
+    history.push(name);
+    showScreen(name);
+  }
+
+  document.querySelectorAll("[data-goto]").forEach((el) => {
+    el.addEventListener("click", () => goTo(el.getAttribute("data-goto")));
+  });
+  document.querySelectorAll("[data-back]").forEach((el) => {
+    el.addEventListener("click", goBack);
+  });
+  document.querySelectorAll("[data-reset]").forEach((el) => {
+    el.addEventListener("click", () => resetTo(el.getAttribute("data-reset")));
+  });
+
+  // Sti A: side (steg 1) → lagre svar, gå til kanal (steg 2)
+  let selectedSide = null;
+  document.querySelectorAll("#a1-buttons .answer-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
-      const panel = document.getElementById(btn.getAttribute("aria-controls") ?? "");
-      const isOpen = btn.getAttribute("aria-expanded") === "true";
-      btn.setAttribute("aria-expanded", isOpen ? "false" : "true");
-      if (panel) panel.hidden = isOpen;
+      selectedSide = btn.getAttribute("data-value");
+      goTo("a2");
     });
   });
 
-  // Sidevalg-knapper, manøvre uten sidevalg (f.eks. Brandt-Daroff) og
-  // rehabiliteringsøvelser (ExerciseCard i steg 3) velger direkte.
-  document.querySelectorAll(".side-btn, .row-main.single, .exercise-card").forEach((el) => {
-    el.addEventListener("click", () => selectExercise(el));
+  // Sti A: kanal (steg 2) → slå opp treff i match-tabellen, fyll resultatet
+  const a2Screen = document.querySelector('[data-screen="a2"]');
+  let matchTable = {};
+  try {
+    matchTable = JSON.parse(a2Screen?.getAttribute("data-match-table") ?? "{}");
+  } catch {
+    matchTable = {};
+  }
+
+  const resultTitle = document.getElementById("a-result-title");
+  const resultLead = document.getElementById("a-result-lead");
+  const resultTips = document.getElementById("a-result-tips");
+  const resultCta = document.getElementById("a-result-cta");
+
+  document.querySelectorAll("#a2-buttons .answer-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const canal = btn.getAttribute("data-value");
+      const match = selectedSide ? matchTable[`${canal}-${selectedSide}`] : null;
+
+      if (match) {
+        if (resultTitle) resultTitle.textContent = match.title;
+        if (resultLead) resultLead.textContent = match.lead;
+        if (resultTips) {
+          resultTips.innerHTML = "";
+          match.tips.forEach((tip) => {
+            const li = document.createElement("li");
+            li.textContent = tip;
+            resultTips.appendChild(li);
+          });
+        }
+        if (resultCta) resultCta.setAttribute("href", match.href);
+      } else {
+        if (resultTitle) resultTitle.textContent = "Fant ikke en direkte match";
+        if (resultLead) resultLead.textContent = "Se hele øvelsesbiblioteket for å finne riktig manøver.";
+        if (resultTips) resultTips.innerHTML = "";
+        if (resultCta) resultCta.setAttribute("href", "/ovelsesbibliotek/");
+      }
+
+      goTo("a-result");
+    });
   });
 
-  vgNext?.addEventListener("click", () => {
-    if (currentIndex < currentSteps.length - 1) {
-      currentIndex++;
-      renderStep();
-    }
+  // Sti B: ja/nei avdekker svaret på samme skjerm (ingen navigasjon)
+  document.querySelectorAll("#b1-buttons .answer-btn[data-reveal]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const key = btn.getAttribute("data-reveal");
+      document.querySelectorAll("#b1-buttons .answer-btn[data-reveal]").forEach((b) => {
+        b.classList.toggle("selected", b === btn);
+      });
+      document.querySelectorAll("[data-reveal-panel]").forEach((panel) => {
+        panel.hidden = panel.getAttribute("data-reveal-panel") !== key;
+      });
+    });
   });
 </script>
 
@@ -680,35 +596,80 @@ const attributionText =
   .prereq-ctas { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 22px; }
   @media (max-width: 640px) { .prereq { padding: 28px 22px; } }
 
-  .steg1 { padding-bottom: 72px; }
-  .steg1 h2 { margin: 0 0 36px; }
+  .steg1 { padding-bottom: 72px; scroll-margin-top: 24px; }
+  .steg1 h2 { margin: 0 0 10px; }
+  .start-subheading { font-size: 0.97rem; color: var(--ink-soft); margin: 0 0 32px; max-width: 60ch; }
   .choice-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
   @media (max-width: 860px) { .choice-grid { grid-template-columns: 1fr; } }
 
   .choice-card {
     background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius);
     padding: 30px 26px; box-shadow: 0 8px 24px rgba(22, 56, 117, 0.06);
-    display: flex; flex-direction: column; gap: 12px;
+    display: flex; flex-direction: column; gap: 12px; text-align: left;
+    font-family: var(--font-body); cursor: pointer; width: 100%;
   }
-  .choice-card h3 { font-size: 1.05rem; margin: 0; }
+  .choice-card h3 { font-size: 1.05rem; margin: 0; color: var(--navy); }
   .choice-card p { font-size: 0.9rem; line-height: 1.55; color: var(--ink-soft); margin: 0; flex-grow: 1; }
-  .choice-card .link { color: var(--navy-2); font-weight: 700; font-size: 0.9rem; text-decoration: none; }
-  .choice-card .link:hover { text-decoration: underline; }
-  .choice-card.coming-soon { opacity: 0.7; }
-  .choice-card .link.muted { color: var(--ink-soft); font-weight: 600; cursor: default; }
+  .choice-card .link { color: var(--navy-2); font-weight: 700; font-size: 0.9rem; }
+  .choice-card:hover .link { text-decoration: underline; }
 
-  .steg2 { padding: 72px 0; background: var(--paper); scroll-margin-top: 24px; }
-  .steg2 h2 { margin: 0 0 10px; }
-  .helper { font-size: 0.95rem; color: var(--ink-soft); margin: 0 0 32px; max-width: 60ch; }
-  .maneuver-list { max-width: 760px; }
   .exercise-empty { color: var(--ink-soft); }
   .exercise-empty .link { color: var(--accent); font-weight: 600; text-decoration: none; }
 
-  .skjerm-b { padding: 0 0 72px; display: none; scroll-margin-top: 24px; }
-  .skjerm-b.show { display: block; }
-
   .intro { font-size: 1rem; line-height: 1.6; color: var(--ink-soft); max-width: 62ch; margin: 0 0 32px; }
   .section-sky { background: var(--sky); }
+
+  /* Delte stiler for de nye ett-steg-av-gangen-skjermene */
+  .flow-screen { padding: 60px 0; scroll-margin-top: 24px; }
+  .flow-narrow { max-width: 640px; }
+  .flow-back {
+    background: none; border: none; padding: 0; margin-bottom: 24px; cursor: pointer;
+    color: var(--accent); font-weight: 600; font-size: 0.9rem; font-family: var(--font-body);
+  }
+  .flow-back:hover { text-decoration: underline; }
+  .flow-subtext { font-size: 0.92rem; color: var(--ink-soft); margin: 0 0 28px; }
+
+  .answer-grid { display: flex; gap: 14px; flex-wrap: wrap; }
+  .answer-grid-yesno { margin-bottom: 24px; }
+  .answer-btn {
+    background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-sm);
+    padding: 16px 28px; font-family: var(--font-display); font-weight: 600; font-size: 1rem;
+    color: var(--navy); cursor: pointer; transition: border-color 0.15s ease;
+  }
+  .answer-btn:hover { border-color: var(--accent); }
+  .answer-btn.selected { border-color: var(--accent); border-width: 1.5px; }
+
+  .reveal-panel {
+    background: var(--sky); border-radius: var(--radius); padding: 26px 28px; margin-top: 8px;
+  }
+  .reveal-panel p { font-size: 0.97rem; line-height: 1.65; color: var(--ink); margin: 0 0 16px; }
+
+  .result-card {
+    background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 36px; box-shadow: 0 8px 24px rgba(22, 56, 117, 0.06);
+  }
+  .result-card h2 { margin: 0 0 12px; }
+  .result-card > p { font-size: 0.98rem; line-height: 1.65; color: var(--ink-soft); margin: 0 0 20px; }
+  .result-tips { list-style: none; margin: 0 0 28px; padding: 0; }
+  .result-tips :global(li) {
+    position: relative; padding-left: 24px; font-size: 0.95rem; line-height: 1.55;
+    color: var(--ink); margin-bottom: 10px;
+  }
+  .result-tips :global(li)::before {
+    content: ""; position: absolute; left: 0; top: 7px; width: 10px; height: 10px;
+    border-radius: 50%; background: var(--turquoise);
+  }
+
+  .safety-box {
+    background: #fff; border: 2px solid var(--navy-2); border-radius: var(--radius-sm);
+    padding: 22px 24px; margin-bottom: 28px;
+  }
+  .safety-box h3 { font-size: 1rem; color: var(--navy-2); margin: 0 0 8px; }
+  .safety-box p { font-size: 0.92rem; color: var(--ink-soft); margin: 0; }
+
+  .result-ctas { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+  .result-ctas .link { background: none; border: none; padding: 0; cursor: pointer; color: var(--accent); font-weight: 600; font-size: 0.9rem; font-family: var(--font-body); }
+  .result-ctas .link:hover { text-decoration: underline; }
 
   /* DEL 2: RESTSVIMMELHET */
   .restsvimmelhet { background: var(--paper); padding: 72px 0; scroll-margin-top: 24px; }
@@ -721,6 +682,7 @@ const attributionText =
   .rest-card {
     background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); padding: 26px;
     box-shadow: 0 8px 24px rgba(22, 56, 117, 0.06); text-decoration: none; display: block;
+    text-align: left; font-family: var(--font-body); cursor: pointer; width: 100%;
     transition: transform 0.15s ease, box-shadow 0.15s ease;
   }
   .rest-card:hover { transform: translateY(-2px); box-shadow: 0 14px 32px rgba(22, 56, 117, 0.1); }

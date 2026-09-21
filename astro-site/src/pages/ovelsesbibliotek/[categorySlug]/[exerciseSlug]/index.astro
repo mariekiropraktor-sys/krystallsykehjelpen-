@@ -90,6 +90,12 @@ const isVideo = exercise?.mediaFile?.asset?.mimeType?.startsWith("video/");
 >
   {exercise ? (
     <>
+      <div class="from-hjemme-banner" id="from-hjemme-banner" hidden>
+        <div class="container">
+          <a href="/hjemme/">← Tilbake til hjemme-veiledningen</a>
+        </div>
+      </div>
+
       <div class="breadcrumb">
         <div class="container">
           <a href="/ovelsesbibliotek/">Øvelsesbibliotek</a> / <a href={`/ovelsesbibliotek/${categorySlug}/`}>{groupTitle}</a> / {exercise.title}
@@ -252,6 +258,10 @@ const isVideo = exercise?.mediaFile?.asset?.mimeType?.startsWith("video/");
         </div>
 
         <a href={`/ovelsesbibliotek/${categorySlug}/`} class="card-link back-link">← Tilbake til {groupTitle}</a>
+
+        <div class="from-hjemme-cta" id="from-hjemme-cta-bottom" hidden>
+          <a href="/hjemme/" class="btn btn-outline">Tilbake til hjemme-veiledningen</a>
+        </div>
       </div>
     </>
   ) : (
@@ -263,7 +273,23 @@ const isVideo = exercise?.mediaFile?.asset?.mimeType?.startsWith("video/");
   )}
 </Layout>
 
+<script>
+  // Statisk side (output: "static") — ?fra=hjemme kan ikke leses server-side,
+  // så tilbake-bjelken/CTA-en til hjemme-veiledningen vises kun via klient-
+  // side sjekk av window.location.search. Samme mønster som ?q= på /sok/.
+  if (new URLSearchParams(window.location.search).get("fra") === "hjemme") {
+    document.getElementById("from-hjemme-banner")?.removeAttribute("hidden");
+    document.getElementById("from-hjemme-cta-bottom")?.removeAttribute("hidden");
+  }
+</script>
+
 <style>
+  .from-hjemme-banner { background: var(--beige); padding: 14px 0; }
+  .from-hjemme-banner a { color: var(--navy); font-weight: 600; font-size: 0.9rem; text-decoration: none; }
+  .from-hjemme-banner a:hover { text-decoration: underline; }
+
+  .from-hjemme-cta { margin: 32px 0 0; }
+
   .breadcrumb { background: var(--sky); padding: 14px 0; font-size: 0.85rem; color: var(--ink-soft); }
   .breadcrumb a { color: var(--accent); text-decoration: none; }
   .breadcrumb a:hover { text-decoration: underline; }
