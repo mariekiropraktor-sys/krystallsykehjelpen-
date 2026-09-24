@@ -1,0 +1,537 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import MarieStripe from "../../../components/MarieStripe.astro";
+import { safeFetch } from "../../../lib/safeFetch";
+import { inlineHtmlFromBlock } from "../../../lib/portableText";
+import { urlForImage } from "../../../lib/sanityImage";
+import { svimmelhetPreviewClient, isPreviewingSvimmelhetDrafts } from "../../../lib/svimmelhetPreviewClient";
+
+// Felles mal for alle diagnosesider UNNTATT krystallsyke (som beholder sin
+// egen, urørte side på /svimmelhet/krystallsyke/). Bygges kun for
+// diagnosisPage-dokumenter der hasOwnPage ikke er sann — se
+// diagnosisPage.ts. Alle seksjoner er valgfrie og skjules når feltene er
+// tomme. svimmelhetPreviewClient gjør at upubliserte utkast vises lokalt i
+// dev når SANITY_PREVIEW_DRAFTS+SANITY_READ_TOKEN er satt i .env.local —
+// se den filen. En faktisk build ser alltid kun publiserte dokumenter.
+
+const bookingUrl =
+  "https://psno-patient-platform-fe.svc.pasientsky.no/embedded/planner/booking?serviceProviderId=54907264-049e-11eb-8fc8-26c6f94d64b7";
+
+export async function getStaticPaths() {
+  try {
+    const docs = await svimmelhetPreviewClient.fetch(
+      `*[_type == "diagnosisPage" && defined(slug.current) && hasOwnPage != true]{ "slug": slug.current }`,
+    );
+    return docs.map((d) => ({ params: { slug: d.slug } }));
+  } catch (error) {
+    console.warn("[svimmelhet/[slug]] Kunne ikke hente stier fra Sanity:", error);
+    return [];
+  }
+}
+
+const { slug } = Astro.params;
+
+const diagnosis = await safeFetch(
+  `*[_type == "diagnosisPage" && slug.current == $slug && hasOwnPage != true][0]{
+    title, seoTitle, seoDescription,
+    heroEyebrow, heroHeading, heroLead, heroFacts, heroImage,
+    understandEyebrow, understandHeading, understandPullQuote, understandBody,
+    symptomsHeading, symptomsItems, symptomsAfter,
+    warningHeading, warningIntro, warningItems, warningAfter,
+    backgroundHeading, backgroundIntro, backgroundChips, backgroundAfter,
+    examinationHeading, examinationIntro, examinationSteps, examinationAfter,
+    treatmentHeading, treatmentIntro, treatmentCards,
+    selfCareHeading, selfCareItems,
+    "featuredExercise": selfCareFeaturedExercise->{
+      title, lead, "slug": slug.current, format,
+      "groupSlug": coalesce(category->slug.current, habitueringSeksjon)
+    },
+    prognosisHeading, prognosisBody,
+    faq,
+    "relatedArticles": relatedArticles[]->{ title, "slug": slug.current },
+    "relatedExercises": relatedExercises[]->{
+      title, "slug": slug.current, format,
+      "groupSlug": coalesce(category->slug.current, habitueringSeksjon)
+    },
+    ctaHeading, ctaText
+  }`,
+  { slug },
+  null,
+  svimmelhetPreviewClient,
+);
+
+const otherDiagnoses = diagnosis
+  ? await safeFetch(
+      `*[_type == "diagnosisPage" && slug.current != $slug] | order(order asc) [0...2]{
+        title, hasOwnPage, ownPagePath, "slug": slug.current
+      }`,
+      { slug },
+      [],
+      svimmelhetPreviewClient,
+    )
+  : [];
+
+const svimmelhetVisible = diagnosis
+  ? Boolean(await safeFetch(`*[_id == "svimmelhetPage" && visible == true][0]._id`, {}, null, svimmelhetPreviewClient))
+  : false;
+
+function exerciseHref(ex) {
+  if (!ex?.groupSlug || !ex?.slug) return null;
+  return `/ovelsesbibliotek/${ex.groupSlug}/${ex.slug}/`;
+}
+
+function diagnosisHref(d) {
+  return d.hasOwnPage && d.ownPagePath ? d.ownPagePath : `/svimmelhet/${d.slug}/`;
+}
+
+const canonicalUrl = diagnosis ? `https://www.krystallsykehjelpen.no/svimmelhet/${slug}/` : undefined;
+
+const breadcrumbLd = diagnosis && {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Hjem", item: "https://www.krystallsykehjelpen.no/" },
+    ...(svimmelhetVisible ? [{ "@type": "ListItem", position: 2, name: "Svimmelhet", item: "https://www.krystallsykehjelpen.no/svimmelhet/" }] : []),
+    { "@type": "ListItem", position: svimmelhetVisible ? 3 : 2, name: diagnosis?.title, item: canonicalUrl },
+  ],
+};
+
+const medicalWebPageLd = diagnosis && {
+  "@context": "https://schema.org",
+  "@type": "MedicalWebPage",
+  name: diagnosis.seoTitle || diagnosis.title,
+  about: { "@type": "MedicalCondition", name: diagnosis.title },
+  url: canonicalUrl,
+};
+
+const faqLd = diagnosis?.faq?.length && {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: diagnosis.faq.map((item) => ({
+    "@type": "Question",
+    name: item.question,
+    acceptedAnswer: { "@type": "Answer", text: item.answer },
+  })),
+};
+
+const heroImageUrl = diagnosis ? urlForImage(diagnosis.heroImage, 1000) : undefined;
+---
+
+<Layout
+  title={diagnosis ? `${diagnosis.seoTitle || diagnosis.title} | Krystallsykehjelpen` : "Svimmelhet | Krystallsykehjelpen"}
+  description={diagnosis?.seoDescription ?? "Informasjon om svimmelhet hos Krystallsykehjelpen."}
+  activePath={`/svimmelhet/${slug}/`}
+  hideMarie
+>
+  {diagnosis ? (
+    <>
+      {isPreviewingSvimmelhetDrafts && (
+        <div class="preview-banner">Forhåndsvisning (upubliserte utkast er synlige — kun lokalt)</div>
+      )}
+      <script type="application/ld+json" set:html={JSON.stringify(breadcrumbLd)} />
+      <script type="application/ld+json" set:html={JSON.stringify(medicalWebPageLd)} />
+      {faqLd && <script type="application/ld+json" set:html={JSON.stringify(faqLd)} />}
+
+      <div class="breadcrumb">
+        <div class="container">
+          <a href="/">Forside</a> / {svimmelhetVisible ? <a href="/svimmelhet/">Svimmelhet</a> : <span>Svimmelhet</span>} / {diagnosis.title}
+        </div>
+      </div>
+
+      <!-- HERO -->
+      <section class="hero">
+        <div class="container hero-grid">
+          <div>
+            {diagnosis.heroEyebrow && <span class="eyebrow">{diagnosis.heroEyebrow}</span>}
+            <h1>{diagnosis.heroHeading || diagnosis.title}</h1>
+            {diagnosis.heroLead && <p class="lead">{diagnosis.heroLead}</p>}
+            <div class="hero-ctas">
+              <a href={bookingUrl} class="btn btn-primary">Bestill time →</a>
+              {diagnosis.symptomsHeading && <a href="#kjennetegn" class="text-link">Forstå symptomene ↓</a>}
+            </div>
+          </div>
+          {heroImageUrl && (
+            <div class="hero-media">
+              <img src={heroImageUrl} alt="" class="hero-photo" />
+            </div>
+          )}
+        </div>
+        {diagnosis.heroFacts?.length ? (
+          <div class="container">
+            <div class="facts-strip">
+              {diagnosis.heroFacts.map((f) => (
+                <div><strong>{f.title}</strong><span>{f.text}</span></div>
+              ))}
+            </div>
+          </div>
+        ) : null}
+      </section>
+
+      <!-- FORSTÅ TILSTANDEN -->
+      {(diagnosis.understandHeading || diagnosis.understandBody?.length) && (
+        <section class="section-alt">
+          <div class="container">
+            {diagnosis.understandEyebrow && <span class="eyebrow">{diagnosis.understandEyebrow}</span>}
+            <div class="two-col">
+              <div>
+                {diagnosis.understandHeading && <h2>{diagnosis.understandHeading}</h2>}
+                {diagnosis.understandPullQuote && <p class="pull-quote">{diagnosis.understandPullQuote}</p>}
+              </div>
+              <div class="prose">
+                {diagnosis.understandBody?.map((b) => <p set:html={inlineHtmlFromBlock(b)} />)}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      <!-- KJENNETEGN -->
+      {(diagnosis.symptomsHeading || diagnosis.symptomsItems?.length) && (
+        <section class="section-beige" id="kjennetegn">
+          <div class="container">
+            <span class="eyebrow">Vanlige kjennetegn</span>
+            {diagnosis.symptomsHeading && <h2>{diagnosis.symptomsHeading}</h2>}
+            {diagnosis.symptomsItems?.length ? (
+              <div class="numbered-grid">
+                {diagnosis.symptomsItems.map((item, i) => (
+                  <div class="numbered-card">
+                    <div class="num">{i + 1}</div>
+                    {item.title && <h3>{item.title}</h3>}
+                    {item.text && <p>{item.text}</p>}
+                  </div>
+                ))}
+              </div>
+            ) : null}
+            {diagnosis.symptomsAfter && <p class="section-after">{diagnosis.symptomsAfter}</p>}
+          </div>
+        </section>
+      )}
+
+      <!-- VIKTIG Å VITE -->
+      {(diagnosis.warningHeading || diagnosis.warningItems?.length) && (
+        <section class="section-sky">
+          <div class="container">
+            <div class="warning-box">
+              <div class="warning-icon">!</div>
+              <div>
+                <span class="eyebrow warning-eyebrow">Viktig å vite</span>
+                {diagnosis.warningHeading && <h3>{diagnosis.warningHeading}</h3>}
+                {diagnosis.warningIntro && <p>{diagnosis.warningIntro}</p>}
+                {diagnosis.warningItems?.length ? (
+                  <ul>
+                    {diagnosis.warningItems.map((item) => <li>{item}</li>)}
+                  </ul>
+                ) : null}
+                {diagnosis.warningAfter && <p>{diagnosis.warningAfter}</p>}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      <!-- BAKGRUNN -->
+      {(diagnosis.backgroundHeading || diagnosis.backgroundIntro?.length) && (
+        <section class="section-alt">
+          <div class="container narrow">
+            <span class="eyebrow">Bakgrunn</span>
+            {diagnosis.backgroundHeading && <h2>{diagnosis.backgroundHeading}</h2>}
+            {diagnosis.backgroundIntro?.map((b) => <p set:html={inlineHtmlFromBlock(b)} />)}
+            {diagnosis.backgroundChips?.length ? (
+              <div class="chip-row">
+                {diagnosis.backgroundChips.map((chip) => <span class="chip">{chip}</span>)}
+              </div>
+            ) : null}
+            {diagnosis.backgroundAfter && <p class="section-after">{diagnosis.backgroundAfter}</p>}
+          </div>
+        </section>
+      )}
+
+      <!-- UNDERSØKELSE -->
+      {(diagnosis.examinationHeading || diagnosis.examinationSteps?.length) && (
+        <section class="section-sky">
+          <div class="container">
+            <span class="eyebrow">Undersøkelse</span>
+            {diagnosis.examinationHeading && <h2>{diagnosis.examinationHeading}</h2>}
+            {diagnosis.examinationIntro && <p class="lead-sm">{diagnosis.examinationIntro}</p>}
+            {diagnosis.examinationSteps?.length ? (
+              <div class="steps-grid">
+                {diagnosis.examinationSteps.map((step, i) => (
+                  <div class="step-card">
+                    <div class="step-num">{i + 1}</div>
+                    {step.title && <h3>{step.title}</h3>}
+                    {step.text && <p>{step.text}</p>}
+                  </div>
+                ))}
+              </div>
+            ) : null}
+            {diagnosis.examinationAfter && <p class="section-after">{diagnosis.examinationAfter}</p>}
+          </div>
+        </section>
+      )}
+
+      <!-- BEHANDLING -->
+      {(diagnosis.treatmentHeading || diagnosis.treatmentCards?.length) && (
+        <section class="navy-section">
+          <div class="container">
+            <span class="eyebrow">Behandling</span>
+            {diagnosis.treatmentHeading && <h2>{diagnosis.treatmentHeading}</h2>}
+            {diagnosis.treatmentIntro && <p class="lead-sm">{diagnosis.treatmentIntro}</p>}
+            {diagnosis.treatmentCards?.length ? (
+              <div class="treatment-grid">
+                {diagnosis.treatmentCards.map((card) => (
+                  <div class="treatment-card">
+                    {card.kicker && <span class="kicker">{card.kicker}</span>}
+                    {card.title && <h3>{card.title}</h3>}
+                    {card.text && <p>{card.text}</p>}
+                  </div>
+                ))}
+              </div>
+            ) : null}
+          </div>
+        </section>
+      )}
+
+      <!-- DETTE KAN DU GJØRE SELV -->
+      {(diagnosis.selfCareHeading || diagnosis.selfCareItems?.length) && (
+        <section class="section-beige">
+          <div class="container two-col align-center">
+            <div>
+              <span class="eyebrow">Dette kan du gjøre selv</span>
+              {diagnosis.selfCareHeading && <h2>{diagnosis.selfCareHeading}</h2>}
+              {diagnosis.selfCareItems?.length ? (
+                <ul class="checklist">
+                  {diagnosis.selfCareItems.map((item) => <li>{item}</li>)}
+                </ul>
+              ) : null}
+            </div>
+            {diagnosis.featuredExercise && exerciseHref(diagnosis.featuredExercise) && (
+              <a href={exerciseHref(diagnosis.featuredExercise)} class="exercise-link-card">
+                <span class="eyebrow">Øvelse</span>
+                <h3>{diagnosis.featuredExercise.title}</h3>
+                <span class="text-link">Se øvelsen →</span>
+              </a>
+            )}
+          </div>
+        </section>
+      )}
+
+      <!-- FORLØP -->
+      {(diagnosis.prognosisHeading || diagnosis.prognosisBody) && (
+        <section class="section-alt">
+          <div class="container narrow">
+            <span class="eyebrow">Forløp</span>
+            {diagnosis.prognosisHeading && <h2>{diagnosis.prognosisHeading}</h2>}
+            {diagnosis.prognosisBody && <p>{diagnosis.prognosisBody}</p>}
+          </div>
+        </section>
+      )}
+
+      <MarieStripe bg="beige" />
+
+      <!-- SPØRSMÅL OG SVAR -->
+      {diagnosis.faq?.length ? (
+        <section class="section-alt">
+          <div class="container narrow">
+            <span class="eyebrow">Spørsmål og svar</span>
+            <h2>Det mange lurer på</h2>
+            <div class="faq-list">
+              {diagnosis.faq.map((item) => (
+                <details>
+                  <summary>{item.question}</summary>
+                  <p>{item.answer}</p>
+                </details>
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : null}
+
+      <!-- RELATERT -->
+      <section class="section-sky">
+        <div class="container">
+          <span class="eyebrow">Relatert</span>
+          <h2>Mer å lese</h2>
+          <div class="related-grid">
+            {otherDiagnoses.map((d) => (
+              <a href={diagnosisHref(d)} class="related-card">
+                <span class="related-tag">Svimmelhet</span>
+                <strong>{d.title}</strong>
+                <span class="text-link">→</span>
+              </a>
+            ))}
+            {diagnosis.relatedArticles?.map((a) => (
+              <a href={`/blogg/${a.slug}/`} class="related-card">
+                <span class="related-tag">Artikkel</span>
+                <strong>{a.title}</strong>
+                <span class="text-link">→</span>
+              </a>
+            ))}
+            {diagnosis.relatedExercises?.map((ex) => exerciseHref(ex) && (
+              <a href={exerciseHref(ex)} class="related-card">
+                <span class="related-tag">Øvelse</span>
+                <strong>{ex.title}</strong>
+                <span class="text-link">→</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <!-- FÅ HJELP / CTA -->
+      <section class="final-cta">
+        <div class="container">
+          <span class="eyebrow">Få hjelp</span>
+          <h2>{diagnosis.ctaHeading || "Usikker på om dette gjelder deg?"}</h2>
+          {diagnosis.ctaText && <p>{diagnosis.ctaText}</p>}
+          <a href={bookingUrl} class="btn btn-primary">Bestill time →</a>
+        </div>
+      </section>
+    </>
+  ) : (
+    <section class="container not-found">
+      <h1>Fant ikke siden</h1>
+      <p>Denne diagnosesiden finnes ikke.</p>
+      <a href="/" class="btn btn-primary">Til forsiden</a>
+    </section>
+  )}
+</Layout>
+
+<style>
+  .preview-banner {
+    background: var(--beige); color: var(--navy-2); text-align: center; padding: 8px;
+    font-size: 0.82rem; font-weight: 700;
+  }
+  .breadcrumb { background: var(--sky); padding: 14px 0; font-size: 0.85rem; color: var(--ink-soft); }
+  .breadcrumb a { color: var(--accent); text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+
+  .hero { background: linear-gradient(var(--beige), var(--sky)); padding: 64px 0 48px; }
+  .hero-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 48px; align-items: center; }
+  @media (max-width: 860px) { .hero-grid { grid-template-columns: 1fr; } }
+  .eyebrow { font-size: 0.82rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 12px; display: inline-block; }
+  .hero h1 { margin-bottom: 16px; }
+  .lead { font-size: 1.05rem; line-height: 1.65; color: var(--ink-soft); margin: 0 0 26px; }
+  .hero-ctas { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+  .text-link { color: var(--navy); font-weight: 700; border-bottom: 2px solid var(--turquoise); padding-bottom: 2px; text-decoration: none; }
+
+  .hero-media { border-radius: var(--radius); overflow: hidden; box-shadow: 0 16px 36px rgba(22, 56, 117, 0.1); }
+  .hero-photo { width: 100%; height: 100%; display: block; aspect-ratio: 4/3; object-fit: cover; }
+
+  .facts-strip {
+    display: grid; grid-template-columns: repeat(3, 1fr); background: #fff; border-radius: var(--radius);
+    box-shadow: 0 8px 24px rgba(22, 56, 117, 0.08); margin-top: 40px;
+  }
+  .facts-strip div { padding: 22px 24px; border-left: 1px solid var(--line); }
+  .facts-strip div:first-child { border-left: none; }
+  .facts-strip strong { display: block; font-family: var(--font-display); color: var(--navy); font-size: 1.1rem; margin-bottom: 3px; }
+  .facts-strip span { font-size: 0.88rem; color: var(--ink-soft); }
+  @media (max-width: 700px) {
+    .facts-strip { grid-template-columns: 1fr; }
+    .facts-strip div { border-left: none; border-top: 1px solid var(--line); }
+    .facts-strip div:first-child { border-top: none; }
+  }
+
+  .section-alt { background: var(--paper); padding: 64px 0; }
+  .section-beige { background: var(--beige); padding: 64px 0; }
+  .section-sky { background: var(--sky); padding: 64px 0; }
+  .narrow { max-width: 720px; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
+  .two-col.align-center { align-items: center; }
+  @media (max-width: 860px) { .two-col { grid-template-columns: 1fr; gap: 24px; } }
+  .pull-quote {
+    font-family: var(--font-display); font-size: 1.3rem; line-height: 1.45; color: var(--navy);
+    border-left: 3px solid var(--turquoise); padding-left: 20px; margin-top: 12px;
+  }
+  .prose p { font-size: 1rem; line-height: 1.65; color: var(--ink-soft); margin: 0 0 16px; }
+  .prose p:last-child { margin-bottom: 0; }
+
+  .numbered-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 28px; }
+  @media (max-width: 900px) { .numbered-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 520px) { .numbered-grid { grid-template-columns: 1fr; } }
+  .numbered-card { background: #fff; border-radius: var(--radius); padding: 22px; box-shadow: 0 8px 24px rgba(22, 56, 117, 0.06); }
+  .numbered-card .num {
+    width: 30px; height: 30px; border-radius: 8px; background: var(--sky); color: var(--navy);
+    font-weight: 700; display: flex; align-items: center; justify-content: center; font-size: 0.88rem; margin-bottom: 14px;
+  }
+  .numbered-card h3 { font-size: 1.05rem; margin-bottom: 6px; }
+  .numbered-card p { font-size: 0.9rem; line-height: 1.55; color: var(--ink-soft); }
+  .section-after { font-size: 0.95rem; color: var(--ink-soft); margin-top: 24px; }
+
+  .warning-box {
+    background: #fff; border: 1.5px solid var(--navy-2); border-left: 5px solid var(--navy-2);
+    border-radius: var(--radius); padding: 32px; display: flex; gap: 20px; box-shadow: 0 8px 24px rgba(22, 56, 117, 0.06);
+  }
+  @media (max-width: 600px) { .warning-box { flex-direction: column; } }
+  .warning-icon {
+    flex-shrink: 0; width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid var(--navy-2);
+    color: var(--navy-2); display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display); font-weight: 600; font-size: 1.3rem;
+  }
+  .warning-eyebrow { color: var(--navy-2); margin-bottom: 6px; }
+  .warning-box h3 { margin-bottom: 10px; color: var(--navy-2); }
+  .warning-box p { font-size: 0.98rem; color: var(--ink-soft); margin: 0 0 10px; }
+  .warning-box ul { margin: 0 0 10px; padding-left: 20px; color: var(--ink-soft); }
+  .warning-box li { margin-bottom: 6px; font-size: 0.98rem; }
+
+  .chip-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+  .chip { background: var(--sky); color: var(--navy); font-weight: 600; font-size: 0.88rem; padding: 8px 16px; border-radius: 999px; }
+
+  .lead-sm { font-size: 0.98rem; color: var(--ink-soft); max-width: 62ch; }
+  .steps-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-top: 32px; }
+  @media (max-width: 760px) { .steps-grid { grid-template-columns: 1fr 1fr; row-gap: 28px; } }
+  .step-card { text-align: center; }
+  .step-num {
+    width: 42px; height: 42px; border-radius: 50%; background: var(--navy); color: #fff; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; font-family: var(--font-display);
+  }
+  .step-card h3 { font-size: 1rem; margin-bottom: 4px; }
+  .step-card p { font-size: 0.88rem; color: var(--ink-soft); }
+
+  .navy-section { background: var(--navy); color: #fff; padding: 64px 0; }
+  .navy-section h2, .navy-section h3 { color: #fff; }
+  .navy-section p { color: rgba(255, 255, 255, 0.8); }
+  .navy-section .eyebrow { color: var(--turquoise); }
+  .treatment-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 30px; }
+  @media (max-width: 900px) { .treatment-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 520px) { .treatment-grid { grid-template-columns: 1fr; } }
+  .treatment-card { background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.14); border-radius: var(--radius); padding: 22px; }
+  .treatment-card .kicker { font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--turquoise); font-weight: 700; display: block; margin-bottom: 10px; }
+  .treatment-card h3 { font-size: 1.02rem; margin-bottom: 8px; }
+  .treatment-card p { font-size: 0.9rem; line-height: 1.55; }
+
+  .checklist { list-style: none; margin: 20px 0 0; padding: 0; display: grid; gap: 12px; }
+  .checklist li { position: relative; padding-left: 26px; font-size: 0.98rem; line-height: 1.55; color: var(--ink-soft); }
+  .checklist li::before { content: ""; position: absolute; left: 0; top: 7px; width: 10px; height: 10px; border-radius: 50%; background: var(--turquoise); }
+
+  .exercise-link-card {
+    background: #fff; border-radius: var(--radius); box-shadow: 0 8px 24px rgba(22, 56, 117, 0.06);
+    padding: 24px; display: flex; flex-direction: column; gap: 8px; text-decoration: none;
+  }
+  .exercise-link-card h3 { color: var(--navy); }
+
+  .faq-list details { border-bottom: 1px solid var(--line); padding: 20px 0; }
+  .faq-list summary {
+    list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+    gap: 16px; font-weight: 600; color: var(--navy); font-size: 1.02rem;
+  }
+  .faq-list summary::-webkit-details-marker { display: none; }
+  .faq-list summary::after { content: "+"; font-size: 1.3rem; color: var(--accent); flex-shrink: 0; }
+  .faq-list details[open] summary::after { content: "–"; }
+  .faq-list p { margin-top: 12px; font-size: 0.95rem; color: var(--ink-soft); }
+
+  .related-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 26px; }
+  @media (max-width: 800px) { .related-grid { grid-template-columns: 1fr; } }
+  .related-card {
+    border: 1px solid var(--line); background: #fff; border-radius: var(--radius); padding: 20px 22px;
+    display: flex; flex-direction: column; gap: 6px; text-decoration: none; transition: border-color 0.15s ease;
+  }
+  .related-card:hover { border-color: var(--turquoise); }
+  .related-tag { font-size: 0.72rem; color: var(--ink-soft); font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+  .related-card strong { color: var(--navy); font-size: 1rem; }
+
+  .final-cta { background: var(--paper); padding: 64px 0; text-align: center; }
+  .final-cta p { max-width: 58ch; margin: 0 auto 26px; color: var(--ink-soft); }
+
+  .not-found { padding: 100px 24px; text-align: center; }
+</style>

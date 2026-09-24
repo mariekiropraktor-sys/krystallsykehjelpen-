@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="no">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Diagnoseside – mal (mockup)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#163875;--navy2:#1e4c96;--sky:#eff4fb;--accent:#2f79c9;--beige:#f4eee3;--turkis:#5fc1d6;--ink:#1b2431;--text:#55616f;--line:#e2e8f2;--muted:rgba(22,56,117,.55);--shadow:0 8px 24px rgba(22,56,117,.06)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Public Sans",-apple-system,system-ui,sans-serif;color:var(--ink);background:#fff;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.c{max-width:1120px;margin:0 auto;padding:0 20px}
+.narrow{max-width:760px}
+h1,h2,h3{font-family:Fraunces,Georgia,serif;font-weight:600;color:var(--navy)}
+h1{font-size:clamp(34px,4.6vw,52px);line-height:1.1}
+h2{font-size:clamp(24px,3vw,34px);line-height:1.18;margin-bottom:14px}
+h3{font-size:19px;line-height:1.3}
+p{font-size:18.4px;line-height:1.6;color:var(--text)}
+.eyebrow{font-size:12.8px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:14px;display:block}
+section{padding:72px 0}
+@media(max-width:700px){section{padding:56px 0}}
+.beige{background:var(--beige)}.sky{background:var(--sky)}
+.btn{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:15px;padding:14px 24px;border-radius:999px}
+.btn-p{background:var(--navy2);color:#fff}.btn-w{background:#fff;color:var(--navy)}
+.tlink{font-weight:700;color:var(--navy);border-bottom:2px solid var(--turkis);padding-bottom:2px;font-size:16px}
+.draft{background:var(--navy2);color:#fff;font-size:13.5px;text-align:center;padding:10px 16px}
+.lbl{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--navy2);background:#fff;border:1px dashed var(--navy2);border-radius:999px;padding:3px 10px;margin-bottom:12px}
+
+.hdr{position:sticky;top:0;z-index:5;height:68px;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);box-shadow:0 1px 0 var(--line),0 4px 16px rgba(22,56,117,.04)}
+.hdr .c{height:100%;display:flex;align-items:center;gap:12px}
+.logo{display:flex;align-items:center;gap:10px;flex:1}
+.mark{width:38px;height:38px;border-radius:50%;background:radial-gradient(circle,#f4eee3 0 38%,transparent 39%),conic-gradient(from 20deg,#163875,#2f79c9,#5fc1d6,#f4eee3,#163875)}
+.logo b{font-family:Fraunces,Georgia,serif;font-weight:600;color:var(--navy);font-size:17px;display:block}
+.logo small{font-size:11.5px;color:var(--muted);font-weight:500}
+.ghost{border:1.5px solid var(--navy);color:var(--navy);border-radius:999px;font-weight:700;font-size:13.5px;padding:8px 16px}
+.burger{width:40px;height:40px;border:1.5px solid var(--line);border-radius:10px;display:grid;place-items:center}
+.burger i{width:16px;height:1.5px;background:var(--navy);box-shadow:0 -5px 0 var(--navy),0 5px 0 var(--navy)}
+@media(max-width:520px){.logo small{display:none}.ghost{font-size:13px;padding:7px 12px}}
+
+/* hero */
+.hero{background:linear-gradient(#f4eee3,#eff4fb);padding:64px 0 0}
+.crumbs{font-size:13.5px;color:var(--muted);margin-bottom:26px}.crumbs a{color:var(--navy2);font-weight:600}
+.hgrid{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
+@media(max-width:860px){.hgrid{grid-template-columns:1fr;gap:28px}}
+.hero p.lead{margin:20px 0 28px}
+.actions{display:flex;flex-wrap:wrap;align-items:center;gap:22px}
+.himg{aspect-ratio:4/3;border-radius:24px;background:linear-gradient(150deg,#dfe8f5,#c9d8ee);box-shadow:var(--shadow);display:grid;place-items:center;color:var(--navy);opacity:.9;font-size:13px}
+.facts{display:grid;grid-template-columns:repeat(3,1fr);background:#fff;border-radius:20px;box-shadow:var(--shadow);margin-top:48px;transform:translateY(40px)}
+.facts div{padding:22px 24px;border-left:1px solid var(--line)}
+.facts div:first-child{border-left:0}
+.facts b{display:block;font-family:Fraunces,Georgia,serif;color:var(--navy);font-size:18px;margin-bottom:3px}
+.facts span{font-size:14px;color:var(--text)}
+@media(max-width:700px){.facts{grid-template-columns:1fr}.facts div{border-left:0;border-top:1px solid var(--line)}.facts div:first-child{border-top:0}}
+.afterhero{padding-top:112px}
+
+/* two col */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:56px}
+@media(max-width:860px){.two{grid-template-columns:1fr;gap:20px}}
+.two p+p{margin-top:16px}
+.pull{font-family:Fraunces,Georgia,serif;font-size:24px;line-height:1.4;color:var(--navy);border-left:3px solid var(--turkis);padding-left:20px}
+
+/* numbered cards */
+.ncards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:30px}
+@media(max-width:900px){.ncards{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.ncards{grid-template-columns:1fr}}
+.nc{background:#fff;border-radius:18px;padding:22px;box-shadow:var(--shadow)}
+.nc .n{width:30px;height:30px;border-radius:8px;background:var(--sky);color:var(--navy);font-weight:700;display:grid;place-items:center;font-size:14px;margin-bottom:14px}
+.nc h3{font-size:17.5px;margin-bottom:6px}
+.nc p{font-size:15px;line-height:1.55}
+.after{font-size:15.5px;margin-top:22px}
+
+/* warning */
+.warn{background:#fff;border:1.5px solid var(--navy2);border-radius:22px;padding:30px 32px;display:flex;gap:20px}
+.warn .ic{flex:none;width:40px;height:40px;border-radius:50%;border:1.5px solid var(--navy2);color:var(--navy2);display:grid;place-items:center;font-weight:700;font-size:19px;font-family:Fraunces,serif}
+.warn ul{margin:10px 0 12px 18px}.warn li{font-size:16.5px;line-height:1.7;color:var(--text)}
+.warn p{font-size:16px}
+
+/* chips */
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.chips span{background:var(--sky);color:var(--navy);font-weight:600;font-size:14.5px;padding:9px 16px;border-radius:999px}
+
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:34px;position:relative}
+.steps::before{content:"";position:absolute;left:12%;right:12%;top:21px;height:2px;background:repeating-linear-gradient(90deg,var(--turkis) 0 6px,transparent 6px 12px)}
+.st{text-align:center;padding:0 12px;position:relative}
+.st .n{width:44px;height:44px;border-radius:50%;background:var(--navy);color:#fff;font-weight:700;display:grid;place-items:center;margin:0 auto 14px;font-family:Fraunces,serif;font-size:18px}
+.st h3{font-size:17px;margin-bottom:4px}.st p{font-size:14.5px;line-height:1.5}
+@media(max-width:760px){.steps{grid-template-columns:1fr 1fr;row-gap:28px}.steps::before{display:none}}
+
+/* treatment */
+.navyS{background:var(--navy)}.navyS h2,.navyS h3{color:#fff}.navyS p{color:#cfdcf0}.navyS .eyebrow{color:var(--turkis)}
+.tcards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:32px}
+@media(max-width:900px){.tcards{grid-template-columns:1fr 1fr}}@media(max-width:520px){.tcards{grid-template-columns:1fr}}
+.tc{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:18px;padding:22px}
+.tc .k{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--turkis);font-weight:700;display:block;margin-bottom:10px}
+.tc h3{font-size:18px;margin-bottom:8px}.tc p{font-size:15px;line-height:1.55}
+
+/* self care */
+.check{list-style:none;display:grid;gap:12px;margin-top:22px}
+.check li{position:relative;padding-left:30px;font-size:17px;line-height:1.55;color:var(--text)}
+.check li::before{content:"";position:absolute;left:0;top:7px;width:12px;height:12px;border-radius:50%;background:var(--turkis)}
+.linkcard{background:#fff;border-radius:20px;box-shadow:var(--shadow);padding:24px;display:flex;flex-direction:column;gap:10px}
+.linkcard .ph{height:140px;border-radius:14px;background:linear-gradient(150deg,#dfe8f5,#c9d8ee)}
+
+/* related */
+.rel{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:26px}
+@media(max-width:800px){.rel{grid-template-columns:1fr}}
+.rc{border:1px solid var(--line);border-radius:18px;padding:20px 22px;display:flex;justify-content:space-between;align-items:center;gap:12px;transition:border-color .2s}
+.rc:hover{border-color:var(--turkis)}
+.rc small{display:block;font-size:12px;color:var(--muted);font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px}
+.rc b{color:var(--navy);font-size:16.5px}
+
+/* faq */
+.faq{margin-top:22px;border-top:1px solid var(--line)}
+.faq details{border-bottom:1px solid var(--line)}
+.faq summary{list-style:none;cursor:pointer;padding:20px 40px 20px 0;font-weight:600;font-size:17.5px;color:var(--navy);position:relative}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";position:absolute;right:6px;top:15px;font-size:24px;color:var(--navy2);font-weight:400}
+.faq details[open] summary::after{content:"–"}
+.faq details p{font-size:16.5px;padding:0 0 22px}
+
+.marie .in{display:flex;align-items:center;gap:28px}
+.portrait{width:96px;height:96px;border-radius:50%;background:linear-gradient(160deg,#d8c9ae,#bfae90);flex:none}
+.marie p{font-size:16.5px}.marie b{font-family:Fraunces,serif;color:var(--navy);font-size:19px;display:block;margin-bottom:4px}
+.cta{text-align:center}.cta p{max-width:620px;margin:0 auto 26px}.cta .actions{justify-content:center}
+
+.notes{background:#f7f8fa;border-top:1px dashed #c7d2e3;padding:44px 0}
+.notes h2{font-size:22px}.notes ol{margin:12px 0 0 20px;display:grid;gap:6px}
+.notes li{font-size:15px;line-height:1.55;color:var(--text)}
+.notes code{background:#fff;border:1px solid var(--line);padding:1px 6px;border-radius:6px;font-size:13.5px}
+</style>
+</head>
+<body>
+<div class="draft">Mockup: felles mal for diagnosesider. Eksempelet bruker PPPD-teksten. De stiplede merkene viser hvilket Sanity-felt hver seksjon henter fra.</div>
+
+<header class="hdr"><div class="c">
+  <a class="logo" href="#"><span class="mark"></span><span><b>Krystallsykehjelpen</b><small>Spesialisert på svimmelhet</small></span></a>
+  <a class="ghost" href="#">Få hjelp</a><span class="burger"><i></i></span>
+</div></header>
+
+<main>
+<!-- HERO -->
+<section class="hero">
+  <div class="c">
+    <nav class="crumbs"><a href="#">Forside</a> / <a href="#">Svimmelhet</a> / PPPD</nav>
+    <div class="hgrid">
+      <div>
+        <span class="lbl">hero</span>
+        <span class="eyebrow">PPPD</span>
+        <h1>PPPD: når ustøheten ikke gir seg</h1>
+        <p class="lead">PPPD (vedvarende postural-perseptuell svimmelhet) gir en daglig følelse av gynging eller ustøhet som varer i måneder. Det er en reell tilstand, ikke noe du innbiller deg, og den kan behandles.</p>
+        <div class="actions"><a class="btn btn-p" href="#">Bestill time →</a><a class="tlink" href="#kjennetegn">Forstå symptomene ↓</a></div>
+      </div>
+      <div class="himg">Hero-bilde / illustrasjon</div>
+    </div>
+    <div class="facts">
+      <div><b>Langvarig</b><span>Tre måneder eller mer</span></div>
+      <div><b>Daglig</b><span>Gynging og ustøhet</span></div>
+      <div><b>Kan behandles</b><span>Med gradvis trening</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- FORSTÅ -->
+<section class="afterhero">
+  <div class="c">
+    <span class="lbl">understand</span>
+    <span class="eyebrow">01 · Forstå tilstanden</span>
+    <div class="two">
+      <div><h2>Hva skjer ved PPPD?</h2><p class="pull">Selve hendelsen går over, men balansesystemet «glemmer» å slå av alarmen.</p></div>
+      <div>
+        <p>PPPD starter ofte etter en hendelse som gir svimmelhet: krystallsyke, betennelse i balansenerven, et migreneanfall, en hjernerystelse eller et panikkanfall.</p>
+        <p>Kroppen fortsetter å bruke en forsiktig, stiv balansestrategi, og hjernen lener seg mer på synet enn på det indre øret. Resultatet er en vedvarende følelse av gynging, selv om ingen organer er skadet.</p>
+        <p>PPPD regnes som en funksjonell tilstand: det er måten systemet fungerer på som er forstyrret, ikke strukturen. Derfor er undersøkelser og bilder ofte normale.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- KJENNETEGN -->
+<section class="beige" id="kjennetegn">
+  <div class="c">
+    <span class="lbl">symptoms</span>
+    <span class="eyebrow">Vanlige kjennetegn</span>
+    <h2>Slik oppleves PPPD</h2>
+    <div class="ncards">
+      <div class="nc"><div class="n">1</div><h3>Gynging og ustøhet</h3><p>Følelsen av å gå på en båt eller en madrass, de fleste dager.</p></div>
+      <div class="nc"><div class="n">2</div><h3>Verre når du står og går</h3><p>Bedre når du sitter eller ligger.</p></div>
+      <div class="nc"><div class="n">3</div><h3>Verre i travle omgivelser</h3><p>Butikker, trafikk, mønstre, rulling på skjerm.</p></div>
+      <div class="nc"><div class="n">4</div><h3>Verre av bevegelse</h3><p>Både egen bevegelse og det å bli kjørt i bil eller tog.</p></div>
+    </div>
+    <p class="after">Mange blir slitne, anspente og bekymret over plagene. Det er en naturlig reaksjon, og kan i seg selv forsterke symptomene.</p>
+  </div>
+</section>
+
+<!-- VIKTIG -->
+<section class="sky">
+  <div class="c">
+    <span class="lbl">warning</span>
+    <div class="warn">
+      <div class="ic">!</div>
+      <div>
+        <span class="eyebrow" style="margin-bottom:6px">Viktig å vite</span>
+        <h3 style="font-size:22px">Andre årsaker må vurderes</h3>
+        <ul><li>Ring 113 ved ny svimmelhet sammen med lammelser, talevansker eller dobbeltsyn</li><li>plutselig, kraftig hodepine</li><li>plutselig manglende evne til å gå</li></ul>
+        <p>Ustøhet som stadig forverres, nye nevrologiske symptomer, hørselstap eller fall bør alltid undersøkes av lege.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BAKGRUNN -->
+<section>
+  <div class="c narrow">
+    <span class="lbl">background</span>
+    <span class="eyebrow">Bakgrunn</span>
+    <h2>Hvem får PPPD?</h2>
+    <p>PPPD er en av de vanligste årsakene til langvarig svimmelhet. Vanlige utløsende hendelser er:</p>
+    <div class="chips"><span>Krystallsyke</span><span>Vestibulær nevritt</span><span>Vestibulær migrene</span><span>Hjernerystelse</span><span>Panikkanfall</span><span>Annen akutt sykdom</span></div>
+  </div>
+</section>
+
+<!-- UNDERSØKELSE -->
+<section class="sky">
+  <div class="c">
+    <span class="lbl">examination</span>
+    <span class="eyebrow">Undersøkelse</span>
+    <h2>Diagnosen stilles ut fra mønsteret</h2>
+    <div class="steps">
+      <div class="st"><div class="n">1</div><h3>Sykehistorie</h3><p>Hva startet det, og hva gjør det bedre eller verre?</p></div>
+      <div class="st"><div class="n">2</div><h3>Balansesystemet</h3><p>Øyebevegelser, posisjonstester og balanse</p></div>
+      <div class="st"><div class="n">3</div><h3>Utelukke aktiv sykdom</h3><p>For eksempel krystallsyke som fortsatt er aktiv</p></div>
+      <div class="st"><div class="n">4</div><h3>Forklaring og plan</h3><p>Forstå tilstanden og lag en plan for opptrening</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- BEHANDLING -->
+<section class="navyS">
+  <div class="c">
+    <span class="lbl" style="background:transparent;color:#fff;border-color:#fff">treatment</span>
+    <span class="eyebrow">Behandling</span>
+    <h2>Å skru ned alarmen, gradvis</h2>
+    <div class="tcards">
+      <div class="tc"><span class="k">Grunnmur</span><h3>Forståelse</h3><p>Å vite hva PPPD er, og at det ikke er farlig, er en viktig del av behandlingen i seg selv.</p></div>
+      <div class="tc"><span class="k">Kjernen</span><h3>Vestibulær rehabilitering</h3><p>Gradvis tilvenning til bevegelse og visuelle omgivelser som i dag gir plager.</p></div>
+      <div class="tc"><span class="k">Ved behov</span><h3>Kognitiv atferdsterapi</h3><p>Hjelper mange med å bryte sirkelen av oppmerksomhet, bekymring og unngåelse.</p></div>
+      <div class="tc"><span class="k">Via lege</span><h3>Medisiner</h3><p>Noen får hjelp av medisiner i lav dose. Dette vurderes av lege.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- SELV -->
+<section class="beige">
+  <div class="c two" style="align-items:center">
+    <div>
+      <span class="lbl">selfCare</span>
+      <span class="eyebrow">Dette kan du gjøre selv</span>
+      <h2>Små steg som hjelper</h2>
+      <ul class="check">
+        <li>Hold deg i aktivitet. Unngåelse gjør som regel plagene verre over tid</li>
+        <li>Utsett deg gradvis for det som er vanskelig: kortere butikkbesøk først, så lengre</li>
+        <li>Gå turer ute, gjerne på varierende underlag</li>
+        <li>Regn med gode og dårlige dager. Se på utviklingen over uker, ikke dager</li>
+      </ul>
+    </div>
+    <a class="linkcard" href="#"><div class="ph"></div><span class="eyebrow" style="margin:0">Øvelse</span><h3>Gradvis eksponering</h3><span class="tlink" style="align-self:flex-start;font-size:15px">Se øvelsen →</span></a>
+  </div>
+</section>
+
+<!-- FORLØP -->
+<section>
+  <div class="c narrow">
+    <span class="lbl">prognosis</span>
+    <span class="eyebrow">Forløp</span>
+    <h2>Hva kan du forvente?</h2>
+    <p>Bedringen ved PPPD skjer ofte gradvis, over uker og måneder. De fleste blir tydelig bedre med riktig behandling, og mange blir helt eller nesten helt symptomfrie. Tålmodighet og jevn trening er nøkkelen.</p>
+  </div>
+</section>
+
+<!-- MARIE -->
+<section class="beige marie" style="padding:44px 0">
+  <div class="c in"><div class="portrait"></div><div><b>Hvem står bak</b><p>Standardkomponenten «Hvem står bak», samme som på de andre sidene.</p></div></div>
+</section>
+
+<!-- FAQ -->
+<section>
+  <div class="c narrow">
+    <span class="lbl">faq</span>
+    <span class="eyebrow">Ofte stilte spørsmål</span>
+    <h2>Det mange lurer på</h2>
+    <div class="faq">
+      <details open><summary>Er PPPD psykisk?</summary><p>Nei. PPPD er en funksjonell tilstand i balansesystemet. Stress og bekymring kan påvirke den, men plagene er reelle.</p></details>
+      <details><summary>Hvorfor er undersøkelsene mine normale?</summary><p>Ved PPPD er det ingen skade på organene. Det er samspillet i balansesystemet som er forstyrret.</p></details>
+      <details><summary>Kan jeg få PPPD etter krystallsyke?</summary><p>Ja, krystallsyke er en av de vanligste utløsende hendelsene.</p></details>
+      <details><summary>Blir jeg noen gang frisk?</summary><p>De fleste blir tydelig bedre med behandling. Bedringen tar tid og kommer gjerne gradvis.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- RELATERT -->
+<section class="sky" style="padding:56px 0">
+  <div class="c">
+    <span class="lbl">related (automatisk)</span>
+    <span class="eyebrow">Andre former for svimmelhet</span>
+    <div class="rel">
+      <a class="rc" href="#"><span><small>Svimmelhet</small><b>Krystallsyke (BPPV)</b></span>→</a>
+      <a class="rc" href="#"><span><small>Svimmelhet</small><b>Vestibulær migrene</b></span>→</a>
+      <a class="rc" href="#"><span><small>Artikkel</small><b>Restsvimmelhet etter krystallsyke</b></span>→</a>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <div class="c">
+    <span class="lbl">cta</span>
+    <span class="eyebrow">Få hjelp</span>
+    <h2>Få hjelp med langvarig svimmelhet</h2>
+    <p>En grundig undersøkelse kan avklare om plagene passer med PPPD, om noe fortsatt er aktivt, og hvordan du trygt kan trene deg bedre.</p>
+    <div class="actions"><a class="btn btn-p" href="#">Bestill time →</a></div>
+  </div>
+</section>
+</main>
+
+<div class="notes"><div class="c">
+  <h2>Notater til bygging (vises ikke på siden)</h2>
+  <ol>
+    <li>Én mal, <code>/svimmelhet/[slug]/</code>, for alle diagnoser unntatt krystallsyke. Krystallsyke beholder sin egen side.</li>
+    <li>Seksjonsrekkefølge og bakgrunn: hero (beige→sky) · forstå (hvit) · kjennetegn (beige) · viktig (sky) · bakgrunn (hvit) · undersøkelse (sky) · behandling (navy) · selv (beige) · forløp (hvit) · Hvem står bak · spørsmål og svar (hvit) · relatert (sky) · få hjelp (hvit).</li>
+    <li>Seksjoner uten innhold i Sanity skjules automatisk.</li>
+    <li>«Relatert» fylles automatisk med andre publiserte diagnoser, pluss valgfrie artikler og øvelser.</li>
+    <li>Schema: <code>MedicalWebPage</code> med <code>about: MedicalCondition</code>, <code>FAQPage</code>, <code>BreadcrumbList</code>.</li>
+  </ol>
+</div></div>
+</body>
+</html>

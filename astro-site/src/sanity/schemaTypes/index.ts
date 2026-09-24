@@ -7,6 +7,8 @@ import faqItem from "./faqItem";
 import practitioner from "./practitioner";
 import hjemmePage from "./hjemmePage";
 import omMariePage from "./omMariePage";
+import diagnosisPage from "./diagnosisPage";
+import svimmelhetPage from "./svimmelhetPage";
 
 export const schemaTypes = [
   siteSettings,
@@ -18,4 +20,6 @@ export const schemaTypes = [
   practitioner,
   hjemmePage,
   omMariePage,
+  diagnosisPage,
+  svimmelhetPage,
 ];

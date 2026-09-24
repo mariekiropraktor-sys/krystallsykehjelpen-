@@ -143,7 +143,7 @@ export default defineType({
           name: "relatedLink",
           fields: [
             defineField({ name: "title", title: "Tittel", type: "string", validation: (Rule) => Rule.required() }),
-            defineField({ name: "url", title: "Intern URL", type: "string", description: 'F.eks. "/krystallsyken/"', validation: (Rule) => Rule.required() }),
+            defineField({ name: "url", title: "Intern URL", type: "string", description: 'F.eks. "/svimmelhet/krystallsyke/"', validation: (Rule) => Rule.required() }),
           ],
           preview: { select: { title: "title", subtitle: "url" } },
         },

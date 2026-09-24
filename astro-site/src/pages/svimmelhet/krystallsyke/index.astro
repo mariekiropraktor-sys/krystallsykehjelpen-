@@ -1,7 +1,7 @@
 ---
-import Layout from "../../layouts/Layout.astro";
-import { getPageSections } from "../../lib/pageSections";
-import { urlForImage } from "../../lib/sanityImage";
+import Layout from "../../../layouts/Layout.astro";
+import { getPageSections } from "../../../lib/pageSections";
+import { urlForImage } from "../../../lib/sanityImage";
 
 // Kun hero-illustrasjonen (bilde A) er koblet til Sanity, slik prompten ber
 // om — resten av siden er ny, godkjent tekst fra mockupen og er derfor
@@ -87,7 +87,7 @@ const breadcrumbLd = {
   "@type": "BreadcrumbList",
   itemListElement: [
     { "@type": "ListItem", position: 1, name: "Hjem", item: "https://www.krystallsykehjelpen.no/" },
-    { "@type": "ListItem", position: 2, name: "Krystallsyken", item: "https://www.krystallsykehjelpen.no/krystallsyken/" },
+    { "@type": "ListItem", position: 2, name: "Krystallsyken", item: "https://www.krystallsykehjelpen.no/svimmelhet/krystallsyke/" },
   ],
 };
 
@@ -105,7 +105,7 @@ const faqLd = {
 <Layout
   title="Krystallsyke (BPPV): symptomer og behandling"
   description="Hva er krystallsyke, hvilke symptomer er typiske, og hvordan behandles BPPV? Les om bueganger, testing, Epleys manøver og tilbakefall."
-  activePath="/krystallsyken/"
+  activePath="/svimmelhet/krystallsyke/"
 >
   <script type="application/ld+json" set:html={JSON.stringify(breadcrumbLd)} />
   <script type="application/ld+json" set:html={JSON.stringify(faqLd)} />

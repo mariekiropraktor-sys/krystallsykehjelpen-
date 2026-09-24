@@ -1,22 +1,25 @@
 ---
-import Layout from "../../layouts/Layout.astro";
+// Redirect-side: /om-oss/ → /om-krystallsykehjelpen/. Var tidligere en
+// "under bygging"-plassholder for en side som aldri ble ferdigstilt — det
+// finnes ikke noe eget Sanity-dokument bak den, kun denne statiske filen.
+// Sidefilen er bevisst beholdt (ikke slettet) per oppgavebeskrivelsen, men
+// gjort om til en redirect siden /om-krystallsykehjelpen/ er den ekte,
+// ferdige siden. Ekte HTTP 301 håndteres av vercel.json i produksjon; denne
+// meta-refresh-siden er fallback for lokal dev/preview, der vercel.json
+// ikke gjelder.
+const target = "/om-krystallsykehjelpen/";
 ---
 
-<Layout
-  title="Om krystallsykehjelpen | Krystallsykehjelpen"
-  description="Om krystallsykehjelpen – Krystallsykehjelpen, klinikk for krystallsyke og svimmelhet i Fetsund."
-  activePath="/om-oss/"
-  hideMarie
->
-  <section class="container placeholder">
-    <span class="eyebrow">Under bygging</span>
-    <h1>Om krystallsykehjelpen</h1>
-    <p>Denne siden bygges videre i neste steg – innholdet fra den forrige versjonen flyttes hit med samme komponentstruktur som forsiden.</p>
-    <a href="/" class="btn btn-primary">Til forsiden</a>
-  </section>
-</Layout>
-
-<style>
-  .placeholder { padding: 70px 24px 100px; max-width: 640px; }
-  .eyebrow { font-size: 0.82rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); font-weight: 700; }
-</style>
+<!doctype html>
+<html lang="no">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="refresh" content={`0;url=${target}`} />
+    <link rel="canonical" href={target} />
+    <meta name="robots" content="noindex" />
+    <title>Omdirigerer …</title>
+  </head>
+  <body>
+    <p>Denne siden har flyttet. Hvis du ikke sendes videre automatisk, <a href={target}>klikk her</a>.</p>
+  </body>
+</html>

@@ -1,0 +1,8 @@
+{
+  "redirects": [
+    { "source": "/krystallsyken", "destination": "/svimmelhet/krystallsyke/", "permanent": true },
+    { "source": "/krystallsyken/", "destination": "/svimmelhet/krystallsyke/", "permanent": true },
+    { "source": "/om-oss", "destination": "/om-krystallsykehjelpen/", "permanent": true },
+    { "source": "/om-oss/", "destination": "/om-krystallsykehjelpen/", "permanent": true }
+  ]
+}

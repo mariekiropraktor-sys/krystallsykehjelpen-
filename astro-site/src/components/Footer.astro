@@ -1,35 +1,48 @@
 ---
+import { getNavigationTabs, footerBehandlingExtras } from "../data/navigation";
+
 const year = new Date().getFullYear();
+const navigationTabs = await getNavigationTabs();
+
+function visibleLinks(tabLabel) {
+  const tab = navigationTabs.find((t) => t.label === tabLabel);
+  return (tab?.items ?? []).filter((item) => item.kind === "link" && item.enabled !== false);
+}
+
+const svimmelhetLinks = visibleLinks("Svimmelhet");
+const hjelpDegSelvLinks = visibleLinks("Hjelp deg selv");
+const behandlingLinks = [...visibleLinks("Behandling"), ...footerBehandlingExtras];
+const omLinks = visibleLinks("Om");
 ---
 
 <footer class="site-footer">
   <div class="container">
     <div class="footer-grid">
       <div>
-        <h4>Krystallsykehjelpen</h4>
-        <p class="muted">Klinikk-, hjemme- og telefonkonsultasjoner for krystallsyke og svimmelhet i Fetsund.</p>
+        <h4>Svimmelhet</h4>
+        {svimmelhetLinks.map((link) => <a href={link.href}>{link.label}</a>)}
       </div>
       <div>
-        <h4>Snarveier</h4>
-        <a href="/fa-hjelp/">Få hjelp</a>
-        <a href="/om-krystallsykehjelpen/">Om Krystallsykehjelpen</a>
-        <a href="/krystallsyken/">Krystallsyken</a>
-        <a href="/ovelsesbibliotek/">Øvelsesbibliotek</a>
-        <a href="/finn-behandler/">Finn behandler</a>
+        <h4>Hjelp deg selv</h4>
+        {hjelpDegSelvLinks.map((link) => <a href={link.href}>{link.label}</a>)}
       </div>
       <div>
-        <h4>Ressurser</h4>
-        <a href="/blogg/">Blogg</a>
-        <a href="/faq/">FAQ</a>
+        <h4>Behandling</h4>
+        {behandlingLinks.map((link) => <a href={link.href}>{link.label}</a>)}
       </div>
       <div>
-        <h4>Kontakt</h4>
+        <h4>Om</h4>
+        {omLinks.map((link) => <a href={link.href}>{link.label}</a>)}
+      </div>
+    </div>
+    <div class="footer-bottom-row">
+      <div class="footer-contact">
         <a href="tel:+4746384492">+47 46384492</a>
         <a href="mailto:mariekiropraktor@gmail.com">mariekiropraktor@gmail.com</a>
         <a href="/kontakt/">Garderbakken 1, Fetsund</a>
       </div>
+      <div class="footer-bottom">© {year} Krystallsykehjelpen</div>
     </div>
-    <div class="footer-bottom">© {year} Krystallsykehjelpen</div>
   </div>
 </footer>
 
@@ -42,7 +55,7 @@ const year = new Date().getFullYear();
   }
   .footer-grid {
     display: grid;
-    grid-template-columns: 1.1fr 1fr 1fr 1fr;
+    grid-template-columns: repeat(4, 1fr);
     gap: 32px;
     margin-bottom: 32px;
   }
@@ -60,7 +73,7 @@ const year = new Date().getFullYear();
     font-size: 0.92rem;
   }
   .site-footer a:hover { color: #fff; }
-  .muted { color: #cbd8ef; font-size: 0.92rem; }
+  .footer-contact { display: flex; flex-direction: column; margin-bottom: 20px; }
   .footer-bottom {
     border-top: 1px solid rgba(255, 255, 255, 0.14);
     padding-top: 20px;
@@ -68,6 +81,6 @@ const year = new Date().getFullYear();
     color: #9db0d1;
   }
   @media (max-width: 720px) {
-    .footer-grid { grid-template-columns: 1fr; }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
   }
 </style>

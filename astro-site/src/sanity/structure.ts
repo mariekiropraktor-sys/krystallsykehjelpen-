@@ -31,6 +31,20 @@ export const structure: StructureResolver = (S) =>
         .child(
           S.document().schemaType("omMariePage").documentId("omMariePage"),
         ),
+      S.listItem()
+        .title("Svimmelhet")
+        .child(
+          S.list()
+            .title("Svimmelhet")
+            .items([
+              S.listItem()
+                .title("Oversiktssiden (/svimmelhet/)")
+                .child(
+                  S.document().schemaType("svimmelhetPage").documentId("svimmelhetPage"),
+                ),
+              S.documentTypeListItem("diagnosisPage").title("Diagnosesider"),
+            ]),
+        ),
       S.divider(),
       S.listItem()
         .title("Sidetekster")
