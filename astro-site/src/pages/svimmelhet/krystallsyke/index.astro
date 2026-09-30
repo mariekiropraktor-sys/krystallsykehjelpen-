@@ -8,7 +8,12 @@ import { MARIE_URL } from "../../../config/marie";
 // om — resten av siden er ny, godkjent tekst fra mockupen og er derfor
 // hardkodet direkte i komponenten, ikke hentet fra pageSection-dokumenter.
 const sections = await getPageSections("krystallsyken");
-const heroImage = urlForImage(sections.hero?.mediaAsset, 1200) ?? "/ear-diagram.jpg";
+const heroImage = urlForImage(sections.hero?.mediaAsset, 1200) ?? "/indre-ore-forside.webp";
+
+// Bildet finnes ikke ennå. Sett filnavnet her når Marie har lastet det opp
+// i public/ (4:5-format), f.eks. "/etter-behandling.webp" — seksjonen
+// viser da bildet automatisk igjen.
+const afterTreatmentImage = null;
 
 const bookingUrl =
   "https://psno-patient-platform-fe.svc.pasientsky.no/embedded/planner/booking?serviceProviderId=54907264-049e-11eb-8fc8-26c6f94d64b7";
@@ -144,7 +149,7 @@ const faqLd = {
       </div>
       <div class="hero-media">
         <div class="hero-img-frame">
-          <img src={heroImage} alt="Anatomisk illustrasjon av det indre øret med balanseorganet og buegangene" width="900" height="906" />
+          <img src={heroImage} alt="Illustrasjon av det indre øret med buegangene og sneglehuset. Bakre buegang er uthevet." width="1000" height="1000" />
         </div>
       </div>
     </div>
@@ -168,32 +173,32 @@ const faqLd = {
   <!-- 3+4. HVA SKJER I ØRET + ANIMASJON -->
   <section id="symptomer-forstaa">
     <div class="container">
-      <div class="two-col">
-        <div>
+      <div class="explain-grid">
+        <div class="explain-heading">
           <span class="eyebrow">01 · Forstå tilstanden</span>
           <h2>Hva skjer egentlig i det indre øret?</h2>
         </div>
-        <div>
+        <div class="explain-text">
           <p class="pull-quote">Små kalkpartikler som normalt ligger i utriculus, kan løsne og komme inn i en av de væskefylte buegangene.</p>
           <p>Når hodet beveges, kan partiklene forskyve væsken i buegangen på en måte som ikke passer med den faktiske bevegelsen. Hjernen mottar da motstridende informasjon fra balanseorganene, synet og resten av kroppen — noe som kan oppleves som en intens rotasjonsfølelse.</p>
           <p>Man skiller gjerne mellom <strong>canalolithiasis</strong>, hvor partiklene beveger seg fritt i væsken, og <strong>cupulolithiasis</strong>, hvor partiklene sitter fast på cupula. Skillet har betydning for hvilket symptommønster som oppstår og hvilken manøver som er mest relevant.</p>
           <a href="#buegangene" class="link-arrow">Se de ulike buegangene →</a>
         </div>
-      </div>
 
-      <div class="media-frame">
-        <video
-          id="krystallsyke-video"
-          controls
-          muted
-          loop
-          playsinline
-          preload="metadata"
-          aria-label="Animasjon som viser hvordan løse kalkpartikler beveger seg i buegangen og skaper feilsignaler om rotasjon"
-        >
-          <source src="/videos/krystallsyke%20animasjon.mp4" type="video/mp4" />
-        </video>
-        <p class="media-caption"><strong>Se hva som skjer:</strong> Animasjonen viser hvordan løse partikler kan bevege seg i buegangen og gi feil signaler om rotasjon.</p>
+        <div class="media-frame explain-video">
+          <video
+            id="krystallsyke-video"
+            controls
+            muted
+            loop
+            playsinline
+            preload="metadata"
+            aria-label="Animasjon som viser hvordan løse kalkpartikler beveger seg i buegangen og skaper feilsignaler om rotasjon"
+          >
+            <source src="/videos/krystallsyke%20animasjon.mp4#t=1.5" type="video/mp4" />
+          </video>
+          <p class="media-caption"><strong>Se hva som skjer:</strong> Animasjonen viser hvordan løse partikler kan bevege seg i buegangen og gi feil signaler om rotasjon.</p>
+        </div>
       </div>
     </div>
   </section>
@@ -322,7 +327,7 @@ const faqLd = {
       <span class="eyebrow">Etter behandling</span>
       <h2>Når snurringen er borte, men kroppen fortsatt føles ustø</h2>
 
-      <div class="two-col two-col-top mt-lg">
+      <div class={afterTreatmentImage ? "two-col two-col-top mt-lg" : "mt-lg after-treatment-text"}>
         <div>
           <p>Noen blir symptomfrie med én gang. Andre kjenner mild ustøhet, kvalme eller en «svaiende» følelse i dager eller uker etter en vellykket manøver.</p>
           <div class="info-box">
@@ -333,11 +338,13 @@ const faqLd = {
           </div>
           <a href="/blogg/restsvimmelhet-etter-krystallsyke/" class="link-arrow mt">Les om restsvimmelhet →</a>
         </div>
-        <div class="side-media">
-          <div class="side-media-frame">
-            {/* TODO: sett inn bilde om restsvimmelhet/balanse her (4:5-format) — mangler foreløpig, må lastes opp av Marie */}
+        {afterTreatmentImage && (
+          <div class="side-media">
+            <div class="side-media-frame">
+              <img src={afterTreatmentImage} alt="Illustrasjon av restsvimmelhet og balanse etter behandling" />
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   </section>
@@ -475,8 +482,18 @@ const faqLd = {
     line-height: 1.4; border-left: 3px solid var(--turquoise); padding-left: 24px; margin: 8px 0 28px;
   }
 
+  /* HVA SKJER I ØRET + VIDEO */
+  .explain-grid { display: grid; grid-template-columns: 1fr; grid-template-areas: "heading" "text" "video"; gap: 28px; }
+  .explain-heading { grid-area: heading; }
+  .explain-text { grid-area: text; }
+  .explain-video { grid-area: video; }
+  @media (min-width: 901px) {
+    .explain-grid { grid-template-columns: 1fr 1fr; column-gap: 64px; row-gap: 0; grid-template-areas: "heading text" "video text"; }
+    .explain-video { margin-top: 48px; }
+  }
+
   /* VIDEO */
-  .media-frame { background: var(--sky); border-radius: 28px; padding: 20px; margin-top: 48px; }
+  .media-frame { background: var(--sky); border-radius: 28px; padding: 20px; }
   .media-frame video { width: 100%; display: block; border-radius: 20px; object-fit: contain; background: var(--sky); }
   .media-caption { font-size: 0.95rem; color: var(--ink-soft); margin-top: 14px; padding: 0 4px; }
   .media-caption strong { color: var(--navy); }
@@ -484,13 +501,16 @@ const faqLd = {
   /* SYMPTOM CARDS */
   .section-beige { background: var(--beige); }
   .symptom-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 40px; }
-  @media (max-width: 960px) { .symptom-grid { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 600px) { .symptom-grid { grid-template-columns: 1fr; } }
   .symptom-card { background: #fff; border-radius: 20px; padding: 28px 24px; box-shadow: 0 8px 24px rgba(22, 56, 117, 0.06); }
   .symptom-num {
     width: 36px; height: 36px; border-radius: 50%; background: var(--sky); color: var(--navy-2);
     font-family: var(--font-display); font-weight: 600; display: flex; align-items: center; justify-content: center;
     margin-bottom: 16px; font-size: 1rem;
+  }
+  @media (max-width: 900px) {
+    .symptom-grid { grid-template-columns: 1fr; gap: 10px; }
+    .symptom-card { display: flex; align-items: center; gap: 14px; padding: 16px; }
+    .symptom-num { flex: none; width: 32px; height: 32px; margin-bottom: 0; }
   }
   .symptom-card h3 { font-size: 1.1rem; margin-bottom: 8px; }
   .symptom-card p { font-size: 0.95rem; margin: 0; color: var(--ink-soft); }
@@ -547,6 +567,9 @@ const faqLd = {
   .diag-steps { background: #fff; border-radius: 28px; box-shadow: 0 12px 32px rgba(22, 56, 117, 0.08); padding: 12px 32px; }
   .diag-step { display: flex; gap: 22px; padding: 26px 0; border-bottom: 1px solid var(--line); }
   .diag-step:last-child { border-bottom: none; }
+  @media (max-width: 900px) {
+    .diag-step { gap: 14px; padding: 5px 0; }
+  }
   .diag-num {
     width: 40px; height: 40px; border-radius: 50%; background: var(--sky); color: var(--navy-2);
     font-family: var(--font-display); font-weight: 600; display: flex; align-items: center; justify-content: center;
@@ -563,6 +586,9 @@ const faqLd = {
   .info-box-lead { margin-bottom: 10px; font-weight: 600; color: var(--navy); }
   .info-box ul { margin: 0; padding-left: 20px; color: var(--ink-soft); }
   .info-box li { margin-bottom: 6px; }
+
+  /* ETTER BEHANDLING (uten bilde) */
+  .after-treatment-text { max-width: 680px; }
 
   /* BILDEPLASS: etter behandling */
   .side-media-frame {
