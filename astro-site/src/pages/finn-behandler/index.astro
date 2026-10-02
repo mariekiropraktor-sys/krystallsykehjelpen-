@@ -72,6 +72,12 @@ const professionOptions = [
   { value: "offentlig", label: "Offentlig / sykehus" },
 ];
 
+// Så lenge ingen behandlere er bekreftet + publisert, er katalogen tom. Da
+// vises en ærlig «bygges opp»-melding i stedet for søk, kart og tomme
+// fremhevet-plasser (ellers gir hvert søk «Ingen behandlere matcher» og ser
+// ødelagt ut). Alt kommer tilbake av seg selv når første behandler publiseres.
+const hasPractitioners = listData.length > 0;
+
 const featured = listData.filter((p) => p.tier === "featured");
 const FEATURED_MIN = 4;
 const emptySlots = Math.max(0, FEATURED_MIN - featured.length);
@@ -87,7 +93,11 @@ const emptySlots = Math.max(0, FEATURED_MIN - featured.length);
     <div class="container">
       <span class="eyebrow">Behandlere i Norge</span>
       <h1>Finn din behandler</h1>
-      <p class="lead">Søk på navn, sted eller behandlingstype for å finne en behandler for krystallsyke og svimmelhet nær deg.</p>
+      <p class="lead">
+        {hasPractitioners
+          ? "Søk på navn, sted eller behandlingstype for å finne en behandler for krystallsyke og svimmelhet nær deg."
+          : "Vi bygger opp en oversikt over behandlere for krystallsyke og svimmelhet i hele Norge."}
+      </p>
     </div>
     <svg class="hero-wave" viewBox="0 0 1440 60" preserveAspectRatio="none">
       <path d="M0,32 C360,72 1080,0 1440,32 L1440,60 L0,60 Z" fill="#ffffff" />
@@ -96,6 +106,15 @@ const emptySlots = Math.max(0, FEATURED_MIN - featured.length);
 
   <section class="section-alt no-top">
     <div class="container">
+      {!hasPractitioners && (
+        <div class="catalog-empty">
+          <strong>Oversikten over behandlere bygges opp</strong>
+          <p>Vi kontakter klinikker over hele Norge og legger inn behandlere fortløpende, etter hvert som de bekrefter at de vil være med.</p>
+          <p>Inntil videre kan du få hjelp hos Krystallsykehjelpen, på klinikken i Fetsund eller som videokonsultasjon.</p>
+          <a href="/fa-hjelp/" class="btn btn-primary">Se måter å få hjelp på →</a>
+        </div>
+      )}
+      {hasPractitioners && (<>
       <div class="section-head">
         <span class="eyebrow center">Søk i Norge</span>
         <h2>Finn en behandler</h2>
@@ -142,9 +161,11 @@ const emptySlots = Math.max(0, FEATURED_MIN - featured.length);
       <div class="empty-state" id="empty-state">
         <p>Ingen behandlere matcher søket ditt. Prøv et annet sted, navn eller filter.</p>
       </div>
+      </>)}
     </div>
   </section>
 
+  {hasPractitioners && (
   <section class="section-beige">
     <div class="container">
       <div class="section-head">
@@ -155,7 +176,9 @@ const emptySlots = Math.max(0, FEATURED_MIN - featured.length);
       <div id="practitioner-map" class="map"></div>
     </div>
   </section>
+  )}
 
+  {hasPractitioners && (
   <section class="section-featured">
     <div class="container">
       <div class="section-head">
@@ -208,6 +231,7 @@ const emptySlots = Math.max(0, FEATURED_MIN - featured.length);
       </div>
     </div>
   </section>
+  )}
 
   <section class="section-cta">
     <div class="container cta-inner">
@@ -465,6 +489,16 @@ const emptySlots = Math.max(0, FEATURED_MIN - featured.length);
     border: 1px dashed var(--line); border-radius: var(--radius); padding: 32px 20px; color: var(--ink-soft); font-size: 0.92rem;
   }
   .search-hint strong { display: block; color: var(--navy); font-size: 1.02rem; margin-bottom: 6px; }
+
+  /* TOM KATALOG (ingen behandlere publisert ennå) */
+  .catalog-empty {
+    max-width: 720px; margin: 8px auto 0; text-align: center; background: var(--sky);
+    border-radius: var(--radius); padding: 40px 28px; color: var(--ink-soft);
+  }
+  .catalog-empty strong { display: block; font-family: var(--font-display); font-weight: 600; color: var(--navy); font-size: 1.3rem; margin-bottom: 12px; }
+  .catalog-empty p { font-size: 0.98rem; line-height: 1.6; margin: 0 auto 10px; max-width: 56ch; }
+  .catalog-empty .btn { margin-top: 14px; }
+  @media (max-width: 640px) { .catalog-empty { padding: 30px 20px; } }
 
   /* RESULTATKORT */
   .practitioner-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 22px; max-width: 940px; margin: 20px auto 0; }
