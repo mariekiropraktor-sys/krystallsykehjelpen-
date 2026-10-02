@@ -219,7 +219,7 @@ const attributionText =
         <p class="subheading">Fra diagnose til tryggere hverdag.</p>
         <p class="ingress">Har du fått påvist krystallsyke? Her får du hjelp til å finne veiledningen du har fått anbefalt, gjennomføre behandlingen hjemme og forstå hva du bør gjøre videre.</p>
         <div class="hero-ctas">
-          <a href="#steg1" class="btn btn-primary">Start veiledningen</a>
+          <a href="#steg1" class="btn btn-primary" data-start="start">Start veiledningen</a>
         </div>
       </div>
       <div class="hero-visual">
@@ -240,7 +240,7 @@ const attributionText =
         <p>For å velge riktig manøver bør du vite hvilken side og buegang som er påvirket, eller hvilken manøver du har fått anbefalt.</p>
         <p>Hvis du ikke vet dette, bør du ikke velge en tilfeldig manøver basert på symptomer alene.</p>
         <div class="prereq-ctas">
-          <a href="#steg1" class="btn btn-outline">Jeg vet hvilken behandling jeg skal gjøre</a>
+          <a href="#steg1" class="btn btn-outline" data-start="a1">Jeg vet hvilken behandling jeg skal gjøre</a>
           <a href="/fa-hjelp/" class="btn btn-outline">Jeg er usikker på diagnosen min</a>
         </div>
       </div>
@@ -502,6 +502,19 @@ const attributionText =
     el.addEventListener("click", () => resetTo(el.getAttribute("data-reset")));
   });
 
+  // Knappene i hero og «Før du starter» er lenker til #steg1 (virker uten
+  // JS), men med JS starter de flyten på riktig skjerm og ruller dit — også
+  // når besøkende allerede er inne i flyten og startskjermen er skjult.
+  // «start» = de tre valgkortene, «a1» = rett til «Hvilken side …?».
+  document.querySelectorAll("[data-start]").forEach((el) => {
+    el.addEventListener("click", (event) => {
+      event.preventDefault();
+      const target = el.getAttribute("data-start");
+      resetTo("start");
+      if (target && target !== "start") goTo(target);
+    });
+  });
+
   // Sti A: side (steg 1) → lagre svar, gå til kanal (steg 2)
   let selectedSide = null;
   document.querySelectorAll("#a1-buttons .answer-btn").forEach((btn) => {
@@ -596,7 +609,9 @@ const attributionText =
   .prereq-ctas { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 22px; }
   @media (max-width: 640px) { .prereq { padding: 28px 22px; } }
 
-  .steg1 { padding-bottom: 72px; scroll-margin-top: 24px; }
+  /* Plass til den faste menylinjen øverst, så overskriften ikke havner bak den */
+  #hjemme-flow { scroll-margin-top: 88px; }
+  .steg1 { padding-bottom: 72px; scroll-margin-top: 88px; }
   .steg1 h2 { margin: 0 0 10px; }
   .start-subheading { font-size: 0.97rem; color: var(--ink-soft); margin: 0 0 32px; max-width: 60ch; }
   .choice-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
