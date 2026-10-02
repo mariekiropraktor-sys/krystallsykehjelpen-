@@ -165,18 +165,25 @@ const emptySlots = Math.max(0, FEATURED_MIN - featured.length);
     </div>
   </section>
 
-  {hasPractitioners && (
   <section class="section-beige">
     <div class="container">
       <div class="section-head">
         <span class="eyebrow center">Kart</span>
-        <h2>Se behandlerne på kartet</h2>
-        <p>Kartet oppdateres med søkeresultatene over.</p>
+        {hasPractitioners ? (
+          <>
+            <h2>Se behandlerne på kartet</h2>
+            <p>Kartet oppdateres med søkeresultatene over.</p>
+          </>
+        ) : (
+          <>
+            <h2>Behandlere i Norge</h2>
+            <p>Kartet fylles etter hvert som behandlere legges inn. Foreløpig finner du Krystallsykehjelpen i Fetsund.</p>
+          </>
+        )}
       </div>
       <div id="practitioner-map" class="map"></div>
     </div>
   </section>
-  )}
 
   {hasPractitioners && (
   <section class="section-featured">
@@ -290,6 +297,15 @@ const emptySlots = Math.max(0, FEATURED_MIN - featured.length);
       attribution: "&copy; OpenStreetMap-bidragsytere",
       maxZoom: 19,
     }).addTo(map);
+  }
+
+  // Tom katalog: vis Norge-kartet med én nål for Krystallsykehjelpen i
+  // Fetsund (samme geokodede posisjon som på /kontakt/), så kartet ikke står
+  // tomt. Forsvinner av seg selv når første behandler er publisert.
+  if (map && ENTRIES.length === 0) {
+    L.marker([59.9281068, 11.1614349], { icon: privateIcon })
+      .addTo(map)
+      .bindPopup('<strong>Krystallsykehjelpen</strong><br>Garderbakken 1, Fetsund<br><a href="/fa-hjelp/">Få hjelp →</a>');
   }
 
   function clearResultMarkers() {
