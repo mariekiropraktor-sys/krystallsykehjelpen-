@@ -24,10 +24,19 @@ import { MARIE_URL } from "../config/marie";
     display: flex;
     align-items: center;
     gap: 14px;
-    background: #fff;
-    border-top: 1px solid var(--sky);
+    /* Gjennomsiktig: arver sidens bakgrunn (sky på øvelser, hvit i artikler)
+       i stedet for en hvit stripe uten sideluft. */
+    background: transparent;
+    border-top: 1px solid var(--line);
     padding: 24px 0;
     margin: 28px 0 0;
+  }
+
+  /* <picture> er selve flex-elementet. Uten dette krymper den når teksten er
+     lang, og portrettet blir klemt til en smal oval. */
+  .forfattersignatur picture {
+    flex-shrink: 0;
+    display: block;
   }
 
   .forfattersignatur-photo {
