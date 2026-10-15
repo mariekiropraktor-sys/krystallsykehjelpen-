@@ -132,7 +132,7 @@ const isVideo = exercise?.mediaFile?.asset?.mimeType?.startsWith("video/");
         {exercise.format === "steps" ? (
           mediaUrl ? (
             isVideo ? (
-              <video src={mediaUrl} controls class="media-block" />
+              <video src={`${mediaUrl}#t=0.1`} controls playsinline preload="metadata" class="media-video" />
             ) : (
               <img src={mediaUrl} alt={exercise.title} class="media-block" />
             )
@@ -142,7 +142,7 @@ const isVideo = exercise?.mediaFile?.asset?.mimeType?.startsWith("video/");
         ) : (
           mediaUrl && (
             isVideo ? (
-              <video src={mediaUrl} controls class="media-block media-block-light" />
+              <video src={`${mediaUrl}#t=0.1`} controls playsinline preload="metadata" class="media-video" />
             ) : (
               <img src={mediaUrl} alt={exercise.title} class="media-block media-block-light" />
             )
@@ -310,6 +310,8 @@ const isVideo = exercise?.mediaFile?.asset?.mimeType?.startsWith("video/");
 
   .media-block { width: 100%; border-radius: var(--radius); object-fit: cover; aspect-ratio: 16/9; margin-bottom: 28px; }
   .media-block-light { aspect-ratio: 21/9; }
+  /* Video beholder sitt eget format: liggende fyller bredden, stående (mobilfilm) begrenses i høyden og sentreres */
+  .media-video { display: block; width: auto; max-width: 100%; height: auto; max-height: min(80vh, 720px); margin: 0 auto 28px; border-radius: var(--radius); background: #000; }
 
   .callout {
     background: var(--sky); border-radius: var(--radius); padding: 20px 22px;
