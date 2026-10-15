@@ -149,6 +149,18 @@ const isVideo = exercise?.mediaFile?.asset?.mimeType?.startsWith("video/");
           )
         )}
 
+        {exercise.exerciseType === "reponering" && (
+          <div class="callout callout-tilpass">
+            <div class="callout-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9" /><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4 12.5-12.5z" /></svg>
+            </div>
+            <div>
+              <h3>Et utgangspunkt – ikke en fasit</h3>
+              <p>Filmen og stegene viser én vanlig måte å gjøre manøveren på, laget for en gjennomsnittlig pasient. En behandler vil som regel tilpasse øvelsen til deg – for eksempel vinkelen på hodet, tempoet og hvor lenge du ligger i hver stilling. Er du usikker, kan en kort <a href="/tjenester/videokonsultasjon/">videokonsultasjon</a> gi deg trygghet på at du gjør det riktig.</p>
+            </div>
+          </div>
+        )}
+
         {exercise.format === "steps" ? (
           <>
             {exercise.safetyNote && (
@@ -251,11 +263,20 @@ const isVideo = exercise?.mediaFile?.asset?.mimeType?.startsWith("video/");
 
         <Forfattersignatur />
 
-        <div class="cta-band">
-          <h2>Usikker på om dette er riktig øvelse for deg?</h2>
-          <p>Vi hjelper deg å finne riktig buegang og manøver.</p>
-          <a href="/kontakt/" class="btn cta-btn">Bestill time →</a>
-        </div>
+        {exercise.exerciseType === "reponering" ? (
+          <div class="cta-band">
+            <h2>Får du ikke helt til øvelsen?</h2>
+            <p>Det er helt vanlig. Stiv nakke, vondt i ryggen eller usikkerhet om hvilken side det gjelder, kan gjøre manøveren vanskelig å gjøre på egen hånd. I en kort videokonsultasjon ser vi på hvordan du gjør den, og tilpasser den til deg – hjemme fra din egen stue.</p>
+            <a href="/tjenester/videokonsultasjon/" class="btn cta-btn">Bestill videokonsultasjon →</a>
+            <a href="/kontakt/" class="cta-secondary">Eller bestill time på klinikken</a>
+          </div>
+        ) : (
+          <div class="cta-band">
+            <h2>Usikker på om dette er riktig øvelse for deg?</h2>
+            <p>Vi hjelper deg å finne riktig buegang og manøver.</p>
+            <a href="/kontakt/" class="btn cta-btn">Bestill time →</a>
+          </div>
+        )}
 
         <a href={`/ovelsesbibliotek/${categorySlug}/`} class="card-link back-link">← Tilbake til {groupTitle}</a>
 
@@ -372,6 +393,11 @@ const isVideo = exercise?.mediaFile?.asset?.mimeType?.startsWith("video/");
   .cta-band h2 { color: #fff; font-size: 1.3rem; margin-bottom: 10px; }
   .cta-band p { color: rgba(255,255,255,0.8); margin-bottom: 20px; font-size: 0.94rem; }
   .cta-btn { background: var(--beige); color: var(--navy); }
+  .cta-band p { max-width: 520px; margin-left: auto; margin-right: auto; }
+  .cta-secondary { display: block; margin-top: 14px; color: rgba(255,255,255,0.85); font-size: 0.9rem; text-decoration: underline; text-underline-offset: 3px; }
+  .cta-secondary:hover { color: #fff; }
+  .callout-tilpass { margin-top: 0; }
+  .callout-tilpass a { color: var(--navy-2); font-weight: 600; }
 
   .back-link { display: inline-block; }
 
