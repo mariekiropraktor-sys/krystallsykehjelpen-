@@ -48,6 +48,7 @@ export const navigationTabs: NavTab[] = [
     label: "Behandling",
     items: [
       { kind: "link", label: "Videokonsultasjon", href: "/tjenester/videokonsultasjon/" },
+      { kind: "link", label: "Hjemmebesøk", href: "/tjenester/hjemmebesok/" },
       { kind: "link", label: "Finn behandler", href: "/finn-behandler/" },
     ],
   },

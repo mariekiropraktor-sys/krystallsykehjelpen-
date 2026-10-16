@@ -1,0 +1,304 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+
+// Hjemmebesøk er på forespørsel (ikke bookbart i Pasientsky) — alle
+// handlingsknapper går til kontaktskjemaet, forhåndsutfylt via ?emne=hjemmebesok.
+const requestUrl = "/kontakt/?emne=hjemmebesok";
+const phone = "+47 46384492";
+const phoneHref = "tel:+4746384492";
+
+// Fastpris per sone. Én pris uansett om det er første besøk eller oppfølging.
+// Endre tallene her hvis prisene justeres.
+const zones = [
+  {
+    name: "Sone 1",
+    drive: "Under ca. 15 min kjøring",
+    price: "1 990 kr",
+    places: "F.eks. Lørenskog, Rælingen, Strømmen, Lillestrøm og Fetsund",
+  },
+  {
+    name: "Sone 2",
+    drive: "Ca. 15–30 min kjøring",
+    price: "2 590 kr",
+    places: "F.eks. Groruddalen og Oslo øst, Nittedal, Sørumsand, Kløfta og Enebakk",
+    featured: true,
+  },
+  {
+    name: "Sone 3",
+    drive: "Ca. 30–60 min kjøring",
+    price: "3 490 kr",
+    places: "Resten av området innenfor omtrent én times kjøring fra Fjellhamar",
+  },
+];
+
+const eveningSurcharge = "300 kr";
+
+const promises = [
+  { title: "Svar samme dag", desc: "Forespørsler som kommer inn på hverdager, besvares samme dag." },
+  { title: "Besøk innen 1–3 virkedager", desc: "Vanligvis — nøyaktig tidspunkt avtaler vi sammen." },
+  { title: "Ettermiddag og tidlig kveld", desc: "Siste oppstart er kl. 18.00." },
+];
+
+const steps = [
+  { num: "01", title: "Send en forespørsel", desc: "Fortell kort hvor du bor, hvordan svimmelheten arter seg og når det passer." },
+  { num: "02", title: "Vi avtaler tid", desc: "Du får svar med forslag til tidspunkt og pris for din sone." },
+  { num: "03", title: "Undersøkelse og behandling hjemme", desc: "Inntil 45 minutter hos deg, med undersøkelse, behandling og en plan videre." },
+];
+
+const faqItems = [
+  {
+    q: "Hvorfor er hjemmebesøk dyrere enn time på klinikken?",
+    a: "Prisen dekker reisetiden til og fra deg i tillegg til selve behandlingen. Derfor varierer den med avstand, og den er den samme enten det er første besøk eller oppfølging.",
+  },
+  {
+    q: "Må jeg ha fått diagnosen krystallsyke først?",
+    a: "Nei. Hjemmebesøket inkluderer undersøkelse. Er det tegn til at svimmelheten har en annen årsak enn krystallsyke, eller trengs det utredning som bare kan gjøres på klinikken, sier vi fra og hjelper deg videre.",
+  },
+  {
+    q: "Hva trenger jeg å ha klart?",
+    a: "En seng eller sofa med litt plass rundt. Det er fint om en annen voksen er hjemme, men det er ikke et krav.",
+  },
+  {
+    q: "Må oppfølgingen også være hjemme?",
+    a: "Nei. Mange med krystallsyke blir bra etter én eller to behandlinger. Kan du reise selv til oppfølging, er du velkommen på klinikken i Fetsund til vanlig klinikkpris.",
+  },
+  {
+    q: "Usikker på hvilken sone du bor i?",
+    a: "Send forespørselen likevel. Du får alltid oppgitt prisen før vi avtaler besøket.",
+  },
+];
+---
+
+<Layout
+  title="Hjemmebesøk | Krystallsykehjelpen"
+  description="Hjemmebesøk ved krystallsyke og svimmelhet på Romerike, i Oslo og omegn. Fastpris per sone, svar samme dag på hverdager."
+  activePath="/tjenester/hjemmebesok/"
+>
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <span class="eyebrow eyebrow-light">Hjemmebesøk</span>
+        <h1>For svimmel til å reise?<br /><em>Vi kommer til deg.</em></h1>
+        <p class="lead">Når rommet snurrer, er det tungt å komme seg til klinikken. Da kan du få undersøkelse og behandling av krystallsyke hjemme i egen seng eller sofa.</p>
+        <div class="hero-ctas">
+          <a href={requestUrl} class="btn btn-white">Send forespørsel</a>
+          <a href="#pris" class="text-link-light">Se område og priser</a>
+        </div>
+      </div>
+      <div class="promise-card">
+        <span class="promise-label">Slik fungerer tilgjengeligheten</span>
+        <ul>
+          {promises.map((p) => (
+            <li>
+              <span class="check" aria-hidden="true">✓</span>
+              <div>
+                <strong>{p.title}</strong>
+                <span>{p.desc}</span>
+              </div>
+            </li>
+          ))}
+        </ul>
+        <p class="promise-note">Hjemmebesøk avtales ved siden av klinikkdagene i Fetsund, derfor på forespørsel og ikke via timebok.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="acute-band">
+    <div class="container acute-inner">
+      <div class="dot-icon" aria-hidden="true"></div>
+      <p><strong>Hjemmebesøk er ikke akutthjelp.</strong> Plutselig svimmelhet sammen med lammelser, skjevt ansikt, talevansker, dobbeltsyn, besvimelse eller plutselig kraftig hodepine kan være hjerneslag. <strong>Ring 113.</strong> Ved andre akutte plager: legevakt 116 117.</p>
+    </div>
+  </section>
+
+  <section class="section" id="pris">
+    <div class="container">
+      <h2 class="center-heading">Område og pris</h2>
+      <p class="center-intro">Én fastpris per besøk, uansett om det er første gang eller oppfølging. Prisen dekker reise, undersøkelse og behandling, inntil 45 minutter hos deg.</p>
+      <div class="price-grid">
+        {zones.map((zone) => (
+          <div class={`price-card ${zone.featured ? "featured" : ""}`}>
+            <span class="mins">{zone.name}</span>
+            <div class="amount">{zone.price}</div>
+            <div class="subtitle">{zone.drive}</div>
+            <p class="desc">{zone.places}</p>
+          </div>
+        ))}
+      </div>
+      <div class="price-notes">
+        <p><strong>Kveldstillegg {eveningSurcharge}</strong> for besøk som starter etter kl. 16.00. Siste oppstart kl. 18.00.</p>
+        <p>Usikker på sone? Send forespørsel, så får du pris før vi avtaler noe.</p>
+      </div>
+      <div class="center-cta">
+        <a href={requestUrl} class="btn btn-primary">Send forespørsel om hjemmebesøk</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-sky" id="slik">
+    <div class="container">
+      <h2 class="center-heading">Slik fungerer det</h2>
+      <div class="steps-grid">
+        {steps.map((step) => (
+          <div class="step">
+            <span class="num">{step.num}</span>
+            <h3>{step.title}</h3>
+            <p>{step.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="clinic-band">
+    <div class="container clinic-inner">
+      <div>
+        <h3>Kan du reise selv til oppfølging?</h3>
+        <p>Mange med krystallsyke blir bra etter én eller to behandlinger. Klarer du turen, er oppfølging på klinikken i Fetsund både enklere og rimeligere.</p>
+      </div>
+      <a href="/fa-hjelp/" class="btn btn-primary">Se klinikk og video</a>
+    </div>
+  </section>
+
+  <section class="section faq-section">
+    <div class="container faq-container">
+      <h2 class="center-heading">Ofte stilte spørsmål</h2>
+      {faqItems.map((item, i) => (
+        <div class={`accordion-item ${i === 0 ? "open" : ""}`}>
+          <button class="accordion-trigger" aria-expanded={i === 0 ? "true" : "false"}>
+            {item.q}
+            <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
+          </button>
+          <div class="accordion-panel"><p>{item.a}</p></div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="final-cta">
+    <div class="container">
+      <h2>Trenger du hjemmebesøk?</h2>
+      <p>Send en forespørsel, så hører du fra oss samme dag på hverdager. Du kan også ringe {phone}.</p>
+      <div class="final-ctas">
+        <a href={requestUrl} class="btn btn-white">Send forespørsel</a>
+        <a href={phoneHref} class="text-link-light">Ring {phone}</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  document.querySelectorAll(".accordion-trigger").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const item = btn.closest(".accordion-item");
+      const isOpen = item?.classList.toggle("open");
+      btn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    });
+  });
+</script>
+
+<style>
+  /* Stilene følger videokonsultasjon-siden, så de to tjenestesidene ser like ut. */
+  .section { padding: 88px 0; }
+  @media (max-width: 640px) { .section { padding: 56px 0; } }
+  .section-sky { background: var(--sky); }
+
+  .eyebrow { font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 700; margin-bottom: 14px; display: inline-block; }
+  .eyebrow-light { color: var(--turquoise); }
+  .center-heading { font-size: clamp(1.6rem, 2.6vw, 2.1rem); text-align: center; margin-bottom: 12px; }
+  .center-intro { text-align: center; color: var(--ink-soft); max-width: 620px; margin: 0 auto; line-height: 1.6; }
+  .center-cta { text-align: center; margin-top: 36px; }
+
+  .btn-white { background: #fff; color: var(--navy); }
+  .text-link-light {
+    color: #fff; font-weight: 600; font-size: 0.95rem;
+    border-bottom: 1.5px solid rgba(255, 255, 255, 0.4); padding-bottom: 2px; text-decoration: none;
+  }
+  .text-link-light:hover { border-color: #fff; }
+
+  /* HERO */
+  .hero { background: linear-gradient(180deg, var(--navy) 0%, var(--navy-2) 100%); position: relative; overflow: hidden; padding: 88px 0 100px; }
+  .hero::before {
+    content: ""; position: absolute; top: -140px; right: -120px; width: 420px; height: 420px; border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, rgba(95, 193, 214, 0.35), transparent 70%);
+  }
+  .hero-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 56px; align-items: center; position: relative; z-index: 2; }
+  @media (max-width: 900px) { .hero-grid { grid-template-columns: 1fr; } }
+  @media (max-width: 640px) { .hero { padding: 64px 0 72px; } }
+  .hero h1 { color: #fff; font-size: clamp(2rem, 4vw, 3rem); line-height: 1.12; margin-bottom: 22px; }
+  .hero h1 em { font-style: italic; color: var(--turquoise); font-family: var(--font-display); }
+  .hero .lead { color: rgba(255, 255, 255, 0.85); font-size: 1.12rem; line-height: 1.6; max-width: 460px; margin-bottom: 32px; }
+  .hero-ctas { display: flex; align-items: center; gap: 26px; flex-wrap: wrap; }
+
+  .promise-card {
+    background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 26px; padding: 30px; color: #fff;
+  }
+  .promise-label { font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--turquoise); font-weight: 700; }
+  .promise-card ul { list-style: none; padding: 0; margin: 18px 0; display: flex; flex-direction: column; gap: 16px; }
+  .promise-card li { display: flex; gap: 14px; align-items: flex-start; }
+  .promise-card .check {
+    width: 28px; height: 28px; min-width: 28px; border-radius: 50%; background: #fff; color: var(--navy);
+    display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem;
+  }
+  .promise-card strong { display: block; font-size: 1.02rem; }
+  .promise-card li span:not(.check) { color: rgba(255, 255, 255, 0.78); font-size: 0.92rem; line-height: 1.5; }
+  .promise-note { margin: 0; font-size: 0.86rem; color: rgba(255, 255, 255, 0.7); line-height: 1.5; }
+
+  /* AKUTT */
+  .acute-band { background: #fff; padding: 28px 0; border-bottom: 1px solid var(--line); }
+  .acute-inner {
+    display: flex; gap: 14px; align-items: flex-start; max-width: 860px; margin: 0 auto;
+    border: 1.5px solid rgba(224, 82, 77, 0.35); border-radius: 18px; padding: 20px 24px;
+  }
+  .acute-inner .dot-icon { width: 10px; height: 10px; border-radius: 50%; background: #e0524d; margin-top: 7px; min-width: 10px; }
+  .acute-inner p { margin: 0; font-size: 0.95rem; color: var(--ink-soft); line-height: 1.6; }
+  .acute-inner strong { color: #c23f3a; }
+
+  /* PRIS */
+  .price-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-top: 44px; }
+  @media (max-width: 900px) { .price-grid { grid-template-columns: 1fr; } }
+  .price-card { border: 1.5px solid var(--line); border-radius: 26px; padding: 30px; background: #fff; }
+  .price-card.featured { border: 2px solid var(--accent); box-shadow: 0 20px 44px rgba(47, 121, 201, 0.12); }
+  .price-card .mins { color: var(--ink-soft); font-weight: 600; font-size: 0.88rem; text-transform: uppercase; letter-spacing: 0.05em; }
+  .price-card .amount { font-family: var(--font-display); font-size: 2.4rem; color: var(--navy); margin: 8px 0 4px; }
+  .price-card .subtitle { font-weight: 700; color: var(--navy); margin-bottom: 10px; font-size: 1rem; }
+  .price-card .desc { color: var(--ink-soft); font-size: 0.93rem; line-height: 1.55; margin: 0; }
+  .price-notes { max-width: 660px; margin: 28px auto 0; text-align: center; }
+  .price-notes p { color: var(--ink-soft); margin: 0 0 8px; line-height: 1.6; }
+  .price-notes strong { color: var(--navy); }
+
+  /* STEG */
+  .steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-top: 44px; }
+  @media (max-width: 900px) { .steps-grid { grid-template-columns: 1fr; } }
+  .step .num { font-family: var(--font-display); font-size: 1.05rem; color: var(--accent); font-weight: 600; margin-bottom: 12px; display: block; }
+  .step h3 { font-size: 1.15rem; margin-bottom: 8px; }
+  .step p { color: var(--ink-soft); line-height: 1.6; margin: 0; font-size: 0.95rem; }
+
+  /* KLINIKK */
+  .clinic-band { background: var(--beige); padding: 52px 0; }
+  .clinic-inner { display: flex; gap: 32px; align-items: center; justify-content: space-between; max-width: 900px; margin: 0 auto; }
+  .clinic-inner h3 { font-size: 1.25rem; margin-bottom: 8px; }
+  .clinic-inner p { color: var(--ink-soft); line-height: 1.6; margin: 0; max-width: 560px; }
+  @media (max-width: 700px) { .clinic-inner { flex-direction: column; align-items: flex-start; } }
+
+  /* FAQ */
+  .faq-container { max-width: 800px; }
+  .accordion-item { border-bottom: 1px solid rgba(22, 56, 117, 0.12); }
+  .accordion-item:first-of-type { border-top: 1px solid rgba(22, 56, 117, 0.12); }
+  .accordion-trigger {
+    width: 100%; text-align: left; background: none; border: none; padding: 18px 4px;
+    font-family: var(--font-body); font-weight: 700; font-size: 1rem; color: var(--navy);
+    display: flex; justify-content: space-between; align-items: center; cursor: pointer; min-height: 44px;
+  }
+  .accordion-trigger .chev { transition: transform 0.2s ease; flex-shrink: 0; margin-left: 12px; }
+  .accordion-item.open .accordion-trigger .chev { transform: rotate(180deg); }
+  .accordion-panel { max-height: 0; overflow: hidden; transition: max-height 0.25s ease; }
+  .accordion-item.open .accordion-panel { max-height: 300px; }
+  .accordion-panel p { padding: 0 4px 18px; margin: 0; color: var(--ink-soft); line-height: 1.6; }
+
+  /* AVSLUTNING */
+  .final-cta { background: linear-gradient(120deg, var(--navy-2), var(--navy)); text-align: center; padding: 80px 0; }
+  .final-cta h2 { color: #fff; font-size: clamp(1.6rem, 2.8vw, 2.2rem); margin-bottom: 16px; }
+  .final-cta p { color: rgba(255, 255, 255, 0.8); margin-bottom: 30px; font-size: 1.02rem; }
+  .final-ctas { display: flex; gap: 26px; justify-content: center; align-items: center; flex-wrap: wrap; }
+</style>

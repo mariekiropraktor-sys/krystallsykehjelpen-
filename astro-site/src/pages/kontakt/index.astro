@@ -157,7 +157,7 @@ const web3formsKey = import.meta.env.PUBLIC_WEB3FORMS_KEY ?? "";
     L.marker([point.lat, point.lng], { icon }).addTo(map).bindPopup(point.address);
   }
 
-  // Forhåndsutfylling fra ?emne=hjemmebesok (lenket fra /fa-hjelp/) — leses
+  // Forhåndsutfylling fra ?emne=hjemmebesok (lenket fra /tjenester/hjemmebesok/) — leses
   // client-side siden siden er statisk generert (ingen ?-parametere ved
   // build-tid).
   const emne = new URLSearchParams(window.location.search).get("emne");
@@ -165,7 +165,7 @@ const web3formsKey = import.meta.env.PUBLIC_WEB3FORMS_KEY ?? "";
     const subjectField = document.getElementById("contact-subject");
     const messageField = document.getElementById("contact-message");
     if (subjectField) subjectField.value = "Forespørsel om hjemmebesøk";
-    if (messageField) messageField.value = "Jeg ønsker å forespørre hjemmebesøk. ";
+    if (messageField) messageField.value = "Jeg ønsker å forespørre hjemmebesøk.\n\nSted / postnummer: \nNår passer det (dag og tid): \nKort om svimmelheten: \n";
   }
 
   const form = document.getElementById("contact-form");
