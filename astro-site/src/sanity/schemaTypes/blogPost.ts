@@ -45,7 +45,7 @@ export default defineType({
       name: "body",
       title: "Tekst",
       description:
-        "Vanlig brødtekst, pluss tre innsettbare blokktyper (sjekkliste, faktaboks, advarselsboks) — bruk «+»-menyen i editoren for å sette dem inn hvor som helst i teksten.",
+        "Vanlig brødtekst, pluss innsettbare blokktyper (sjekkliste, faktaboks, advarselsboks, øvelse med film) — bruk «+»-menyen i editoren for å sette dem inn hvor som helst i teksten.",
       type: "array",
       of: [
         { type: "block" },
@@ -89,6 +89,26 @@ export default defineType({
           preview: {
             select: { title: "title" },
             prepare: ({ title }) => ({ title: title || "Advarselsboks" }),
+          },
+        },
+        {
+          type: "object",
+          name: "exerciseVideo",
+          title: "Øvelse med film",
+          description: "Viser filmen fra øvelsesbiblioteket (med valg av side når to øvelser er valgt) og lenker til steg-for-steg-siden. Filmen oppdateres automatisk når øvelsen får ny film.",
+          fields: [
+            defineField({
+              name: "exercises",
+              title: "Øvelse(r)",
+              description: "Velg én øvelse, eller høyre- og venstre-versjonen av samme manøver",
+              type: "array",
+              of: [{ type: "reference", to: [{ type: "exercise" }] }],
+              validation: (Rule) => Rule.min(1).max(2),
+            }),
+          ],
+          preview: {
+            select: { title: "exercises.0.title" },
+            prepare: ({ title }) => ({ title: title ? `Øvelse med film: ${title}` : "Øvelse med film" }),
           },
         },
       ],

@@ -25,7 +25,17 @@ export async function getStaticPaths() {
 const { slug } = Astro.params;
 
 const QUERY = `*[_type == "blogPost" && slug.current == $slug][0]{
-  title, publishedDate, excerpt, category, shortSummary, body, warningBox,
+  title, publishedDate, excerpt, category, shortSummary, warningBox,
+  body[]{
+    ...,
+    _type == "exerciseVideo" => {
+      "exercises": exercises[]->{
+        title, side, "slug": slug.current,
+        "groupSlug": coalesce(category->slug.current, habitueringSeksjon),
+        "video": mediaFile.asset->url
+      }
+    }
+  },
   faq, sources, relatedLinks, coverImage, coverImageAlt, metaTitle, metaDescription
 }`;
 
@@ -200,6 +210,25 @@ const faqJsonLd = post?.faq?.length && {
 </Layout>
 
 <script>
+  // «Øvelse med film»: bytt mellom høyre og venstre side
+  document.querySelectorAll(".exercise-video").forEach((box) => {
+    const buttons = box.querySelectorAll(".exv-side");
+    buttons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const src = btn.getAttribute("data-video");
+        const media = box.querySelector(".exv-media");
+        if (!media) return;
+        media.innerHTML = src
+          ? `<video class="exv-video" src="${src}#t=0.1" controls playsinline preload="metadata"></video>`
+          : `<div class="exv-soon">Video kommer snart</div>`;
+        buttons.forEach((b) => {
+          b.classList.toggle("is-active", b === btn);
+          b.setAttribute("aria-pressed", String(b === btn));
+        });
+      });
+    });
+  });
+
   document.querySelectorAll(".accordion-trigger").forEach((btn) => {
     btn.addEventListener("click", () => {
       btn.closest(".accordion-item")?.classList.toggle("open");
@@ -267,6 +296,19 @@ const faqJsonLd = post?.faq?.length && {
   .post-body .fact-box-label { display: block; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--navy-2); margin-bottom: 8px; }
   .post-body .fact-box-content p { margin: 0; font-size: 1rem; line-height: 1.6; color: var(--ink); }
   .post-body .fact-box-illustration img { width: 100%; border-radius: var(--radius-sm); display: block; }
+
+  .post-body ol { margin: 0 0 20px; padding-left: 24px; }
+  .post-body ol li { font-size: 1.02rem; line-height: 1.6; color: var(--ink); margin-bottom: 8px; }
+  .post-body .exercise-video { background: var(--sky); border-radius: var(--radius); padding: 20px; margin: 24px 0 36px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .post-body .exv-media { width: 100%; display: flex; justify-content: center; }
+  .post-body .exv-video { width: auto; max-width: 100%; max-height: min(70vh, 560px); border-radius: var(--radius-sm); background: #000; display: block; }
+  .post-body .exv-soon { width: 100%; max-width: 300px; aspect-ratio: 9/16; max-height: 360px; border-radius: var(--radius-sm); background: #fff; display: grid; place-items: center; font-weight: 700; color: var(--navy-2); }
+  .post-body .exv-sides { display: flex; gap: 8px; }
+  .post-body .exv-side { font-family: var(--font-body); font-weight: 600; font-size: 0.88rem; border: 1px solid var(--line); background: #fff; color: var(--navy); border-radius: 999px; padding: 7px 14px; cursor: pointer; }
+  .post-body .exv-side.is-active { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .post-body .exv-links { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
+  .post-body .exv-link { font-weight: 600; color: var(--accent); text-decoration: none; font-size: 0.95rem; }
+  .post-body .exv-link:hover { text-decoration: underline; }
 
   .post-body .warning-box { background: #fff; border: 2px solid var(--navy-2); border-radius: var(--radius-sm); padding: 22px 24px; margin: 28px 0; }
   .post-body .warning-box h3 { margin: 0 0 12px; font-size: 1.05rem; color: var(--navy); }

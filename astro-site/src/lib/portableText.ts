@@ -27,6 +27,8 @@ type PortableBlock = {
   illustration?: unknown;
   // warningBox
   callout?: string;
+  // exerciseVideo (exercises er dereferert i GROQ-spørringen)
+  exercises?: { title?: string; side?: string; slug?: string; groupSlug?: string; video?: string | null }[];
 };
 
 function escapeHtml(value: string): string {
@@ -96,6 +98,33 @@ function renderWarningBox(block: PortableBlock): string {
   return `<div class="warning-box">${title}${items}${callout}</div>`;
 }
 
+
+const SIDE_LABEL: Record<string, string> = { hoyre: "Høyre side", venstre: "Venstre side" };
+
+// «Øvelse med film»: viser filmen fra øvelsesbiblioteket. Med to øvelser
+// (høyre/venstre) får leseren knapper for å bytte side — byttet håndteres av
+// et lite skript i blogg/[slug]/index.astro.
+function renderExerciseVideo(block: PortableBlock): string {
+  const list = (block.exercises ?? []).filter((ex) => ex && ex.slug);
+  if (!list.length) return "";
+  const first = list.find((ex) => ex.video) ?? list[0];
+  const media = first.video
+    ? `<video class="exv-video" src="${escapeHtml(first.video)}#t=0.1" controls playsinline preload="metadata"></video>`
+    : `<div class="exv-soon">Video kommer snart</div>`;
+  const buttons = list.length > 1
+    ? `<div class="exv-sides" role="group" aria-label="Velg side">${list
+        .map((ex) => `<button type="button" class="exv-side${ex === first ? " is-active" : ""}" aria-pressed="${ex === first}" data-video="${ex.video ? escapeHtml(ex.video) : ""}">${escapeHtml(SIDE_LABEL[ex.side ?? ""] ?? ex.title ?? "")}</button>`)
+        .join("")}</div>`
+    : "";
+  const links = list
+    .map((ex) => {
+      const label = list.length > 1 ? `Steg-for-steg, ${(SIDE_LABEL[ex.side ?? ""] ?? ex.title ?? "").toLowerCase()} →` : "Se steg-for-steg →";
+      return `<a href="/ovelsesbibliotek/${escapeHtml(ex.groupSlug ?? "")}/${escapeHtml(ex.slug ?? "")}/" class="exv-link">${escapeHtml(label)}</a>`;
+    })
+    .join("");
+  return `<div class="exercise-video"><div class="exv-media">${media}</div>${buttons}<div class="exv-links">${links}</div></div>`;
+}
+
 // Rendrer en full portable text-array til HTML, inkludert blokk-nivå
 // struktur (h2/h3-overskrifter og punktlister) — for lengre artikkelinnhold
 // (f.eks. blogPost.body) der inlineHtmlFromBlock() alene ikke er nok, fordi
@@ -121,6 +150,11 @@ export function blocksToHtml(blocks?: PortableBlock[]): string {
       i++;
       continue;
     }
+    if (block._type === "exerciseVideo") {
+      html += renderExerciseVideo(block);
+      i++;
+      continue;
+    }
     if (block._type !== "block") {
       i++;
       continue;
@@ -132,6 +166,15 @@ export function blocksToHtml(blocks?: PortableBlock[]): string {
         i++;
       }
       html += `<ul>${items}</ul>`;
+      continue;
+    }
+    if (block.listItem === "number") {
+      let items = "";
+      while (i < blocks.length && blocks[i].listItem === "number") {
+        items += `<li>${inlineHtmlFromBlock(blocks[i])}</li>`;
+        i++;
+      }
+      html += `<ol>${items}</ol>`;
       continue;
     }
     const isHeading = block.style === "h2" || block.style === "h3";
