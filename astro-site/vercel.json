@@ -1,8 +1,74 @@
 {
   "redirects": [
-    { "source": "/krystallsyken", "destination": "/svimmelhet/krystallsyke/", "permanent": true },
-    { "source": "/krystallsyken/", "destination": "/svimmelhet/krystallsyke/", "permanent": true },
-    { "source": "/om-oss", "destination": "/om-krystallsykehjelpen/", "permanent": true },
-    { "source": "/om-oss/", "destination": "/om-krystallsykehjelpen/", "permanent": true }
+    {
+      "source": "/krystallsyken",
+      "destination": "/svimmelhet/krystallsyke/",
+      "permanent": true
+    },
+    {
+      "source": "/krystallsyken/",
+      "destination": "/svimmelhet/krystallsyke/",
+      "permanent": true
+    },
+    {
+      "source": "/om-oss",
+      "destination": "/om-krystallsykehjelpen/",
+      "permanent": true
+    },
+    {
+      "source": "/om-oss/",
+      "destination": "/om-krystallsykehjelpen/",
+      "permanent": true
+    },
+    {
+      "source": "/kontakt-oss",
+      "destination": "/kontakt/",
+      "permanent": true
+    },
+    {
+      "source": "/kontakt-oss/",
+      "destination": "/kontakt/",
+      "permanent": true
+    },
+    {
+      "source": "/bestill-undersokelse-og-behandling-av-krystallsyke",
+      "destination": "/fa-hjelp/",
+      "permanent": true
+    },
+    {
+      "source": "/bestill-undersokelse-og-behandling-av-krystallsyke/",
+      "destination": "/fa-hjelp/",
+      "permanent": true
+    },
+    {
+      "source": "/ovelsesbibliotek/brandt-daroff",
+      "destination": "/ovelsesbibliotek/vestibular-rehab/brandt-daroff/",
+      "permanent": true
+    },
+    {
+      "source": "/ovelsesbibliotek/brandt-daroff/",
+      "destination": "/ovelsesbibliotek/vestibular-rehab/brandt-daroff/",
+      "permanent": true
+    },
+    {
+      "source": "/test-blogg",
+      "destination": "/blogg/",
+      "permanent": true
+    },
+    {
+      "source": "/test-blogg/",
+      "destination": "/blogg/",
+      "permanent": true
+    },
+    {
+      "source": "/category/ukategorisert",
+      "destination": "/blogg/",
+      "permanent": true
+    },
+    {
+      "source": "/category/ukategorisert/",
+      "destination": "/blogg/",
+      "permanent": true
+    }
   ]
 }
