@@ -34,7 +34,7 @@ const habitueringSections = Object.entries(HABITUERING_SECTIONS).map(([slug, sec
       <h1>{sections.hero?.heading ?? "Øvelsesbibliotek"}</h1>
       <p class="lead" set:html={sections.hero?.body?.[0]
         ? inlineHtmlFromBlock(sections.hero.body[0])
-        : "Reponeringsmanøvre organisert etter buegang, og habitueringsøvelser for balanse og forebygging."} />
+        : "Reponeringsmanøvre organisert etter buegang, og habitueringsøvelser for balanse og bevegelsestoleranse."} />
     </div>
     <svg class="hero-wave" viewBox="0 0 1440 60" preserveAspectRatio="none">
       <path d="M0,32 C360,72 1080,0 1440,32 L1440,60 L0,60 Z" fill="#ffffff" />

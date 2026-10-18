@@ -36,7 +36,8 @@ const QUERY = `*[_type == "blogPost" && slug.current == $slug][0]{
       }
     }
   },
-  faq, sources, relatedLinks, coverImage, coverImageAlt, metaTitle, metaDescription
+  faq, sources, relatedLinks, coverImage, coverImageAlt, metaTitle, metaDescription,
+  "author": author->{ name }
 }`;
 
 const post = await safeFetch(QUERY, { slug }, null, blogPreviewClient);
@@ -57,7 +58,14 @@ const articleJsonLd = post && {
   headline: post.title,
   description: post.excerpt,
   datePublished: post.publishedDate,
-  author: post.author?.name ? { "@type": "Person", name: post.author.name } : undefined,
+  // Forfatter hentes fra Sanity-referansen. Alle fagartikler er skrevet av
+  // Marie, så hun er reserve dersom referansen mangler.
+  author: {
+    "@type": "Person",
+    name: post.author?.name || "Marie Hermansen",
+    jobTitle: "Kiropraktor",
+    url: "https://www.krystallsykehjelpen.no/mott-marie/",
+  },
   image: coverUrl,
   mainEntityOfPage: canonicalUrl,
 };

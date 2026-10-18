@@ -10,6 +10,6 @@ export const HABITUERING_SECTIONS = {
   },
   "balanse-rad": {
     title: "Balansetrening og råd",
-    description: "Balanseøvelser og praktiske råd for hverdagen og forebygging.",
+    description: "Balanseøvelser og praktiske råd for en tryggere hverdag.",
   },
 } as const;

@@ -152,7 +152,7 @@ const heroImageUrl = diagnosis ? urlForImage(diagnosis.heroImage, 1000) : undefi
           </div>
           {heroImageUrl && (
             <div class="hero-media">
-              <img src={heroImageUrl} alt="" class="hero-photo" />
+              <img src={heroImageUrl} alt={`Illustrasjon: ${diagnosis.title}`} class="hero-photo" />
             </div>
           )}
         </div>
