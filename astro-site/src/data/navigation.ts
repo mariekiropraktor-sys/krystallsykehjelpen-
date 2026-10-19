@@ -33,9 +33,6 @@ export const navigationTabs: NavTab[] = [
     items: [
       { kind: "link", label: "Alle former for svimmelhet →", href: "/svimmelhet/", enabled: false },
       { kind: "link", label: "Krystallsyke (BPPV)", href: "/svimmelhet/krystallsyke/", sub: true },
-      { kind: "divider" },
-      { kind: "link", label: "Artikler", href: "/blogg/" },
-      { kind: "link", label: "Spørsmål og svar", href: "/faq/" },
     ],
   },
   {
@@ -43,6 +40,8 @@ export const navigationTabs: NavTab[] = [
     items: [
       { kind: "link", label: "Krystallsykehjelpen hjemme", href: "/hjemme/", description: "Veiledet selvhjelp for krystallsyke" },
       { kind: "link", label: "Øvelsesbibliotek", href: "/ovelsesbibliotek/" },
+      { kind: "link", label: "Artikler", href: "/blogg/" },
+      { kind: "link", label: "Spørsmål og svar", href: "/faq/" },
     ],
   },
   {
