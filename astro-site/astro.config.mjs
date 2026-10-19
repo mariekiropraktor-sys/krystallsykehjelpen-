@@ -32,8 +32,11 @@ export default defineConfig({
   },
   integrations: [
     sanity({
-      projectId: PUBLIC_SANITY_PROJECT_ID,
-      dataset: PUBLIC_SANITY_DATASET,
+      // Reserveverdier: prosjekt-ID og dataset er ikke hemmeligheter (de står
+      // også i sanity.config.ts). De gjør at forhåndsvisninger på Vercel
+      // bygger selv om miljøvariablene bare er satt for produksjon.
+      projectId: PUBLIC_SANITY_PROJECT_ID || "b1cmdslc",
+      dataset: PUBLIC_SANITY_DATASET || "production",
       useCdn: false,
       studioBasePath: "/admin",
     }),
