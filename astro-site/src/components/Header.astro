@@ -1,5 +1,5 @@
 ---
-import { getNavigationTabs, BOOKING_URL } from "../data/navigation";
+import { getNavigationTabs, topLevelLinks, BOOKING_URL } from "../data/navigation";
 
 export interface Props {
   activePath?: string;
@@ -100,6 +100,20 @@ const activeTabIndex = navigationTabs.findIndex((tab) =>
               </ul>
             </div>
           </div>
+        </div>
+      );
+    })}
+    {topLevelLinks.map((link) => {
+      const isActive = activePath === link.href || activePath.startsWith(link.href);
+      return (
+        <div class="nav-tab">
+          <a
+            href={link.href}
+            class={`nav-top-link${isActive ? " active" : ""}`}
+            aria-current={isActive ? "page" : undefined}
+          >
+            {link.label}
+          </a>
         </div>
       );
     })}
@@ -317,6 +331,20 @@ const activeTabIndex = navigationTabs.findIndex((tab) =>
     text-align: left;
   }
   .nav-tab-trigger:hover { background: var(--sky); }
+
+  /* Egne sider (Artikler, Spørsmål og svar) — samme utseende som fanene, uten pil */
+  .nav-top-link {
+    display: block;
+    padding: 14px 4px;
+    font-family: var(--font-body);
+    font-size: 1.03rem;
+    font-weight: 600;
+    color: var(--navy);
+    text-decoration: none;
+  }
+  .nav-top-link:hover { background: var(--sky); }
+  .nav-top-link:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; border-radius: 6px; }
+  .nav-top-link.active { background: var(--sky); box-shadow: inset 3px 0 0 var(--turquoise); padding-left: 12px; }
   .nav-tab-trigger:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; border-radius: 6px; }
   .nav-tab-trigger .chevron { flex-shrink: 0; color: var(--ink-soft); transition: transform 0.2s ease; }
   .nav-tab-trigger[aria-expanded="true"] .chevron { transform: rotate(180deg); }

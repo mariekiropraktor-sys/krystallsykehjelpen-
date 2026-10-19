@@ -1,5 +1,5 @@
 ---
-import { getNavigationTabs, footerBehandlingExtras } from "../data/navigation";
+import { getNavigationTabs, topLevelLinks, footerBehandlingExtras } from "../data/navigation";
 
 const year = new Date().getFullYear();
 const navigationTabs = await getNavigationTabs();
@@ -34,6 +34,9 @@ const omLinks = visibleLinks("Om");
         <h4>Om</h4>
         {omLinks.map((link) => <a href={link.href}>{link.label}</a>)}
       </div>
+      <div class="footer-top-links">
+        {topLevelLinks.map((link) => <a href={link.href}>{link.label}</a>)}
+      </div>
     </div>
     <div class="footer-bottom-row">
       <div class="footer-contact">
@@ -55,7 +58,7 @@ const omLinks = visibleLinks("Om");
   }
   .footer-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: 32px;
     margin-bottom: 32px;
   }
@@ -73,6 +76,8 @@ const omLinks = visibleLinks("Om");
     font-size: 0.92rem;
   }
   .site-footer a:hover { color: #fff; }
+  /* Egne sider vises som overskrifter, ikke som en egen kategori */
+  .site-footer .footer-top-links a { color: #fff; font-family: var(--font-display); font-size: 1rem; margin-bottom: 12px; }
   .footer-contact { display: flex; flex-direction: column; margin-bottom: 20px; }
   .footer-bottom {
     border-top: 1px solid rgba(255, 255, 255, 0.14);

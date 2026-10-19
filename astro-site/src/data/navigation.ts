@@ -40,8 +40,6 @@ export const navigationTabs: NavTab[] = [
     items: [
       { kind: "link", label: "Krystallsykehjelpen hjemme", href: "/hjemme/", description: "Veiledet selvhjelp for krystallsyke" },
       { kind: "link", label: "Øvelsesbibliotek", href: "/ovelsesbibliotek/" },
-      { kind: "link", label: "Artikler", href: "/blogg/" },
-      { kind: "link", label: "Spørsmål og svar", href: "/faq/" },
     ],
   },
   {
@@ -59,6 +57,13 @@ export const navigationTabs: NavTab[] = [
       { kind: "link", label: "Kontakt", href: "/kontakt/" },
     ],
   },
+];
+
+// Egne sider som står for seg selv i menyen, under de fire fanene (ikke inni
+// noen fane). Undersider matcher forelderen: /blogg/* → Artikler.
+export const topLevelLinks: { label: string; href: string }[] = [
+  { label: "Artikler", href: "/blogg/" },
+  { label: "Spørsmål og svar", href: "/faq/" },
 ];
 
 // Footer viser samme fire faner (kun enabled lenker), pluss et par
