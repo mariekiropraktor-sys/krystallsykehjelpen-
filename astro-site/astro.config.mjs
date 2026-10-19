@@ -2,6 +2,7 @@ import { defineConfig } from "astro/config";
 import { loadEnv } from "vite";
 import sanity from "@sanity/astro";
 import react from "@astrojs/react";
+import sitemap from "@astrojs/sitemap";
 
 const { PUBLIC_SANITY_PROJECT_ID, PUBLIC_SANITY_DATASET } = loadEnv(
   process.env.NODE_ENV || "development",
@@ -37,5 +38,20 @@ export default defineConfig({
       studioBasePath: "/admin",
     }),
     react(),
+    // Sitemap: lister alle sider som faktisk bygges (også Sanity-sider som
+    // artikler, øvelser og diagnosesider). @astrojs/sitemap er låst til
+    // 3.2.1, versjonen fra Astro 4-tiden. Sider som bare videresender
+    // (/om-oss/, /krystallsyken/), søkesiden og Studio holdes utenfor.
+    sitemap({
+      filter: (page) => {
+        const path = new URL(page).pathname;
+        return ![
+          "/om-oss/",
+          "/krystallsyken/",
+          "/krystallsyken",
+          "/sok/",
+        ].includes(path) && !path.startsWith("/admin");
+      },
+    }),
   ],
 });

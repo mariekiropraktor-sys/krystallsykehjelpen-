@@ -91,7 +91,7 @@ const journeyCards = [
       <div class="hero-bottom">
         <div class="hero-ctas">
           <a href="/blogg/er-dette-krystallsyke/" class="btn btn-primary">Jeg tror jeg har krystallsyke →</a>
-          <a href={bookingUrl} class="btn btn-beige">Bestill time</a>
+          <a href={bookingUrl} class="btn btn-outline hero-btn-secondary">Bestill time</a>
         </div>
         <div class="hero-search-row">
           <span class="hero-search-divider">eller søk direkte</span>
@@ -248,16 +248,20 @@ const journeyCards = [
   .hero-wave { position: absolute; bottom: -2px; left: 0; width: 100%; line-height: 0; }
 
   .hero-ctas { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; margin-top: 26px; margin-bottom: 26px; }
+  /* Sekundærknapp i hero: navy kant, så den ser klikkbar ut ved siden av hovedknappen. */
+  .hero-btn-secondary { border-color: var(--navy); }
 
   @media (max-width: 640px) {
     .hero-grid {
       grid-template-columns: 1fr;
       grid-template-areas:
         "text"
-        "image"
-        "bottom";
+        "bottom"
+        "image";
     }
-    .hero-image { margin-bottom: 8px; }
+    /* Mobil: knapper og søk rett under teksten, bildet etter, så
+       hovedknappen er synlig uten å scrolle. */
+    .hero-image { margin-top: 18px; }
   }
 
   .hero-photo-frame { display: block; width: 100%; }
