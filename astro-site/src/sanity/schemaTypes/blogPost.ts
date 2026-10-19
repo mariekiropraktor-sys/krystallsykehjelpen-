@@ -42,6 +42,25 @@ export default defineType({
       rows: 3,
     }),
     defineField({
+      name: "keyFacts",
+      title: "Nøkkeltall (valgfritt)",
+      description:
+        "Opptil tre tall som vises i egne bokser under «Kort fortalt», f.eks. «79» + «eldre undersøkt, medianalder 82 år». La stå tomt hvis artikkelen ikke har tall.",
+      type: "array",
+      validation: (Rule) => Rule.max(3),
+      of: [
+        {
+          type: "object",
+          name: "keyFact",
+          fields: [
+            defineField({ name: "value", title: "Tall", type: "string", description: "F.eks. «19 %» eller «7 av 15»", validation: (Rule) => Rule.required() }),
+            defineField({ name: "label", title: "Forklaring", type: "string", validation: (Rule) => Rule.required() }),
+          ],
+          preview: { select: { title: "value", subtitle: "label" } },
+        },
+      ],
+    }),
+    defineField({
       name: "body",
       title: "Tekst",
       description:
