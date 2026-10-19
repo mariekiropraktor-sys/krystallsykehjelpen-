@@ -18,6 +18,7 @@ export type NavItem =
       href: string;
       description?: string;
       enabled?: boolean; // default true — sett false for lenker til sider som ikke finnes ennå
+      sub?: boolean; // true = vises innrykket som underpunkt (diagnoser under «Alle former for svimmelhet»)
     }
   | { kind: "divider" };
 
@@ -31,7 +32,7 @@ export const navigationTabs: NavTab[] = [
     label: "Svimmelhet",
     items: [
       { kind: "link", label: "Alle former for svimmelhet →", href: "/svimmelhet/", enabled: false },
-      { kind: "link", label: "Krystallsyke (BPPV)", href: "/svimmelhet/krystallsyke/" },
+      { kind: "link", label: "Krystallsyke (BPPV)", href: "/svimmelhet/krystallsyke/", sub: true },
       { kind: "divider" },
       { kind: "link", label: "Artikler", href: "/blogg/" },
       { kind: "link", label: "Spørsmål og svar", href: "/faq/" },
@@ -101,6 +102,7 @@ export async function getNavigationTabs(): Promise<NavTab[]> {
       kind: "link" as const,
       label: d.title,
       href: `/svimmelhet/${d.slug}/`,
+      sub: true,
     }));
     svimmelhetTab.items.splice(insertAt, 0, ...newItems);
   } catch (error) {

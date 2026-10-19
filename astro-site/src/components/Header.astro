@@ -85,7 +85,7 @@ const activeTabIndex = navigationTabs.findIndex((tab) =>
                   item.kind === "divider" ? (
                     <li class="nav-divider" role="presentation" />
                   ) : isVisible(item) ? (
-                    <li>
+                    <li class={item.sub ? "nav-sub" : undefined}>
                       <a
                         href={item.href}
                         class={item.href === activePath ? "active" : ""}
@@ -352,6 +352,9 @@ const activeTabIndex = navigationTabs.findIndex((tab) =>
     font-weight: 600;
     border-radius: 0 8px 8px 0;
   }
+  /* Diagnoser vises som underpunkter under «Alle former for svimmelhet» */
+  .nav-tab-panel li.nav-sub { margin-left: 22px; }
+  .nav-tab-panel li.nav-sub a { font-size: 0.9rem; padding-top: 6px; padding-bottom: 6px; }
   .nav-link-label { display: block; }
   .nav-link-desc { display: block; font-size: 0.78rem; font-weight: 400; color: var(--ink-soft); margin-top: 2px; }
 
