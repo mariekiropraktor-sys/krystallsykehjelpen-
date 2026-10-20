@@ -101,28 +101,40 @@ function renderWarningBox(block: PortableBlock): string {
 
 const SIDE_LABEL: Record<string, string> = { hoyre: "Høyre side", venstre: "Venstre side" };
 
-// «Øvelse med film»: viser filmen fra øvelsesbiblioteket. Med to øvelser
-// (høyre/venstre) får leseren knapper for å bytte side — byttet håndteres av
-// et lite skript i blogg/[slug]/index.astro.
+// Øvelsesnavn uten « – høyre»/« – venstre» på slutten, f.eks. «Epley-manøver».
+function exerciseName(title?: string): string {
+  return (title ?? "").replace(/\s*[–-]\s*(høyre|venstre)\s*$/i, "").trim();
+}
+
+// «Øvelse med film»: viser filmen fra øvelsesbiblioteket i en egen boks med
+// øvelsens navn øverst, så det er tydelig hvilken øvelse filmen hører til.
+// Med to øvelser (høyre/venstre) får leseren en tydelig sidevelger — byttet
+// håndteres av et lite skript i blogg/[slug]/index.astro.
 function renderExerciseVideo(block: PortableBlock): string {
   const list = (block.exercises ?? []).filter((ex) => ex && ex.slug);
   if (!list.length) return "";
   const first = list.find((ex) => ex.video) ?? list[0];
+  const name = exerciseName(first.title) || "Øvelsen";
+  const sideText = (ex: { side?: string }) => (SIDE_LABEL[ex.side ?? ""] ?? "").toLowerCase();
   const media = first.video
     ? `<video class="exv-video" src="${escapeHtml(first.video)}#t=0.1" controls playsinline preload="metadata"></video>`
     : `<div class="exv-soon">Video kommer snart</div>`;
+  const head = `<div class="exv-head"><span class="exv-kicker">Film av øvelsen</span><span class="exv-title">${escapeHtml(name)}${
+    list.length > 1 ? `<span class="exv-current">, ${escapeHtml(sideText(first))}</span>` : ""
+  }</span></div>`;
   const buttons = list.length > 1
-    ? `<div class="exv-sides" role="group" aria-label="Velg side">${list
-        .map((ex) => `<button type="button" class="exv-side${ex === first ? " is-active" : ""}" aria-pressed="${ex === first}" data-video="${ex.video ? escapeHtml(ex.video) : ""}">${escapeHtml(SIDE_LABEL[ex.side ?? ""] ?? ex.title ?? "")}</button>`)
-        .join("")}</div>`
+    ? `<div class="exv-picker"><span class="exv-picker-label" id="exv-l-${escapeHtml(first.slug ?? "")}">Velg side</span><div class="exv-sides" role="group" aria-labelledby="exv-l-${escapeHtml(first.slug ?? "")}">${list
+        .map((ex) => `<button type="button" class="exv-side${ex === first ? " is-active" : ""}" aria-pressed="${ex === first}" data-side="${escapeHtml(ex.side ?? "")}" data-side-text="${escapeHtml(sideText(ex))}" data-video="${ex.video ? escapeHtml(ex.video) : ""}">${escapeHtml(SIDE_LABEL[ex.side ?? ""] ?? ex.title ?? "")}</button>`)
+        .join("")}</div></div>`
     : "";
   const links = list
     .map((ex) => {
-      const label = list.length > 1 ? `Steg-for-steg, ${(SIDE_LABEL[ex.side ?? ""] ?? ex.title ?? "").toLowerCase()} →` : "Se steg-for-steg →";
-      return `<a href="/ovelsesbibliotek/${escapeHtml(ex.groupSlug ?? "")}/${escapeHtml(ex.slug ?? "")}/" class="exv-link">${escapeHtml(label)}</a>`;
+      const label = list.length > 1 ? `Steg-for-steg: ${escapeHtml(name)}, ${escapeHtml(sideText(ex))} →` : `Steg-for-steg: ${escapeHtml(name)} →`;
+      const hidden = list.length > 1 && ex !== first ? " hidden" : "";
+      return `<a href="/ovelsesbibliotek/${escapeHtml(ex.groupSlug ?? "")}/${escapeHtml(ex.slug ?? "")}/" class="exv-link" data-side="${escapeHtml(ex.side ?? "")}"${hidden}>${label}</a>`;
     })
     .join("");
-  return `<div class="exercise-video"><div class="exv-media">${media}</div>${buttons}<div class="exv-links">${links}</div></div>`;
+  return `<figure class="exercise-video" aria-label="Film: ${escapeHtml(name)}">${head}${buttons}<div class="exv-media">${media}</div><div class="exv-links">${links}</div></figure>`;
 }
 
 // Rendrer en full portable text-array til HTML, inkludert blokk-nivå
