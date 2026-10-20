@@ -270,17 +270,25 @@ const faqJsonLd = post?.faq?.length && {
 </Layout>
 
 <script>
-  // «Øvelse med film»: bytt mellom høyre og venstre side
+  // «Øvelse med film»: bytt mellom høyre og venstre side. Oppdaterer
+  // filmen, teksten «…, høyre side» i boksens tittel og steg-for-steg-lenken.
   document.querySelectorAll(".exercise-video").forEach((box) => {
     const buttons = box.querySelectorAll(".exv-side");
     buttons.forEach((btn) => {
       btn.addEventListener("click", () => {
         const src = btn.getAttribute("data-video");
+        const side = btn.getAttribute("data-side");
         const media = box.querySelector(".exv-media");
-        if (!media) return;
-        media.innerHTML = src
-          ? `<video class="exv-video" src="${src}#t=0.1" controls playsinline preload="metadata"></video>`
-          : `<div class="exv-soon">Video kommer snart</div>`;
+        if (media) {
+          media.innerHTML = src
+            ? `<video class="exv-video" src="${src}#t=0.1" controls playsinline preload="metadata"></video>`
+            : `<div class="exv-soon">Video kommer snart</div>`;
+        }
+        const current = box.querySelector(".exv-current");
+        if (current) current.textContent = `, ${btn.getAttribute("data-side-text") ?? ""}`;
+        box.querySelectorAll(".exv-link").forEach((link) => {
+          link.hidden = link.getAttribute("data-side") !== side;
+        });
         buttons.forEach((b) => {
           b.classList.toggle("is-active", b === btn);
           b.setAttribute("aria-pressed", String(b === btn));
@@ -380,24 +388,6 @@ const faqJsonLd = post?.faq?.length && {
   .key-fact b { display: block; font-family: var(--font-display); font-size: 1.9rem; font-weight: 600; color: var(--navy); line-height: 1.1; font-variant-numeric: tabular-nums; }
   .key-fact span { display: block; margin-top: 6px; font-size: 0.86rem; color: var(--ink-soft); line-height: 1.4; }
 
-  .post-body p { font-size: 1.07rem; line-height: 1.78; margin: 0 0 18px; }
-  .post-body h2 {
-    font-size: clamp(1.4rem, 2.6vw, 1.75rem); line-height: 1.25; margin: 44px 0 14px; padding-top: 16px;
-    position: relative; scroll-margin-top: 100px; text-wrap: balance;
-  }
-  .post-body h2::before { content: ""; position: absolute; top: 0; left: 0; width: 36px; height: 3px; border-radius: 2px; background: var(--turquoise); }
-  .post-body h2:first-child { margin-top: 0; }
-  .post-body h3 { font-size: 1.2rem; margin: 30px 0 10px; scroll-margin-top: 100px; }
-  .post-body a { color: var(--navy-2); font-weight: 600; text-decoration: underline; text-decoration-color: var(--turquoise); text-decoration-thickness: 2px; text-underline-offset: 4px; }
-  .post-body a:hover { color: var(--accent); }
-  .post-body ul { margin: 0 0 20px; padding-left: 22px; }
-  .post-body li { font-size: 1.05rem; line-height: 1.65; color: var(--ink-soft); margin-bottom: 8px; }
-  .post-body li::marker { color: var(--turquoise); }
-  .post-body blockquote {
-    margin: 32px 0; padding: 6px 0 6px 22px; border-left: 3px solid var(--turquoise);
-    font-family: var(--font-display); font-style: italic; font-size: clamp(1.25rem, 2.4vw, 1.5rem);
-    line-height: 1.45; color: var(--navy);
-  }
 
   /* Varselboks: Navy-2 på hvitt, som på krystallsyke-siden (aldri rød) */
   .safety { display: flex; gap: 16px; border: 1.5px solid var(--navy-2); background: #fff; border-radius: 18px; padding: 20px 22px; margin: 36px 0; }
@@ -405,38 +395,9 @@ const faqJsonLd = post?.faq?.length && {
   .safety strong { display: block; color: var(--navy); margin-bottom: 4px; }
   .safety p { margin: 0; font-size: 0.98rem; line-height: 1.6; }
 
-  .post-body .checklist-box { background: var(--sky); border-radius: var(--radius); padding: 24px 26px; margin: 28px 0; }
-  .post-body .checklist-box h3 { margin: 0 0 14px; font-size: 1.05rem; color: var(--navy); }
-  .post-body .checklist-items { list-style: none; margin: 0; padding: 0; }
-  .post-body .checklist-items li { display: flex; align-items: flex-start; gap: 12px; font-size: 1rem; line-height: 1.55; color: var(--ink); margin-bottom: 10px; }
-  .post-body .checklist-items li:last-child { margin-bottom: 0; }
-  .post-body .checklist-mark { flex-shrink: 0; width: 18px; height: 18px; margin-top: 3px; border: 2px solid var(--turquoise); border-radius: 4px; }
 
-  .post-body .fact-box { background: var(--beige); border-radius: var(--radius); padding: 26px; margin: 28px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: center; }
-  @media (max-width: 640px) { .post-body .fact-box { grid-template-columns: 1fr; } }
-  .post-body .fact-box-full { grid-template-columns: 1fr; }
-  .post-body .fact-box-label { display: block; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--navy-2); margin-bottom: 8px; }
-  .post-body .fact-box-content p { margin: 0; font-size: 1rem; line-height: 1.6; color: var(--ink); }
-  .post-body .fact-box-illustration img { width: 100%; border-radius: var(--radius-sm); display: block; }
 
-  .post-body ol { margin: 0 0 20px; padding-left: 24px; }
-  .post-body ol li { font-size: 1.02rem; line-height: 1.6; color: var(--ink); margin-bottom: 8px; }
-  .post-body .exercise-video { background: var(--sky); border-radius: var(--radius); padding: 20px; margin: 24px 0 36px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
-  .post-body .exv-media { width: 100%; display: flex; justify-content: center; }
-  .post-body .exv-video { width: auto; max-width: 100%; max-height: min(70vh, 560px); border-radius: var(--radius-sm); background: #000; display: block; }
-  .post-body .exv-soon { width: 100%; max-width: 300px; aspect-ratio: 9/16; max-height: 360px; border-radius: var(--radius-sm); background: #fff; display: grid; place-items: center; font-weight: 700; color: var(--navy-2); }
-  .post-body .exv-sides { display: flex; gap: 8px; }
-  .post-body .exv-side { font-family: var(--font-body); font-weight: 600; font-size: 0.88rem; border: 1px solid var(--line); background: #fff; color: var(--navy); border-radius: 999px; padding: 7px 14px; cursor: pointer; }
-  .post-body .exv-side.is-active { background: var(--navy); color: #fff; border-color: var(--navy); }
-  .post-body .exv-links { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
-  .post-body .exv-link { font-weight: 600; color: var(--accent); text-decoration: none; font-size: 0.95rem; }
-  .post-body .exv-link:hover { text-decoration: underline; }
 
-  .post-body .warning-box { background: #fff; border: 2px solid var(--navy-2); border-radius: var(--radius-sm); padding: 22px 24px; margin: 28px 0; }
-  .post-body .warning-box h3 { margin: 0 0 12px; font-size: 1.05rem; color: var(--navy); }
-  .post-body .warning-box ul { margin: 0; padding-left: 20px; }
-  .post-body .warning-box li { font-size: 0.98rem; line-height: 1.6; color: var(--ink); margin-bottom: 6px; }
-  .post-body .warning-box-callout { background: var(--sky); border-radius: var(--radius-sm); padding: 12px 16px; margin: 16px 0 0; font-size: 0.94rem; font-weight: 600; color: var(--navy); }
 
   .faq-section { margin: 40px 0; }
   .faq-section h2 { font-size: 1.5rem; margin-bottom: 10px; }
@@ -490,4 +451,85 @@ const faqJsonLd = post?.faq?.length && {
   .post-cta p { max-width: 560px; margin: 0 auto 22px; }
 
   .not-found { padding: 90px 24px; text-align: center; max-width: 520px; }
+</style>
+
+<style is:global>
+  /* Artikkelteksten settes inn med set:html, så Astros avgrensede stiler når
+     ikke inn dit. Alle regler her er derfor globale, men begrenset til
+     .post-body, så de påvirker ikke resten av siden. */
+  .post-body p { font-size: 1.07rem; line-height: 1.78; margin: 0 0 18px; }
+  .post-body h2 {
+    font-size: clamp(1.4rem, 2.6vw, 1.75rem); line-height: 1.25; margin: 44px 0 14px; padding-top: 16px;
+    position: relative; scroll-margin-top: 100px; text-wrap: balance;
+  }
+  .post-body h2::before { content: ""; position: absolute; top: 0; left: 0; width: 36px; height: 3px; border-radius: 2px; background: var(--turquoise); }
+  .post-body h2:first-child { margin-top: 0; }
+  .post-body h3 { font-size: clamp(1.3rem, 2.3vw, 1.5rem); line-height: 1.3; margin: 40px 0 12px; scroll-margin-top: 100px; text-wrap: balance; }
+  .post-body a { color: var(--navy-2); font-weight: 600; text-decoration: underline; text-decoration-color: var(--turquoise); text-decoration-thickness: 2px; text-underline-offset: 4px; }
+  .post-body a:hover { color: var(--accent); }
+  .post-body ul { margin: 0 0 20px; padding-left: 22px; }
+  .post-body li { font-size: 1.05rem; line-height: 1.65; color: var(--ink-soft); margin-bottom: 8px; }
+  .post-body li::marker { color: var(--turquoise); }
+  .post-body blockquote {
+    margin: 32px 0; padding: 6px 0 6px 22px; border-left: 3px solid var(--turquoise);
+    font-family: var(--font-display); font-style: italic; font-size: clamp(1.25rem, 2.4vw, 1.5rem);
+    line-height: 1.45; color: var(--navy);
+  }
+  .post-body .checklist-box { background: var(--sky); border-radius: var(--radius); padding: 24px 26px; margin: 28px 0; }
+  .post-body .checklist-box h3 { margin: 0 0 14px; font-size: 1.05rem; color: var(--navy); }
+  .post-body .checklist-items { list-style: none; margin: 0; padding: 0; }
+  .post-body .checklist-items li { display: flex; align-items: flex-start; gap: 12px; font-size: 1rem; line-height: 1.55; color: var(--ink); margin-bottom: 10px; }
+  .post-body .checklist-items li:last-child { margin-bottom: 0; }
+  .post-body .checklist-mark { flex-shrink: 0; width: 18px; height: 18px; margin-top: 3px; border: 2px solid var(--turquoise); border-radius: 4px; }
+  .post-body .fact-box { background: var(--beige); border-radius: var(--radius); padding: 26px; margin: 28px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: center; }
+  @media (max-width: 640px) { .post-body .fact-box { grid-template-columns: 1fr; } }
+  .post-body .fact-box-full { grid-template-columns: 1fr; }
+  .post-body .fact-box-label { display: block; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--navy-2); margin-bottom: 8px; }
+  .post-body .fact-box-content p { margin: 0; font-size: 1rem; line-height: 1.6; color: var(--ink); }
+  .post-body .fact-box-illustration img { width: 100%; border-radius: var(--radius-sm); display: block; }
+  .post-body ol { margin: 0 0 20px; padding-left: 24px; }
+  .post-body ol li { font-size: 1.02rem; line-height: 1.6; color: var(--ink); margin-bottom: 8px; }
+  .post-body .warning-box { background: #fff; border: 2px solid var(--navy-2); border-radius: var(--radius-sm); padding: 22px 24px; margin: 28px 0; }
+  .post-body .warning-box h3 { margin: 0 0 12px; font-size: 1.05rem; color: var(--navy); }
+  .post-body .warning-box ul { margin: 0; padding-left: 20px; }
+  .post-body .warning-box li { font-size: 0.98rem; line-height: 1.6; color: var(--ink); margin-bottom: 6px; }
+  .post-body .warning-box-callout { background: var(--sky); border-radius: var(--radius-sm); padding: 12px 16px; margin: 16px 0 0; font-size: 0.94rem; font-weight: 600; color: var(--navy); }
+
+  /* «Øvelse med film» */
+  .post-body .exercise-video {
+    margin: 28px 0 44px; padding: 20px; border-radius: 20px; background: var(--sky);
+    border: 1px solid var(--line); display: flex; flex-direction: column; gap: 14px;
+  }
+  .post-body .exv-head { display: flex; flex-direction: column; gap: 2px; }
+  .post-body .exv-kicker { font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; color: var(--accent); }
+  .post-body .exv-title { font-family: var(--font-display); font-weight: 600; font-size: 1.2rem; line-height: 1.3; color: var(--navy); }
+  .post-body .exv-current { font-family: var(--font-body); font-weight: 500; font-size: 1rem; color: var(--ink-soft); }
+  .post-body .exv-picker { display: flex; flex-direction: column; gap: 8px; }
+  .post-body .exv-picker-label { font-size: 0.86rem; font-weight: 600; color: var(--navy); }
+  .post-body .exv-sides {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px;
+    background: #fff; border: 1.5px solid var(--navy); border-radius: 999px;
+  }
+  .post-body .exv-side {
+    font-family: var(--font-body); font-weight: 700; font-size: 0.98rem; min-height: 46px;
+    border: 0; background: transparent; color: var(--navy); border-radius: 999px; cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+  .post-body .exv-side:hover { background: var(--sky); }
+  .post-body .exv-side.is-active { background: var(--navy); color: #fff; }
+  .post-body .exv-side:focus-visible { outline: 3px solid var(--turquoise); outline-offset: 2px; }
+  .post-body .exv-media { display: flex; justify-content: center; }
+  .post-body .exv-video { width: auto; max-width: 100%; max-height: min(70vh, 560px); border-radius: 14px; background: #000; display: block; }
+  .post-body .exv-soon {
+    width: 100%; aspect-ratio: 16/9; max-height: 260px; border-radius: 14px; background: #fff;
+    display: grid; place-items: center; font-weight: 700; color: var(--navy-2);
+  }
+  .post-body .exv-links { display: flex; justify-content: center; }
+  .post-body .exv-link {
+    display: inline-block; font-weight: 700; font-size: 0.95rem; color: var(--navy-2); text-decoration: none;
+    border-bottom: 2px solid var(--turquoise); padding-bottom: 2px;
+  }
+  .post-body .exv-link[hidden] { display: none; }
+  .post-body .exv-link:hover { color: var(--accent); }
+  @media (prefers-reduced-motion: reduce) { .post-body .exv-side { transition: none; } }
 </style>
