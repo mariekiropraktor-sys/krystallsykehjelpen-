@@ -42,8 +42,8 @@ import Layout from "../../layouts/Layout.astro";
 <script>
   import { HABITUERING_SECTIONS } from "../../lib/habitueringSections";
 
-  const projectId = import.meta.env.PUBLIC_SANITY_PROJECT_ID;
-  const dataset = import.meta.env.PUBLIC_SANITY_DATASET;
+  const projectId = import.meta.env.PUBLIC_SANITY_PROJECT_ID || "b1cmdslc";
+  const dataset = import.meta.env.PUBLIC_SANITY_DATASET || "production";
 
   function groupTitleFor(value) {
     return HABITUERING_SECTIONS[value]?.title ?? value;

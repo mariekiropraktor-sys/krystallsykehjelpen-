@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /sok/
+
+Sitemap: https://www.krystallsykehjelpen.no/sitemap-index.xml
