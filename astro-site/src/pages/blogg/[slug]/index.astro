@@ -464,7 +464,7 @@ const faqJsonLd = post?.faq?.length && {
   }
   .post-body h2::before { content: ""; position: absolute; top: 0; left: 0; width: 36px; height: 3px; border-radius: 2px; background: var(--turquoise); }
   .post-body h2:first-child { margin-top: 0; }
-  .post-body h3 { font-size: 1.2rem; margin: 30px 0 10px; scroll-margin-top: 100px; }
+  .post-body h3 { font-size: clamp(1.3rem, 2.3vw, 1.5rem); line-height: 1.3; margin: 40px 0 12px; scroll-margin-top: 100px; text-wrap: balance; }
   .post-body a { color: var(--navy-2); font-weight: 600; text-decoration: underline; text-decoration-color: var(--turquoise); text-decoration-thickness: 2px; text-underline-offset: 4px; }
   .post-body a:hover { color: var(--accent); }
   .post-body ul { margin: 0 0 20px; padding-left: 22px; }
