@@ -58,7 +58,7 @@ const bookingUrl =
   <section class="section-sky">
     <div class="container">
       <h2>Time hos Krystallsykehjelpen</h2>
-      <p class="lead">Marie holder til på Fetsund Kiropraktorsenter. Videokonsultasjon fungerer uansett hvor du bor.</p>
+      <p class="lead">Marie holder til på Fetsund Kiropraktorsenter. Videokonsultasjon fungerer uansett hvor du bor. <a href="/priser/" class="price-link">Se priser →</a></p>
       <div class="help-grid grid-3">
         <a href={bookingUrl} class="card help-card featured">
           <span class="help-tag">Mest booket</span>
@@ -144,6 +144,8 @@ const bookingUrl =
   .section-alt { background: var(--paper); padding: 60px 0; }
 
   .section-sky h2, .section-alt h2, .section-beige h2 { margin: 0 0 8px; }
+  .price-link { color: var(--accent); font-weight: 700; text-decoration: none; white-space: nowrap; }
+  .price-link:hover { text-decoration: underline; }
   .lead { font-size: 0.95rem; color: var(--ink-soft); margin: 0 0 30px; }
 
   .help-grid { display: grid; gap: 22px; }
