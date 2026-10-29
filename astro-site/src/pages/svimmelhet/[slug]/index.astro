@@ -146,7 +146,7 @@ const heroImageUrl = diagnosis ? urlForImage(diagnosis.heroImage, 1000) : undefi
             <h1>{diagnosis.heroHeading || diagnosis.title}</h1>
             {diagnosis.heroLead && <p class="lead">{diagnosis.heroLead}</p>}
             <div class="hero-ctas">
-              <a href={bookingUrl} class="btn btn-primary">Bestill time →</a>
+              <a href="/fa-hjelp/#bestill" class="btn btn-primary">Bestill time →</a>
               {diagnosis.symptomsHeading && <a href="#kjennetegn" class="text-link">Forstå symptomene ↓</a>}
             </div>
           </div>
@@ -383,7 +383,7 @@ const heroImageUrl = diagnosis ? urlForImage(diagnosis.heroImage, 1000) : undefi
           <span class="eyebrow">Få hjelp</span>
           <h2>{diagnosis.ctaHeading || "Usikker på om dette gjelder deg?"}</h2>
           {diagnosis.ctaText && <p>{diagnosis.ctaText}</p>}
-          <a href={bookingUrl} class="btn btn-primary">Bestill time →</a>
+          <a href="/fa-hjelp/#bestill" class="btn btn-primary">Bestill time →</a>
         </div>
       </section>
     </>

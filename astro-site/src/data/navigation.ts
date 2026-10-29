@@ -71,7 +71,7 @@ export const topLevelLinks: { label: string; href: string }[] = [
 // footer-spesifikke lenker under "Behandling" (booking + Få hjelp) som ikke
 // hører hjemme i menypanelet.
 export const footerBehandlingExtras: NavItem[] = [
-  { kind: "link", label: "Bestill time", href: BOOKING_URL },
+  { kind: "link", label: "Bestill time", href: "/fa-hjelp/#bestill" }, // åpner valgvinduet (BestillValg.astro)
   { kind: "link", label: "Få hjelp", href: "/fa-hjelp/" },
 ];
 

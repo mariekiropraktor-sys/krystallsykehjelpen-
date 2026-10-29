@@ -1,0 +1,150 @@
+---
+// Valgvindu for «Bestill time»: lar pasienten velge klinikk, video eller
+// hjemmebesøk. Ligger én gang i Layout.astro og åpnes av alle lenker som
+// peker til BESTILL_HREF (/fa-hjelp/#bestill). Uten JavaScript går lenken
+// bare til /fa-hjelp/, så ingen havner i en blindvei.
+import { BOOKING_URL } from "../data/navigation";
+
+const options = [
+  {
+    title: "Time på klinikken",
+    text: "Undersøkelse og behandling hos Marie i Fetsund.",
+    href: BOOKING_URL,
+    external: true,
+  },
+  {
+    title: "Videokonsultasjon",
+    text: "Veiledning i øvelser og oppfølging hjemmefra.",
+    href: "/tjenester/videokonsultasjon/#foresporsel",
+  },
+  {
+    title: "Hjemmebesøk",
+    text: "Ved akutt krystallsyke, kveld og helg.",
+    note: "+400 kr utenfor Lillestrøm, Lørenskog og Rælingen",
+    href: "/kontakt/?emne=hjemmebesok",
+  },
+];
+---
+
+<div class="bv-scrim" id="bestill-valg" hidden>
+  <div class="bv-sheet" role="dialog" aria-modal="true" aria-labelledby="bv-title">
+    <span class="bv-grab" aria-hidden="true"></span>
+    <div class="bv-head">
+      <div>
+        <h2 id="bv-title">Hvordan vil du få hjelp?</h2>
+        <p>Velg det som passer best for deg.</p>
+      </div>
+      <button type="button" class="bv-close" data-bv-close aria-label="Lukk">×</button>
+    </div>
+    <div class="bv-options">
+      {options.map((o) => (
+        <a
+          class="bv-option"
+          href={o.href}
+          {...(o.external ? { target: "_blank", rel: "noopener" } : {})}
+        >
+          <div>
+            <h3>{o.title}</h3>
+            <p>{o.text}</p>
+            {o.note && <span class="bv-note">{o.note}</span>}
+          </div>
+          <span class="bv-arrow" aria-hidden="true">→</span>
+        </a>
+      ))}
+    </div>
+    <p class="bv-foot">Usikker? <a href="/fa-hjelp/">Se alle alternativer</a></p>
+  </div>
+</div>
+
+<script>
+  const scrim = document.getElementById("bestill-valg");
+  let lastFocus: HTMLElement | null = null;
+
+  const open = () => {
+    if (!scrim) return;
+    lastFocus = document.activeElement as HTMLElement | null;
+    scrim.hidden = false;
+    document.documentElement.classList.add("bv-open");
+    (scrim.querySelector(".bv-option") as HTMLElement | null)?.focus();
+  };
+
+  const close = () => {
+    if (!scrim || scrim.hidden) return;
+    scrim.hidden = true;
+    document.documentElement.classList.remove("bv-open");
+    lastFocus?.focus();
+  };
+
+  // Fanger opp klikk på alle «Bestill time»-lenker (href slutter på #bestill).
+  document.addEventListener("click", (e) => {
+    const link = (e.target as HTMLElement).closest?.('a[href$="#bestill"]');
+    if (link) {
+      e.preventDefault();
+      open();
+      return;
+    }
+    if ((e.target as HTMLElement).closest?.("[data-bv-close]") || e.target === scrim) close();
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") close();
+  });
+
+  // Lukk når et valg er gjort (f.eks. Pasientsky i ny fane).
+  scrim?.querySelectorAll(".bv-option, .bv-foot a").forEach((a) => a.addEventListener("click", () => close()));
+</script>
+
+<style is:global>
+  html.bv-open { overflow: hidden; }
+</style>
+
+<style>
+  .bv-scrim {
+    position: fixed; inset: 0; z-index: 1000; background: rgba(22, 56, 117, 0.38);
+    display: flex; align-items: flex-end; justify-content: center;
+  }
+  .bv-scrim[hidden] { display: none; }
+  .bv-sheet {
+    background: #fff; width: 100%; max-width: 520px; border-radius: 26px 26px 0 0;
+    padding: 12px 20px calc(24px + env(safe-area-inset-bottom, 0px));
+    box-shadow: 0 -12px 40px rgba(22, 56, 117, 0.18);
+    display: grid; gap: 18px; max-height: 92vh; overflow-y: auto;
+    animation: bv-up 0.28s ease-out;
+  }
+  @keyframes bv-up { from { transform: translateY(40px); opacity: 0.6; } to { transform: none; opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) { .bv-sheet { animation: none; } }
+  @media (min-width: 700px) {
+    .bv-scrim { align-items: center; }
+    .bv-sheet { border-radius: 26px; padding: 28px; }
+    .bv-grab { display: none; }
+  }
+  .bv-grab { width: 44px; height: 5px; border-radius: 99px; background: var(--line); justify-self: center; }
+  .bv-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+  .bv-head h2 { font-family: var(--font-display); font-weight: 500; color: var(--navy); font-size: 1.6rem; margin: 0; line-height: 1.2; }
+  .bv-head p { margin: 6px 0 0; color: var(--ink-soft); font-size: 0.95rem; }
+  .bv-close {
+    width: 40px; height: 40px; min-width: 40px; border-radius: 50%; border: 1.5px solid var(--line);
+    background: #fff; color: var(--navy); font-size: 1.3rem; line-height: 1; cursor: pointer;
+  }
+  .bv-options { display: grid; gap: 12px; }
+  .bv-option {
+    display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 12px;
+    text-decoration: none; color: inherit; background: var(--sky);
+    border: 1.5px solid transparent; border-radius: 18px; padding: 18px 18px 18px 20px;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  @media (hover: hover) {
+    .bv-option:hover { border-color: var(--accent); background: #fff; }
+    .bv-option:hover .bv-arrow { background: var(--navy); color: #fff; }
+  }
+  .bv-option:focus-visible, .bv-close:focus-visible { outline: 3px solid var(--turquoise); outline-offset: 2px; }
+  .bv-option h3 { font-family: var(--font-display); font-weight: 500; color: var(--navy); font-size: 1.25rem; margin: 0 0 4px; }
+  .bv-option p { margin: 0; color: var(--ink-soft); font-size: 0.95rem; line-height: 1.45; }
+  .bv-note { display: block; margin-top: 8px; font-size: 0.82rem; color: var(--navy-2); font-weight: 600; }
+  .bv-arrow {
+    width: 36px; height: 36px; border-radius: 50%; background: #fff; color: var(--navy);
+    display: grid; place-items: center; font-weight: 700;
+  }
+  .bv-foot { font-size: 0.9rem; color: var(--ink-soft); text-align: center; margin: 0; }
+  .bv-foot a { color: var(--navy-2); font-weight: 600; }
+</style>
