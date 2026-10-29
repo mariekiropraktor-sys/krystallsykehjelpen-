@@ -1,0 +1,260 @@
+---
+// Hjemmebesøk ved akutt krystallsyke: kort info + forespørselsskjema.
+// Skjemaet sendes via Web3Forms (samme nøkkel som kontakt/video) og går
+// videre til /tjenester/hjemmebesok/takk/ når det er sendt.
+import Layout from "../../../layouts/Layout.astro";
+
+const web3formsKey = import.meta.env.PUBLIC_WEB3FORMS_KEY ?? "";
+
+const facts = [
+  { title: "Ved akutt krystallsyke", text: "Når svimmelheten gjør det vanskelig å komme seg til klinikken." },
+  { title: "Kveld og helg", text: "Marie kommer hjem til deg utenom vanlig klinikktid." },
+  { title: "Lillestrøm, Lørenskog og Rælingen", text: "Utenfor nærområdet kommer et tillegg på 400 kr." },
+];
+---
+
+<Layout
+  title="Hjemmebesøk ved krystallsyke | Krystallsykehjelpen"
+  description="Hjemmebesøk ved akutt krystallsyke, kveld og helg. Send en forespørsel, så tar Marie kontakt."
+  activePath="/tjenester/hjemmebesok/"
+>
+  <section class="hb-hero">
+    <div class="container hb-hero-inner">
+      <span class="eyebrow">Hjemmebesøk</span>
+      <h1>Vi kommer <em>hjem til deg</em></h1>
+      <p class="lead">Ved akutt krystallsyke kan det være vanskelig å reise. Send en forespørsel, så tar Marie kontakt for å vurdere om et hjemmebesøk passer.</p>
+      <div class="hb-actions">
+        <a href="#foresporsel" class="btn btn-primary">Send forespørsel</a>
+        <a href="/priser/" class="text-link">Se priser</a>
+      </div>
+      <ul class="facts">
+        {facts.map((f) => (
+          <li>
+            <strong>{f.title}</strong>
+            <span>{f.text}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section request-section" id="foresporsel">
+    <div class="container request-container">
+      <span class="eyebrow">Forespørsel</span>
+      <h2>Be om hjemmebesøk</h2>
+      <p class="request-lead">Fyll ut skjemaet, så ringer Marie deg tilbake.</p>
+
+      <form id="hb-form" class="request-card" novalidate>
+        <input type="hidden" name="access_key" value={web3formsKey} />
+        <input type="hidden" name="subject" value="Forespørsel om hjemmebesøk" />
+        <input type="hidden" name="from_name" value="Krystallsykehjelpen – hjemmebesøk" />
+        <input type="checkbox" name="botcheck" class="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+        <div class="request-alert" role="note">
+          <span class="alert-icon" aria-hidden="true">!</span>
+          <p><strong>Ikke send skjema ved akutte symptomer.</strong> Ved nye lammelser, ansiktsskjevhet, talevansker, dobbeltsyn, besvimelse, plutselig kraftig hodepine eller plutselig hørselstap: ring 113. Legevakt: 116 117.</p>
+        </div>
+
+        <fieldset>
+          <legend>Kontaktinformasjon</legend>
+          <div class="field-grid">
+            <label class="field" for="hb-navn">Navn<input type="text" name="name" id="hb-navn" autocomplete="name" required /></label>
+            <label class="field" for="hb-tlf">Telefon<input type="tel" name="Telefon" id="hb-tlf" autocomplete="tel" required /></label>
+          </div>
+          <label class="field" for="hb-epost"><span>E-post <span class="optional">(valgfritt)</span></span><input type="email" name="email" id="hb-epost" autocomplete="email" /></label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Hvor skal Marie komme?</legend>
+          <label class="field" for="hb-adresse">Adresse<input type="text" name="Adresse" id="hb-adresse" autocomplete="street-address" placeholder="Gateadresse og poststed" required /></label>
+          <div class="question">
+            <p>Bor du i Lillestrøm, Lørenskog eller Rælingen?</p>
+            <div class="choices">
+              <label class="choice"><input type="radio" name="Område" id="hb-omr-ja" value="Innenfor nærområdet" /> Ja</label>
+              <label class="choice"><input type="radio" name="Område" id="hb-omr-nei" value="Utenfor nærområdet (+400 kr)" /> Nei, et annet sted</label>
+            </div>
+            <small class="field-hint" id="hb-omr-note" hidden>Utenfor nærområdet kommer et tillegg på 400 kr.</small>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Noen korte spørsmål</legend>
+          <div class="question">
+            <p>Kommer svimmelheten når du endrer hodestilling, for eksempel når du legger deg ned, snur deg i sengen eller ser opp?</p>
+            <div class="choices">
+              <label class="choice"><input type="radio" name="Svimmel ved hodebevegelse" id="hb-q1-ja" value="Ja" /> Ja</label>
+              <label class="choice"><input type="radio" name="Svimmel ved hodebevegelse" id="hb-q1-nei" value="Nei" /> Nei</label>
+              <label class="choice"><input type="radio" name="Svimmel ved hodebevegelse" id="hb-q1-usikker" value="Usikker" /> Usikker</label>
+            </div>
+          </div>
+          <div class="question">
+            <p>Har du hatt krystallsyke før?</p>
+            <div class="choices">
+              <label class="choice"><input type="radio" name="Hatt krystallsyke før" id="hb-q2-ja" value="Ja" /> Ja</label>
+              <label class="choice"><input type="radio" name="Hatt krystallsyke før" id="hb-q2-nei" value="Nei" /> Nei</label>
+              <label class="choice"><input type="radio" name="Hatt krystallsyke før" id="hb-q2-usikker" value="Usikker" /> Usikker</label>
+            </div>
+          </div>
+          <div class="question">
+            <p>Når passer det?</p>
+            <div class="choices">
+              <label class="choice"><input type="radio" name="Når" id="hb-naar-snart" value="Så snart som mulig" /> Så snart som mulig</label>
+              <label class="choice"><input type="radio" name="Når" id="hb-naar-annet" value="Et annet tidspunkt (se melding)" /> Et annet tidspunkt</label>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Vil du fortelle noe mer?</legend>
+          <label class="field" for="hb-melding">
+            <span>Melding til Marie <span class="optional">(valgfritt)</span></span>
+            <textarea name="Melding" id="hb-melding" rows="4" maxlength="1000" placeholder="For eksempel portkode, etasje eller når det passer å bli ringt."></textarea>
+          </label>
+          <small class="field-hint">Hold det kort. Detaljer om helsen din tar vi heller når Marie ringer.</small>
+        </fieldset>
+
+        <label class="consent" for="hb-samtykke">
+          <input type="checkbox" id="hb-samtykke" />
+          <span>Jeg forstår at hjemmebesøk ikke er et akuttilbud, og at Marie tar kontakt for å avtale tid. Jeg skriver ikke inn sensitive helseopplysninger her.</span>
+        </label>
+
+        <p id="hb-status" class="form-status" role="status" aria-live="polite"></p>
+        <button type="submit" class="btn btn-primary">Send forespørsel</button>
+      </form>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  const form = document.getElementById("hb-form") as HTMLFormElement | null;
+  if (form) {
+    const status = document.getElementById("hb-status");
+    const accessKey = (form.querySelector('input[name="access_key"]') as HTMLInputElement | null)?.value;
+    const omrNote = document.getElementById("hb-omr-note");
+
+    // Vis tillegget når man velger «et annet sted».
+    form.querySelectorAll<HTMLInputElement>('input[name="Område"]').forEach((r) =>
+      r.addEventListener("change", () => {
+        if (omrNote) omrNote.hidden = r.id !== "hb-omr-nei" || !r.checked;
+      })
+    );
+
+    const setStatus = (text: string, type = "") => {
+      if (!status) return;
+      status.textContent = text;
+      status.className = `form-status ${type}`.trim();
+    };
+    const svar = (name: string) =>
+      (form.querySelector(`input[name="${name}"]:checked`) as HTMLInputElement | null)?.value;
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!form.checkValidity()) {
+        setStatus("Fyll inn navn, telefon og adresse (og en gyldig e-post hvis du oppgir den).", "error");
+        return;
+      }
+      if (!svar("Område")) {
+        setStatus("Svar på om du bor i Lillestrøm, Lørenskog eller Rælingen.", "error");
+        return;
+      }
+      if (!(document.getElementById("hb-samtykke") as HTMLInputElement | null)?.checked) {
+        setStatus("Kryss av i boksen over før du sender.", "error");
+        return;
+      }
+      if (!accessKey) {
+        setStatus("Skjemaet er ikke koblet til ennå. Ring +47 46384492 i mellomtiden.", "error");
+        return;
+      }
+
+      const btn = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+      if (btn) btn.disabled = true;
+      setStatus("Sender …");
+      try {
+        const res = await fetch("https://api.web3forms.com/submit", {
+          method: "POST",
+          headers: { Accept: "application/json" },
+          body: new FormData(form),
+        });
+        const result = await res.json();
+        if (!result.success) throw new Error();
+        window.location.href = "/tjenester/hjemmebesok/takk/";
+      } catch {
+        setStatus("Noe gikk galt. Prøv igjen, eller ring +47 46384492.", "error");
+        if (btn) btn.disabled = false;
+      }
+    });
+  }
+</script>
+
+<style>
+  [hidden] { display: none !important; }
+  .section { padding: 80px 0; }
+  @media (max-width: 640px) { .section { padding: 56px 0; } }
+  .eyebrow { font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 12px; display: inline-block; }
+  .text-link { color: var(--navy-2); font-weight: 700; }
+
+  /* HERO */
+  .hb-hero { background: var(--sky); padding: 72px 0 64px; }
+  .hb-hero-inner { max-width: 760px; }
+  .hb-hero h1 { font-size: clamp(2rem, 5vw, 3rem); line-height: 1.12; margin-bottom: 16px; text-wrap: balance; }
+  .hb-hero h1 em { font-style: italic; color: var(--accent); }
+  .hb-hero .lead { font-size: 1.08rem; line-height: 1.6; max-width: 560px; }
+  .hb-actions { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; margin: 8px 0 36px; }
+  .facts { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  @media (max-width: 760px) { .facts { grid-template-columns: 1fr; gap: 10px; } }
+  .facts li { background: #fff; border-radius: 18px; padding: 18px 20px; box-shadow: 0 8px 22px rgba(22, 56, 117, 0.06); display: grid; gap: 4px; }
+  .facts strong { color: var(--navy); font-size: 1rem; }
+  .facts span { color: var(--ink-soft); font-size: 0.93rem; line-height: 1.45; }
+
+  /* SKJEMA (samme uttrykk som videoskjemaet) */
+  .request-section { background: var(--beige); }
+  .request-container { max-width: 760px; }
+  .request-container h2 { font-size: clamp(1.6rem, 2.6vw, 2.1rem); margin-bottom: 12px; }
+  .request-lead { font-size: 1.05rem; line-height: 1.6; }
+  .request-card {
+    background: #fff; border-radius: 26px; padding: clamp(22px, 4vw, 40px); margin-top: 28px;
+    box-shadow: 0 16px 40px rgba(22, 56, 117, 0.09); display: grid; gap: 28px;
+  }
+  .botcheck { display: none; }
+  .request-alert { border: 2px solid var(--navy-2); border-radius: 18px; padding: 18px 20px; display: flex; gap: 14px; align-items: flex-start; }
+  .alert-icon {
+    width: 30px; height: 30px; min-width: 30px; border-radius: 50%; background: var(--navy-2); color: #fff;
+    font-family: var(--font-display); font-weight: 600; display: flex; align-items: center; justify-content: center;
+  }
+  .request-alert p { margin: 0; font-size: 0.94rem; line-height: 1.55; }
+  .request-alert strong { color: var(--navy-2); }
+  .request-card fieldset { border: 0; margin: 0; padding: 0; min-width: 0; display: grid; gap: 14px; }
+  .request-card legend { font-family: var(--font-display); font-size: 1.25rem; color: var(--navy); margin-bottom: 8px; padding: 0; }
+  .question { display: grid; gap: 10px; padding-top: 16px; border-top: 1px solid var(--line); }
+  .question p { margin: 0; font-weight: 600; color: var(--navy); line-height: 1.45; }
+  .choices { display: flex; flex-wrap: wrap; gap: 10px; }
+  .choice {
+    position: relative; display: inline-flex; align-items: center; min-height: 44px; padding: 10px 18px;
+    border: 1.5px solid var(--line); border-radius: 999px; background: #fff; cursor: pointer;
+    font-size: 0.95rem; color: var(--navy); font-weight: 600;
+  }
+  .choice input { position: absolute; opacity: 0; pointer-events: none; }
+  .choice:has(input:checked) { background: var(--navy); border-color: var(--navy); color: #fff; }
+  .choice:has(input:focus-visible) { outline: 3px solid var(--turquoise); outline-offset: 2px; }
+  .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 560px) { .field-grid { grid-template-columns: 1fr; } }
+  .field { display: grid; gap: 6px; font-weight: 600; font-size: 0.94rem; color: var(--navy); min-width: 0; }
+  .field input, .field textarea {
+    font: 400 1rem var(--font-body); padding: 13px 14px; border: 1.5px solid var(--line);
+    border-radius: 12px; color: var(--ink); background: #fff; width: 100%;
+  }
+  .field textarea { resize: vertical; min-height: 110px; }
+  .field input:focus, .field textarea:focus { outline: none; border-color: var(--accent); }
+  .optional { font-weight: 400; color: var(--ink-soft); }
+  .field-hint { color: var(--ink-soft); font-size: 0.88rem; }
+  .consent {
+    display: flex; gap: 12px; align-items: flex-start; background: var(--sky); border-radius: 14px;
+    padding: 16px; font-size: 0.94rem; line-height: 1.5; color: var(--ink); cursor: pointer;
+  }
+  .consent input { width: 20px; height: 20px; min-width: 20px; margin-top: 2px; accent-color: var(--navy); }
+  .form-status { margin: 0; font-weight: 600; font-size: 0.94rem; }
+  .form-status:empty { display: none; }
+  .form-status.error { color: var(--navy-2); }
+  .request-card .btn-primary { justify-self: start; border: 0; cursor: pointer; }
+  .request-card .btn-primary:disabled { opacity: 0.6; cursor: wait; }
+</style>

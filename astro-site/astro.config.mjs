@@ -54,6 +54,7 @@ export default defineConfig({
           "/krystallsyken",
           "/sok/",
           "/tjenester/videokonsultasjon/takk/",
+          "/tjenester/hjemmebesok/takk/",
         ].includes(path) && !path.startsWith("/admin");
       },
     }),

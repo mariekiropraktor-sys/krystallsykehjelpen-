@@ -1,0 +1,187 @@
+---
+// Takkeside etter forespørsel om hjemmebesøk (samme oppsett som
+// videokonsultasjonens takkeside).
+import Layout from "../../../../layouts/Layout.astro";
+
+const checklist = [
+  { id: "telefon", title: "Ha telefonen i nærheten", text: "Marie ringer for å avtale tidspunkt, gjerne fra et ukjent nummer." },
+  { id: "hjelper", title: "Noen som kan være til stede", text: "Fint om en annen voksen kan slippe Marie inn og støtte deg under øvelsene." },
+  { id: "seng", title: "Seng eller sofa med god plass rundt", text: "Da kan undersøkelse og manøver gjøres trygt der du er." },
+  { id: "adkomst", title: "Portkode, etasje og parkering", text: "Ha det klart når Marie ringer, så finner hun raskt frem." },
+  { id: "notater", title: "Noen notater om svimmelheten", text: "Når startet den, hva utløser den, og hva har du prøvd?" },
+];
+---
+
+<Layout
+  title="Forespørsel om hjemmebesøk sendt | Krystallsykehjelpen"
+  description="Takk for forespørselen om hjemmebesøk. Marie ringer deg tilbake."
+  activePath="/tjenester/hjemmebesok/"
+  noindex
+>
+  <section class="takk-hero">
+    <div class="container takk-hero-inner">
+      <div class="check-circle" aria-hidden="true">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12.5 10 17.5 19 7.5" /></svg>
+      </div>
+      <span class="eyebrow">Forespørsel sendt</span>
+      <h1>Takk, forespørselen <em>er sendt</em></h1>
+      <p class="lead">Marie har mottatt forespørselen din og ringer deg tilbake så snart hun kan for å avtale hjemmebesøket.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container narrow">
+      <h2>Hva skjer nå?</h2>
+      <ol class="timeline">
+        <li class="done">
+          <span class="dot" aria-hidden="true"></span>
+          <div>
+            <h3>Forespørselen er mottatt</h3>
+            <p>Svarene dine er sendt til Marie.</p>
+          </div>
+        </li>
+        <li>
+          <span class="dot" aria-hidden="true"></span>
+          <div>
+            <h3>Marie ringer deg</h3>
+            <p>På telefonnummeret du oppga, så snart hun kan.</p>
+          </div>
+        </li>
+        <li>
+          <span class="dot" aria-hidden="true"></span>
+          <div>
+            <h3>Dere avtaler tidspunkt</h3>
+            <p>Hjemmebesøk skjer på kveldstid eller i helgen.</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section checklist-section">
+    <div class="container narrow">
+      <span class="eyebrow">Sjekkliste</span>
+      <h2>Gjør klart til besøket</h2>
+      <p class="intro">Kryss av etter hvert. Sjekklisten lagres ikke, den er bare til hjelp mens du forbereder deg.</p>
+
+      <ul class="checklist">
+        {checklist.map((item) => (
+          <li>
+            <label class="check-item" for={`ck-${item.id}`}>
+              <input type="checkbox" id={`ck-${item.id}`} />
+              <span class="box" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12.5 10 17.5 19 7.5" /></svg>
+              </span>
+              <span class="check-text">
+                <strong>{item.title}</strong>
+                <span>{item.text}</span>
+              </span>
+            </label>
+          </li>
+        ))}
+      </ul>
+      <p class="progress" id="ck-progress" aria-live="polite">0 av {checklist.length} klart</p>
+    </div>
+  </section>
+
+  <section class="section acute-section">
+    <div class="container narrow">
+      <div class="acute-note">
+        <span class="acute-icon" aria-hidden="true">!</span>
+        <p><strong>Blir du verre før besøket?</strong> Ved nye lammelser, ansiktsskjevhet, talevansker, dobbeltsyn, besvimelse eller plutselig kraftig hodepine: ring 113. Legevakt: 116 117.</p>
+      </div>
+      <div class="next-links">
+        <a href="/svimmelhet/krystallsyke/" class="btn btn-outline">Les om krystallsyke</a>
+        <a href="/" class="text-link">Til forsiden</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  // Teller for sjekklisten.
+  const boxes = document.querySelectorAll<HTMLInputElement>(".checklist input");
+  const progress = document.getElementById("ck-progress");
+  const update = () => {
+    const done = [...boxes].filter((b) => b.checked).length;
+    if (progress) progress.textContent = done === boxes.length ? "Alt er klart til besøket!" : `${done} av ${boxes.length} klart`;
+  };
+  boxes.forEach((b) => b.addEventListener("change", update));
+</script>
+
+<style>
+  [hidden] { display: none !important; }
+  .section { padding: 72px 0; }
+  @media (max-width: 640px) { .section { padding: 52px 0; } }
+  .narrow { max-width: 720px; }
+  .eyebrow { font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 12px; display: inline-block; }
+  h2 { font-size: clamp(1.5rem, 2.6vw, 2rem); margin-bottom: 20px; }
+
+  /* HERO */
+  .takk-hero { background: var(--sky); padding: 72px 0 64px; text-align: center; }
+  .takk-hero-inner { max-width: 640px; display: flex; flex-direction: column; align-items: center; }
+  .check-circle {
+    width: 76px; height: 76px; border-radius: 50%; background: var(--navy); color: #fff;
+    display: flex; align-items: center; justify-content: center; margin-bottom: 22px;
+    box-shadow: 0 0 0 10px rgba(95, 193, 214, 0.25);
+    animation: pop 0.45s ease-out;
+  }
+  @keyframes pop { from { transform: scale(0.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) { .check-circle { animation: none; } }
+  .takk-hero h1 { font-size: clamp(2rem, 5vw, 2.8rem); line-height: 1.12; margin-bottom: 16px; text-wrap: balance; }
+  .takk-hero h1 em { font-style: italic; color: var(--accent); }
+  .takk-hero .lead { font-size: 1.08rem; line-height: 1.6; margin: 0; }
+
+  /* TIDSLINJE */
+  .timeline { list-style: none; padding: 0; margin: 0 0 32px; display: grid; gap: 0; }
+  .timeline li { display: grid; grid-template-columns: 28px 1fr; gap: 16px; position: relative; padding-bottom: 22px; }
+  .timeline li:not(:last-child)::before {
+    content: ""; position: absolute; left: 13px; top: 28px; bottom: 0; width: 2px; background: var(--line);
+  }
+  .timeline .dot {
+    width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--line); background: #fff; position: relative; z-index: 1;
+  }
+  .timeline li.done .dot { background: var(--turquoise); border-color: var(--turquoise); }
+  .timeline li.done:not(:last-child)::before { background: var(--turquoise); }
+  .timeline h3 { font-size: 1.1rem; margin: 2px 0 4px; }
+  .timeline p { margin: 0; font-size: 0.96rem; line-height: 1.5; }
+
+
+  /* SJEKKLISTE */
+  .checklist-section { background: var(--beige); }
+  .intro { margin-bottom: 24px; }
+  .checklist { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+  .check-item {
+    display: grid; grid-template-columns: 28px 1fr; gap: 14px; align-items: start; cursor: pointer;
+    background: #fff; border: 1.5px solid transparent; border-radius: 16px; padding: 16px 18px;
+    box-shadow: 0 6px 18px rgba(22, 56, 117, 0.05); transition: border-color 0.15s;
+  }
+  .check-item input { position: absolute; opacity: 0; pointer-events: none; }
+  .check-item .box {
+    width: 28px; height: 28px; border-radius: 8px; border: 2px solid var(--line); background: #fff;
+    display: flex; align-items: center; justify-content: center; color: transparent; transition: all 0.15s;
+  }
+  .check-item:has(input:checked) { border-color: var(--turquoise); }
+  .check-item:has(input:checked) .box { background: var(--navy); border-color: var(--navy); color: #fff; }
+  .check-item:has(input:focus-visible) { outline: 3px solid var(--turquoise); outline-offset: 2px; }
+  .check-text { display: grid; gap: 2px; min-width: 0; }
+  .check-text strong { color: var(--navy); font-size: 1rem; }
+  .check-text span { color: var(--ink-soft); font-size: 0.92rem; line-height: 1.45; }
+  .check-item:has(input:checked) .check-text strong { text-decoration: line-through; text-decoration-color: var(--turquoise); }
+  .progress { margin: 18px 0 0; font-weight: 700; color: var(--navy); text-align: center; }
+
+  /* AKUTT */
+  .acute-section { padding-top: 56px; }
+  .acute-note {
+    border: 2px solid var(--navy-2); border-radius: 18px; padding: 18px 20px; background: #fff;
+    display: flex; gap: 14px; align-items: flex-start;
+  }
+  .acute-icon {
+    width: 30px; height: 30px; min-width: 30px; border-radius: 50%; background: var(--navy-2); color: #fff;
+    font-family: var(--font-display); font-weight: 600; display: flex; align-items: center; justify-content: center;
+  }
+  .acute-note p { margin: 0; font-size: 0.94rem; line-height: 1.55; }
+  .acute-note strong { color: var(--navy-2); }
+  .next-links { display: flex; flex-wrap: wrap; align-items: center; gap: 22px; margin-top: 32px; }
+  .text-link { color: var(--navy-2); font-weight: 700; }
+</style>
