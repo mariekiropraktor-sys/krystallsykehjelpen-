@@ -222,18 +222,6 @@ const faqItems = [
           <button type="submit" class="btn btn-primary">Send forespørsel</button>
         </form>
 
-        <div class="request-result result-ok" id="vf-ok" hidden>
-          <span class="eyebrow">Takk, forespørselen er sendt</span>
-          <h3>Video passer trolig for deg</h3>
-          <p>Svarene dine passer med det vi ofte ser ved krystallsyke. Marie ringer eller sender e-post innen én virkedag for å avtale tidspunkt.</p>
-        </div>
-
-        <div class="request-result result-clinic" id="vf-clinic" hidden>
-          <span class="eyebrow">Takk, forespørselen er sendt</span>
-          <h3>Vi anbefaler en undersøkelse på klinikken først</h3>
-          <p>Ut fra svarene dine er det lurt å bli undersøkt fysisk, slik at andre årsaker kan utelukkes. Marie ser på forespørselen og tar kontakt innen én virkedag. Du kan også bestille time på klinikken direkte.</p>
-          <a href={bookingUrl} class="btn btn-primary">Bestill klinikktime</a>
-        </div>
       </div>
     </section>
   )}
@@ -321,8 +309,6 @@ const faqItems = [
   const vForm = document.getElementById("video-form") as HTMLFormElement | null;
   if (vForm) {
     const status = document.getElementById("vf-status");
-    const okBox = document.getElementById("vf-ok");
-    const clinicBox = document.getElementById("vf-clinic");
     const accessKey = (vForm.querySelector('input[name="access_key"]') as HTMLInputElement | null)?.value;
 
     // Prisknappene forhåndsvelger riktig timetype.
@@ -382,6 +368,8 @@ const faqItems = [
       data.set("Passer best", tider || "Ikke oppgitt");
 
       setStatus("Sender …");
+      const submitBtn = vForm.querySelector<HTMLButtonElement>('button[type="submit"]');
+      if (submitBtn) submitBtn.disabled = true;
       try {
         const res = await fetch("https://api.web3forms.com/submit", {
           method: "POST",
@@ -390,14 +378,11 @@ const faqItems = [
         });
         const result = await res.json();
         if (!result.success) throw new Error();
-        vForm.hidden = true;
-        const box = passerVideo ? okBox : clinicBox;
-        if (box) {
-          box.hidden = false;
-          box.scrollIntoView({ behavior: "smooth", block: "center" });
-        }
+        // Videre til takkesiden med bekreftelse og sjekkliste.
+        window.location.href = `/tjenester/videokonsultasjon/takk/?r=${passerVideo ? "video" : "klinikk"}`;
       } catch {
         setStatus("Noe gikk galt. Prøv igjen, eller ring +47 46384492.", "error");
+        if (submitBtn) submitBtn.disabled = false;
       }
     });
   }
@@ -488,7 +473,6 @@ const faqItems = [
     background: #fff; border-radius: 26px; padding: clamp(22px, 4vw, 40px); margin-top: 28px;
     box-shadow: 0 16px 40px rgba(22, 56, 117, 0.09); display: grid; gap: 28px;
   }
-  .request-card[hidden], .request-result[hidden] { display: none; }
   .botcheck { display: none; }
   .request-alert {
     border: 2px solid var(--navy-2); border-radius: 18px; padding: 18px 20px;
@@ -532,11 +516,6 @@ const faqItems = [
   .form-status:empty { display: none; }
   .form-status.error { color: var(--navy-2); }
   .request-card .btn-primary { justify-self: start; }
-  .request-result { border-radius: 26px; padding: clamp(22px, 4vw, 36px); margin-top: 28px; }
-  .request-result h3 { font-size: 1.4rem; margin-bottom: 10px; }
-  .request-result p { line-height: 1.6; }
-  .result-ok { background: var(--sky); }
-  .result-clinic { background: #fff; box-shadow: 0 16px 40px rgba(22, 56, 117, 0.09); }
 
   /* MEDHJELPER */
   .helper-section { background: var(--navy); color: #fff; padding: 72px 0; }
