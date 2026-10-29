@@ -4,6 +4,13 @@ import Layout from "../../../layouts/Layout.astro";
 const bookingUrl =
   "https://psno-patient-platform-fe.svc.pasientsky.no/embedded/planner/booking?serviceProviderId=54907264-049e-11eb-8fc8-26c6f94d64b7";
 
+// Forespørselsmodus: så lenge Marie ikke har satt opp videotimer i kalenderen,
+// sender pasienten en forespørsel via skjemaet på siden i stedet for å booke
+// direkte. Sett til `false` når videotimer kan bookes i Pasientsky — da
+// vises de gamle «Bestill»-knappene igjen og skjemaet skjules.
+const visForesporsel = true;
+const web3formsKey = import.meta.env.PUBLIC_WEB3FORMS_KEY ?? "";
+
 const helpItems = [
   {
     icon: "M12 2v20M2 12h20",
@@ -24,7 +31,9 @@ const helpItems = [
 ];
 
 const steps = [
-  { num: "01", title: "Bestill riktig tid", desc: "Velg 40 minutter første gang, eller 20 minutter for en kort oppfølging." },
+  visForesporsel
+    ? { num: "01", title: "Send en forespørsel", desc: "Velg 40 minutter første gang, eller 20 minutter for en kort oppfølging. Marie tar kontakt innen én virkedag." }
+    : { num: "01", title: "Bestill riktig tid", desc: "Velg 40 minutter første gang, eller 20 minutter for en kort oppfølging." },
   { num: "02", title: "Finn et rolig sted", desc: "Ha god plass, stabilt kamera og gjerne en seng eller sofa i nærheten." },
   { num: "03", title: "Få personlig veiledning", desc: "Vi går gjennom spørsmålene dine og øver sammen, steg for steg." },
 ];
@@ -61,7 +70,11 @@ const faqItems = [
         <h1>Trygg veiledning.<br /><em>Hjemme hos deg.</em></h1>
         <p class="lead">Få personlig hjelp med øvelser, spørsmål og usikkerhet etter svimmelhet eller krystallsyke — i rolige omgivelser hjemme.</p>
         <div class="hero-ctas">
-          <a href="#pris" class="btn btn-white">Se timer og priser</a>
+          {visForesporsel ? (
+            <a href="#foresporsel" class="btn btn-white">Send forespørsel</a>
+          ) : (
+            <a href="#pris" class="btn btn-white">Se timer og priser</a>
+          )}
           <a href="#hjelp" class="text-link-light">Er dette riktig for meg?</a>
         </div>
       </div>
@@ -122,7 +135,11 @@ const faqItems = [
             <li>Kontroll av kjent øvelse</li>
             <li>Mindre justeringer</li>
           </ul>
-          <a href={bookingUrl} class="btn btn-primary btn-full">Bestill 20 minutter</a>
+          {visForesporsel ? (
+            <a href="#foresporsel" class="btn btn-primary btn-full" data-type="oppfolging">Send forespørsel</a>
+          ) : (
+            <a href={bookingUrl} class="btn btn-primary btn-full">Bestill 20 minutter</a>
+          )}
         </div>
         <div class="price-card featured">
           <span class="price-badge">Anbefalt første gang</span>
@@ -135,11 +152,115 @@ const faqItems = [
             <li>Veiledning steg for steg</li>
             <li>Plan for veien videre</li>
           </ul>
-          <a href={bookingUrl} class="btn btn-primary btn-full btn-accent">Bestill 40 minutter</a>
+          {visForesporsel ? (
+            <a href="#foresporsel" class="btn btn-primary btn-full btn-accent" data-type="forste">Send forespørsel</a>
+          ) : (
+            <a href={bookingUrl} class="btn btn-primary btn-full btn-accent">Bestill 40 minutter</a>
+          )}
         </div>
       </div>
+      {visForesporsel && (
+        <p class="price-note">Marie tar kontakt innen én virkedag for å avtale tidspunkt.</p>
+      )}
     </div>
   </section>
+
+  {visForesporsel && (
+    <section class="section request-section" id="foresporsel">
+      <div class="container request-container">
+        <span class="eyebrow">Forespørsel</span>
+        <h2>Er video riktig for deg?</h2>
+        <p class="request-lead">Svar på noen korte spørsmål, så ser vi om videokonsultasjon passer, eller om du heller bør undersøkes på klinikken.</p>
+
+        <form id="video-form" class="request-card" novalidate>
+          <input type="hidden" name="access_key" value={web3formsKey} />
+          <input type="hidden" name="subject" value="Forespørsel om videokonsultasjon" />
+          <input type="hidden" name="from_name" value="Krystallsykehjelpen – videoforespørsel" />
+          <input type="hidden" name="Vurdering" id="vurdering" value="" />
+          <input type="checkbox" name="botcheck" class="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+          <div class="request-alert" role="note">
+            <span class="alert-icon" aria-hidden="true">!</span>
+            <p><strong>Ikke send skjema ved akutte symptomer.</strong> Ved nye lammelser, ansiktsskjevhet, talevansker, dobbeltsyn, besvimelse, plutselig kraftig hodepine eller plutselig hørselstap: ring 113. Legevakt: 116 117.</p>
+          </div>
+
+          <fieldset>
+            <legend>Hva gjelder det?</legend>
+            <div class="choices">
+              <label class="choice"><input type="radio" name="Timetype" id="type-forste" value="Første time, 40 min" checked /> Første time, 40 min</label>
+              <label class="choice"><input type="radio" name="Timetype" id="type-oppfolging" value="Oppfølging, 20 min" /> Oppfølging, 20 min</label>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Noen korte spørsmål</legend>
+            <div class="question">
+              <p>Kommer svimmelheten når du endrer hodestilling, for eksempel når du legger deg ned, snur deg i sengen eller ser opp?</p>
+              <div class="choices">
+                <label class="choice"><input type="radio" name="Svimmel ved hodebevegelse" id="q1-ja" value="Ja" /> Ja</label>
+                <label class="choice"><input type="radio" name="Svimmel ved hodebevegelse" id="q1-nei" value="Nei" /> Nei</label>
+                <label class="choice"><input type="radio" name="Svimmel ved hodebevegelse" id="q1-usikker" value="Usikker" /> Usikker</label>
+              </div>
+            </div>
+            <div class="question">
+              <p>Varer hvert anfall kortere enn ett minutt?</p>
+              <div class="choices">
+                <label class="choice"><input type="radio" name="Anfall under ett minutt" id="q2-ja" value="Ja" /> Ja</label>
+                <label class="choice"><input type="radio" name="Anfall under ett minutt" id="q2-nei" value="Nei" /> Nei</label>
+                <label class="choice"><input type="radio" name="Anfall under ett minutt" id="q2-usikker" value="Usikker" /> Usikker</label>
+              </div>
+            </div>
+            <div class="question">
+              <p>Har en lege, kiropraktor eller fysioterapeut undersøkt deg for denne svimmelheten?</p>
+              <small>Video passer best når du allerede er vurdert av helsepersonell.</small>
+              <div class="choices">
+                <label class="choice"><input type="radio" name="Undersøkt av helsepersonell" id="q3-ja" value="Ja" /> Ja</label>
+                <label class="choice"><input type="radio" name="Undersøkt av helsepersonell" id="q3-nei" value="Nei" /> Nei</label>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Kontaktinformasjon</legend>
+            <div class="field-grid">
+              <label class="field">Navn<input type="text" name="name" id="vf-navn" autocomplete="name" required /></label>
+              <label class="field">Telefon<input type="tel" name="Telefon" id="vf-tlf" autocomplete="tel" required /></label>
+            </div>
+            <label class="field">E-post<input type="email" name="email" id="vf-epost" autocomplete="email" required /></label>
+            <div class="field">
+              <span>Når passer det best?</span>
+              <div class="choices">
+                <label class="choice"><input type="checkbox" name="Passer best" id="t-formiddag" value="Formiddag" /> Formiddag</label>
+                <label class="choice"><input type="checkbox" name="Passer best" id="t-ettermiddag" value="Ettermiddag" /> Ettermiddag</label>
+                <label class="choice"><input type="checkbox" name="Passer best" id="t-kveld" value="Kveld" /> Kveld</label>
+              </div>
+            </div>
+          </fieldset>
+
+          <label class="consent">
+            <input type="checkbox" id="vf-samtykke" />
+            <span>Jeg forstår at videokonsultasjon ikke er et akuttilbud, og at Marie tar kontakt for å avtale tid. Jeg skriver ikke inn sensitive helseopplysninger her.</span>
+          </label>
+
+          <p id="vf-status" class="form-status" role="status" aria-live="polite"></p>
+          <button type="submit" class="btn btn-primary">Send forespørsel</button>
+        </form>
+
+        <div class="request-result result-ok" id="vf-ok" hidden>
+          <span class="eyebrow">Takk, forespørselen er sendt</span>
+          <h3>Video passer trolig for deg</h3>
+          <p>Svarene dine passer med det vi ofte ser ved krystallsyke. Marie ringer eller sender e-post innen én virkedag for å avtale tidspunkt.</p>
+        </div>
+
+        <div class="request-result result-clinic" id="vf-clinic" hidden>
+          <span class="eyebrow">Takk, forespørselen er sendt</span>
+          <h3>Vi anbefaler en undersøkelse på klinikken først</h3>
+          <p>Ut fra svarene dine er det lurt å bli undersøkt fysisk, slik at andre årsaker kan utelukkes. Marie ser på forespørselen og tar kontakt innen én virkedag. Du kan også bestille time på klinikken direkte.</p>
+          <a href={bookingUrl} class="btn btn-primary">Bestill klinikktime</a>
+        </div>
+      </div>
+    </section>
+  )}
 
   <section class="helper-section">
     <div class="container helper-grid">
@@ -194,9 +315,19 @@ const faqItems = [
 
   <section class="final-cta">
     <div class="container">
-      <h2>Klar for å bestille time?</h2>
-      <p>Velg tidspunkt og få veiledning hjemmefra, i ditt eget tempo.</p>
-      <a href={bookingUrl} class="btn btn-white">Bestill time</a>
+      {visForesporsel ? (
+        <>
+          <h2>Klar for å sende en forespørsel?</h2>
+          <p>Svar på noen korte spørsmål, så tar Marie kontakt innen én virkedag.</p>
+          <a href="#foresporsel" class="btn btn-white">Send forespørsel</a>
+        </>
+      ) : (
+        <>
+          <h2>Klar for å bestille time?</h2>
+          <p>Velg tidspunkt og få veiledning hjemmefra, i ditt eget tempo.</p>
+          <a href={bookingUrl} class="btn btn-white">Bestill time</a>
+        </>
+      )}
     </div>
   </section>
 </Layout>
@@ -209,6 +340,91 @@ const faqItems = [
       btn.setAttribute("aria-expanded", isOpen ? "true" : "false");
     });
   });
+
+  // Forespørselsskjema for videokonsultasjon (kun når visForesporsel = true).
+  const vForm = document.getElementById("video-form") as HTMLFormElement | null;
+  if (vForm) {
+    const status = document.getElementById("vf-status");
+    const okBox = document.getElementById("vf-ok");
+    const clinicBox = document.getElementById("vf-clinic");
+    const accessKey = (vForm.querySelector('input[name="access_key"]') as HTMLInputElement | null)?.value;
+
+    // Prisknappene forhåndsvelger riktig timetype.
+    document.querySelectorAll<HTMLAnchorElement>("a[data-type]").forEach((a) => {
+      a.addEventListener("click", () => {
+        const id = a.dataset.type === "oppfolging" ? "type-oppfolging" : "type-forste";
+        const radio = document.getElementById(id) as HTMLInputElement | null;
+        if (radio) radio.checked = true;
+      });
+    });
+
+    const svar = (name: string) =>
+      (vForm.querySelector(`input[name="${name}"]:checked`) as HTMLInputElement | null)?.value;
+
+    const setStatus = (text: string, type = "") => {
+      if (!status) return;
+      status.textContent = text;
+      status.className = `form-status ${type}`.trim();
+    };
+
+    vForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const q1 = svar("Svimmel ved hodebevegelse");
+      const q2 = svar("Anfall under ett minutt");
+      const q3 = svar("Undersøkt av helsepersonell");
+      const samtykke = (document.getElementById("vf-samtykke") as HTMLInputElement | null)?.checked;
+
+      if (!q1 || !q2 || !q3) {
+        setStatus("Svar på de tre spørsmålene før du sender.", "error");
+        return;
+      }
+      if (!vForm.checkValidity()) {
+        setStatus("Fyll inn navn, telefon og en gyldig e-postadresse.", "error");
+        return;
+      }
+      if (!samtykke) {
+        setStatus("Kryss av i boksen over før du sender.", "error");
+        return;
+      }
+      if (!accessKey) {
+        setStatus("Skjemaet er ikke koblet til ennå. Ring +47 46384492 eller send e-post til mariekiropraktor@gmail.com i mellomtiden.", "error");
+        return;
+      }
+
+      // Enkel vurdering: typisk krystallsyke-mønster + allerede undersøkt.
+      const passerVideo = q1 === "Ja" && q2 !== "Nei" && q3 === "Ja";
+      const vurdering = document.getElementById("vurdering") as HTMLInputElement | null;
+      if (vurdering) {
+        vurdering.value = passerVideo
+          ? "Video passer trolig (typisk mønster, allerede undersøkt)"
+          : "Klinikk anbefalt (svarene passer ikke tydelig med video)";
+      }
+
+      const data = new FormData(vForm);
+      const tider = data.getAll("Passer best").join(", ");
+      data.delete("Passer best");
+      data.set("Passer best", tider || "Ikke oppgitt");
+
+      setStatus("Sender …");
+      try {
+        const res = await fetch("https://api.web3forms.com/submit", {
+          method: "POST",
+          headers: { Accept: "application/json" },
+          body: data,
+        });
+        const result = await res.json();
+        if (!result.success) throw new Error();
+        vForm.hidden = true;
+        const box = passerVideo ? okBox : clinicBox;
+        if (box) {
+          box.hidden = false;
+          box.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      } catch {
+        setStatus("Noe gikk galt. Prøv igjen, eller ring +47 46384492.", "error");
+      }
+    });
+  }
 </script>
 
 <style>
@@ -289,6 +505,67 @@ const faqItems = [
   .price-card ul { list-style: none; padding: 0; margin: 0 0 24px; display: flex; flex-direction: column; gap: 10px; }
   .price-card li { display: flex; gap: 10px; align-items: flex-start; font-size: 0.9rem; color: var(--ink); }
   .price-card li::before { content: "✓"; color: var(--turquoise); font-weight: 700; }
+
+  .price-note { text-align: center; margin: 22px 0 0; font-size: 0.95rem; }
+
+  /* FORESPØRSEL */
+  .request-section { background: var(--beige); }
+  .request-container { max-width: 760px; }
+  .request-container h2 { font-size: clamp(1.6rem, 2.6vw, 2.1rem); margin-bottom: 12px; }
+  .request-lead { font-size: 1.05rem; line-height: 1.6; max-width: 600px; }
+  .request-card {
+    background: #fff; border-radius: 26px; padding: clamp(22px, 4vw, 40px); margin-top: 28px;
+    box-shadow: 0 16px 40px rgba(22, 56, 117, 0.09); display: grid; gap: 28px;
+  }
+  .request-card[hidden], .request-result[hidden] { display: none; }
+  .botcheck { display: none; }
+  .request-alert {
+    border: 2px solid var(--navy-2); border-radius: 18px; padding: 18px 20px;
+    display: flex; gap: 14px; align-items: flex-start;
+  }
+  .alert-icon {
+    width: 30px; height: 30px; min-width: 30px; border-radius: 50%; background: var(--navy-2); color: #fff;
+    font-family: var(--font-display); font-weight: 600; display: flex; align-items: center; justify-content: center;
+  }
+  .request-alert p { margin: 0; font-size: 0.94rem; line-height: 1.55; }
+  .request-alert strong { color: var(--navy-2); }
+  .request-card fieldset { border: 0; margin: 0; padding: 0; min-width: 0; display: grid; gap: 14px; }
+  .request-card legend { font-family: var(--font-display); font-size: 1.25rem; color: var(--navy); margin-bottom: 8px; padding: 0; }
+  .question { display: grid; gap: 10px; padding-top: 16px; border-top: 1px solid var(--line); }
+  .question:first-of-type { border-top: 0; padding-top: 0; }
+  .question p { margin: 0; font-weight: 600; color: var(--navy); line-height: 1.45; }
+  .question small { color: var(--ink-soft); font-size: 0.88rem; }
+  .choices { display: flex; flex-wrap: wrap; gap: 10px; }
+  .choice {
+    position: relative; display: inline-flex; align-items: center; min-height: 44px; padding: 10px 18px;
+    border: 1.5px solid var(--line); border-radius: 999px; background: #fff; cursor: pointer;
+    font-size: 0.95rem; color: var(--navy); font-weight: 600;
+  }
+  .choice input { position: absolute; opacity: 0; pointer-events: none; }
+  .choice:has(input:checked) { background: var(--navy); border-color: var(--navy); color: #fff; }
+  .choice:has(input:focus-visible) { outline: 3px solid var(--turquoise); outline-offset: 2px; }
+  .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 560px) { .field-grid { grid-template-columns: 1fr; } }
+  .field { display: grid; gap: 6px; font-weight: 600; font-size: 0.94rem; color: var(--navy); min-width: 0; }
+  .field input {
+    font: 400 1rem var(--font-body); padding: 13px 14px; border: 1.5px solid var(--line);
+    border-radius: 12px; color: var(--ink); background: #fff; width: 100%;
+  }
+  .field input:focus { outline: none; border-color: var(--accent); }
+  .consent {
+    display: flex; gap: 12px; align-items: flex-start; background: var(--sky); border-radius: 14px;
+    padding: 16px; font-size: 0.94rem; line-height: 1.5; color: var(--ink); cursor: pointer;
+  }
+  .consent input { width: 20px; height: 20px; min-width: 20px; margin-top: 2px; accent-color: var(--navy); }
+  .form-status { margin: 0; font-weight: 600; font-size: 0.94rem; }
+  .form-status:empty { display: none; }
+  .form-status.error { color: var(--navy-2); }
+  .request-card .btn-primary { justify-self: start; }
+  .request-result { border-radius: 26px; padding: clamp(22px, 4vw, 36px); margin-top: 28px; }
+  .request-result h3 { font-size: 1.4rem; margin-bottom: 10px; }
+  .request-result p { line-height: 1.6; }
+  .result-ok { background: var(--sky); }
+  .result-clinic { background: #fff; box-shadow: 0 16px 40px rgba(22, 56, 117, 0.09); }
 
   /* MEDHJELPER */
   .helper-section { background: var(--navy); color: #fff; padding: 72px 0; }
