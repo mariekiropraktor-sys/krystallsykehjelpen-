@@ -12,22 +12,10 @@ const visForesporsel = true;
 const web3formsKey = import.meta.env.PUBLIC_WEB3FORMS_KEY ?? "";
 
 const helpItems = [
-  {
-    icon: "M12 2v20M2 12h20",
-    text: "Veiledning i øvelser og reposisjoneringsmanøvre",
-  },
-  {
-    icon: "M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z",
-    text: "Spørsmål etter undersøkelse eller behandling",
-  },
-  {
-    icon: "circle-info",
-    text: "Bekymringer og usikkerhet rundt svimmelheten",
-  },
-  {
-    icon: "clock",
-    text: "Tilpasning av vestibulær rehabilitering",
-  },
+  "Veiledning i øvelser og reposisjoneringsmanøvre",
+  "Spørsmål etter undersøkelse eller behandling",
+  "Bekymringer og usikkerhet rundt svimmelheten",
+  "Tilpasning av vestibulær rehabilitering",
 ];
 
 const steps = [
@@ -91,18 +79,9 @@ const faqItems = [
         <p class="intro">Det er lett å bli usikker når du skal fortsette på egen hånd. Videokonsultasjonen gir deg tid til å spørre, forstå og øve — uten reisevei og i ditt eget tempo.</p>
       </div>
       <div class="help-list">
-        {helpItems.map((item) => (
+        {helpItems.map((text) => (
           <div class="help-item">
-            <div class="icon-circle">
-              {item.icon === "circle-info" ? (
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9" /><path d="M12 8v5M12 16h.01" /></svg>
-              ) : item.icon === "clock" ? (
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 12a8 8 0 1 1 16 0 8 8 0 0 1-16 0z" /><path d="M12 8v4l3 2" /></svg>
-              ) : (
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d={item.icon} /></svg>
-              )}
-            </div>
-            <p>{item.text}</p>
+            <p>{text}</p>
           </div>
         ))}
       </div>
@@ -111,9 +90,6 @@ const faqItems = [
 
   <section class="safety-box">
     <div class="container safety-inner">
-      <div class="icon-circle icon-circle-lg">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2 3 6v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V6z" /></svg>
-      </div>
       <div>
         <h3>Videoveiledning kommer etter en faglig vurdering</h3>
         <p>Tjenesten er først og fremst for deg som allerede er vurdert av lege, kiropraktor, fysioterapeut eller annet kvalifisert helsepersonell. Ny, uforklarlig eller annerledes svimmelhet bør undersøkes fysisk først.</p>
@@ -472,13 +448,8 @@ const faqItems = [
   .help-grid h2 { font-size: clamp(1.6rem, 2.6vw, 2.1rem); margin-bottom: 16px; line-height: 1.2; }
   .help-grid .intro { color: var(--ink-soft); font-size: 1.03rem; line-height: 1.65; }
   .help-list { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-  @media (max-width: 560px) { .help-list { grid-template-columns: 1fr; } }
-  .help-item { display: flex; gap: 16px; align-items: flex-start; background: var(--sky); border-radius: 20px; padding: 22px; }
-  .icon-circle {
-    width: 44px; height: 44px; min-width: 44px; border-radius: 50%; background: #fff;
-    display: flex; align-items: center; justify-content: center; color: var(--accent);
-  }
-  .icon-circle-lg { width: 52px; height: 52px; min-width: 52px; color: var(--navy); }
+  @media (max-width: 560px) { .help-list { grid-template-columns: 1fr; gap: 12px; } }
+  .help-item { background: #fff; border-radius: 18px; padding: 18px 22px; box-shadow: 0 8px 22px rgba(22, 56, 117, 0.06); }
   .help-item p { margin: 0; font-weight: 600; color: var(--navy); font-size: 0.96rem; line-height: 1.4; }
 
   /* SAFETY */
