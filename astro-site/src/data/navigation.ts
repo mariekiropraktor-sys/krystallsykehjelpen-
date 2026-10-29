@@ -45,7 +45,11 @@ export const navigationTabs: NavTab[] = [
   {
     label: "Behandling",
     items: [
+      // Midlertidige lenker til avsnitt på eksisterende sider — byttes til egne sider når de er bygget.
+      { kind: "link", label: "Slik behandles krystallsyke", href: "/svimmelhet/krystallsyke/#behandling", description: "Undersøkelse, manøvrer og forløp" },
+      { kind: "link", label: "Time på klinikken", href: "/priser/#klinikk", description: "Fetsund, Garderbakken 1" },
       { kind: "link", label: "Videokonsultasjon", href: "/tjenester/videokonsultasjon/", description: "Vurdering og veiledning hjemmefra" },
+      { kind: "link", label: "Hjemmebesøk", href: "/priser/#hjemme", description: "Ved akutt krystallsyke, kveld og helg" },
     ],
   },
   {
