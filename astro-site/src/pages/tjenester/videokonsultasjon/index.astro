@@ -213,6 +213,15 @@ const faqItems = [
             </div>
           </fieldset>
 
+          <fieldset>
+            <legend>Vil du fortelle noe mer?</legend>
+            <label class="field" for="vf-melding">
+              <span>Melding til Marie <span class="optional">(valgfritt)</span></span>
+              <textarea name="Melding" id="vf-melding" rows="4" maxlength="1000" placeholder="For eksempel hva du ønsker hjelp med, eller når det passer å bli ringt."></textarea>
+            </label>
+            <small class="field-hint">Hold det kort. Detaljer om helsen din tar vi heller når Marie ringer.</small>
+          </fieldset>
+
           <label class="consent">
             <input type="checkbox" id="vf-samtykke" />
             <span>Jeg forstår at videokonsultasjon ikke er et akuttilbud, og at Marie tar kontakt for å avtale tid. Jeg skriver ikke inn sensitive helseopplysninger her.</span>
@@ -506,7 +515,13 @@ const faqItems = [
     font: 400 1rem var(--font-body); padding: 13px 14px; border: 1.5px solid var(--line);
     border-radius: 12px; color: var(--ink); background: #fff; width: 100%;
   }
-  .field input:focus { outline: none; border-color: var(--accent); }
+  .field textarea {
+    font: 400 1rem var(--font-body); padding: 13px 14px; border: 1.5px solid var(--line);
+    border-radius: 12px; color: var(--ink); background: #fff; width: 100%; resize: vertical; min-height: 110px;
+  }
+  .field input:focus, .field textarea:focus { outline: none; border-color: var(--accent); }
+  .optional { font-weight: 400; color: var(--ink-soft); }
+  .field-hint { color: var(--ink-soft); font-size: 0.88rem; margin-top: -4px; }
   .consent {
     display: flex; gap: 12px; align-items: flex-start; background: var(--sky); border-radius: 14px;
     padding: 16px; font-size: 0.94rem; line-height: 1.5; color: var(--ink); cursor: pointer;
@@ -515,7 +530,8 @@ const faqItems = [
   .form-status { margin: 0; font-weight: 600; font-size: 0.94rem; }
   .form-status:empty { display: none; }
   .form-status.error { color: var(--navy-2); }
-  .request-card .btn-primary { justify-self: start; }
+  .request-card .btn-primary { justify-self: start; border: 0; cursor: pointer; }
+  .request-card .btn-primary:disabled { opacity: 0.6; cursor: wait; }
 
   /* MEDHJELPER */
   .helper-section { background: var(--navy); color: #fff; padding: 72px 0; }
