@@ -45,9 +45,7 @@ export const navigationTabs: NavTab[] = [
   {
     label: "Behandling",
     items: [
-      { kind: "link", label: "Videokonsultasjon", href: "/tjenester/videokonsultasjon/" },
-      { kind: "link", label: "Priser", href: "/priser/" },
-      { kind: "link", label: "Finn behandler", href: "/finn-behandler/" },
+      { kind: "link", label: "Videokonsultasjon", href: "/tjenester/videokonsultasjon/", description: "Vurdering og veiledning hjemmefra" },
     ],
   },
   {
@@ -63,6 +61,8 @@ export const navigationTabs: NavTab[] = [
 // Egne sider som står for seg selv i menyen, under de fire fanene (ikke inni
 // noen fane). Undersider matcher forelderen: /blogg/* → Artikler.
 export const topLevelLinks: { label: string; href: string }[] = [
+  { label: "Priser", href: "/priser/" },
+  { label: "Finn behandler", href: "/finn-behandler/" },
   { label: "Artikler", href: "/blogg/" },
   { label: "Spørsmål og svar", href: "/faq/" },
 ];
