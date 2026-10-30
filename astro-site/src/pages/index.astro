@@ -139,11 +139,17 @@ const journeyCards = [
           <a href="/hjemme/" class="btn btn-primary">Start her</a>
         </div>
         <div class="hjemme-visual">
-          <img
-            src="/forsiden-hjemme.jpg"
-            alt="Illustrasjon av en person som hjelper partneren sin med hodeposisjonering hjemme, med en videokonsultasjon med en fagperson synlig på en bærbar PC i bakgrunnen"
-            class="hjemme-photo"
-          />
+          <picture>
+            <source srcset="/forsiden-hjemme.webp" type="image/webp" />
+            <img
+              src="/forsiden-hjemme.jpg"
+              alt="Mann hjelper partneren sin med en manøver i sengen hjemme, mens en fagperson veileder på videosamtale på en bærbar PC"
+              width="1200"
+              height="900"
+              loading="lazy"
+              class="hjemme-photo"
+            />
+          </picture>
         </div>
       </div>
     </div>
@@ -282,6 +288,7 @@ const journeyCards = [
   .hjemme-content .eyebrow { font-size: 0.78rem; letter-spacing: 0.09em; text-transform: uppercase; color: var(--navy-2); font-weight: 700; margin: 0 0 14px; display: block; }
   .hjemme-content h3 { font-family: var(--font-display); font-weight: 600; font-size: clamp(1.6rem, 2.8vw, 2.1rem); line-height: 1.15; margin: 0 0 16px; color: var(--navy); }
   .hjemme-content p { font-size: 1rem; line-height: 1.6; color: var(--ink-soft); margin: 0 0 28px; max-width: 46ch; }
+  .hjemme-visual picture { display: block; }
   .hjemme-visual {
     position: relative; background: var(--sky); border-radius: var(--radius-sm);
     box-shadow: 0 16px 36px rgba(22, 56, 117, 0.08); overflow: hidden;
