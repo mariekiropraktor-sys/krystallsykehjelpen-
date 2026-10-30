@@ -95,7 +95,6 @@ const journeyCards = [
           <button type="submit" class="search-btn">Søk</button>
         </form>
       </div>
-      <span class="hero-trust-divider" aria-hidden="true"></span>
       <a href={MARIE_URL} class="hero-byline">
         <picture>
           <source srcset="/marie-hermansen-240.webp" type="image/webp" />
@@ -232,14 +231,20 @@ const journeyCards = [
 
   /* ---------- Søk + faglig ansvarlig ---------- */
   .hero-trust { background: var(--paper); padding: 48px 0 0; }
-  .hero-trust-inner { max-width: 960px; display: grid; grid-template-columns: 1.25fr auto 1fr; gap: 32px; align-items: center; }
+  .hero-trust-inner { max-width: 960px; display: grid; grid-template-columns: 1.2fr 1fr; gap: 32px; align-items: end; }
   .hero-trust-search { min-width: 0; }
   .hero-trust-label {
     display: block; font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase;
     color: var(--ink-soft); font-weight: 700; margin-bottom: 18px;
   }
-  .hero-trust-divider { width: 1px; align-self: stretch; background: var(--line); }
-  .hero-byline { display: flex; align-items: center; gap: 16px; text-decoration: none; color: var(--ink-soft); font-size: 0.92rem; line-height: 1.45; }
+  /* Marie som et eget kort, så det ikke svever i luften. */
+  .hero-byline {
+    display: flex; align-items: center; gap: 16px; text-decoration: none; color: var(--ink-soft); font-size: 0.92rem; line-height: 1.45;
+    background: var(--sky); border: 1px solid var(--line); border-radius: 16px; padding: 16px 20px 16px 16px;
+    box-shadow: 0 8px 24px rgba(22, 56, 117, 0.06); transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+  .hero-byline:hover { border-color: var(--navy-2); box-shadow: 0 12px 28px rgba(22, 56, 117, 0.1); }
+  .hero-byline:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
   .hero-byline picture { flex-shrink: 0; }
   .hero-byline-photo { display: block; width: 88px; height: 88px; border-radius: 50%; object-fit: cover; box-shadow: 0 4px 12px rgba(22, 56, 117, 0.12); }
   .hero-byline-name { display: block; font-family: var(--font-display); font-size: 1.08rem; font-weight: 500; color: var(--navy); }
@@ -248,8 +253,7 @@ const journeyCards = [
 
   @media (max-width: 640px) {
     .hero-trust { padding: 36px 0 0; }
-    .hero-trust-inner { grid-template-columns: 1fr; gap: 48px; }
-    .hero-trust-divider { width: 100%; height: 1px; align-self: auto; }
+    .hero-trust-inner { grid-template-columns: 1fr; gap: 28px; }
     .hero-byline-photo { width: 72px; height: 72px; }
   }
 
