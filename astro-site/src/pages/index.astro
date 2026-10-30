@@ -194,13 +194,13 @@ const journeyCards = [
   .hero { background: var(--beige); padding: 52px 0 76px; position: relative; overflow: hidden; text-align: center; }
   .hero-inner { display: flex; flex-direction: column; align-items: center; max-width: 760px; }
   .hero-logo { display: block; width: 196px; height: 196px; margin-bottom: 24px; }
-  .eyebrow { font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--navy-2); font-weight: 700; margin-bottom: 12px; display: inline-block; }
+  .eyebrow { font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 12px; display: inline-block; }
   .hero h1 {
     color: var(--navy-deep); font-weight: 500; font-size: clamp(2.1rem, 4.2vw, 3.25rem);
     line-height: 1.08; letter-spacing: -0.015em; margin: 0 0 16px; text-wrap: balance;
   }
-  /* Dempet kursiv: navy-2 i stedet for klar accent-blå. */
-  .hero h1 em { font-style: italic; font-weight: 400; color: var(--navy-2); }
+  /* Kursiv i petrol (Fjord-paletten). */
+  .hero h1 em { font-style: italic; font-weight: 400; color: var(--accent); }
   .lead { font-size: 1.12rem; line-height: 1.6; color: var(--ink-soft); max-width: 44ch; margin: 0 0 28px; text-wrap: balance; }
   .hero-wave { position: absolute; bottom: -2px; left: 0; width: 100%; height: 44px; line-height: 0; }
 
@@ -251,7 +251,7 @@ const journeyCards = [
     box-shadow: 0 8px 24px rgba(22, 56, 117, 0.06); width: 100%;
     transition: border-color 0.15s ease, box-shadow 0.15s ease;
   }
-  .search-box:focus-within { border-color: var(--accent); box-shadow: 0 8px 28px rgba(47, 121, 201, 0.18); }
+  .search-box:focus-within { border-color: var(--accent); box-shadow: 0 8px 28px rgba(37, 100, 120, 0.18); }
   .search-box svg { flex-shrink: 0; color: var(--ink-soft); }
   .search-box input {
     border: none; outline: none; flex: 1; font-family: var(--font-body);

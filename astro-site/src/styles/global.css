@@ -1,21 +1,24 @@
 /* ===================================================
    KRYSTALLSYKEHJELPEN – globale designtokens
-   Fargepaletten er bevisst beholdt fra den blå/turkise
-   identiteten (matcher den ekte logoen: marineblå ring,
-   turkis sirkel).
+   Fargepalett «Fjord» (valgt 2026-10-30): marineblått som
+   hovedfarge, lyse fjordtoner som flater og petrol som aksent
+   (henter turkisen fra logoringen).
+   Tokennavnene --sky og --beige er beholdt for å ikke måtte
+   endre alle sider: --sky = lys fjord (sidebakgrunn, infobokser),
+   --beige = fjord (hero og bånd).
 =================================================== */
 
 :root {
   --navy: #163875;
   --navy-2: #1e4c96;
   --navy-deep: #0e2650; /* mørk marineblå – forsidens hovedoverskrift */
-  --sky: #eff4fb;
+  --sky: #eef4f3;   /* lys fjord */
   --paper: #ffffff;
-  --beige: #f4eee3;
+  --beige: #e5eeec; /* fjord */
   --ink: #1b2431;
   --ink-soft: #55616f;
-  --line: #e2e8f2;
-  --accent: #2f79c9;
+  --line: #dbe5e3;
+  --accent: #256478; /* petrol */
   --turquoise: #5fc1d6;
 
   --font-display: "Fraunces", Georgia, serif;
@@ -87,7 +90,7 @@ a { color: var(--navy); }
 .btn-outline:hover { border-color: var(--navy-2); }
 
 .btn-beige { background: var(--beige); color: var(--navy); border: 1.5px solid transparent; }
-.btn-beige:hover { background: #ece2d0; }
+.btn-beige:hover { background: #d6e4e1; }
 
 a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible {
   outline: 3px solid var(--accent);
