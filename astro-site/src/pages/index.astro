@@ -79,8 +79,8 @@ const journeyCards = [
         <a href="/fa-hjelp/" class="btn hero-btn-secondary">Finn behandling</a>
       </div>
     </div>
-    <svg class="hero-wave" viewBox="0 0 1440 60" preserveAspectRatio="none" aria-hidden="true">
-      <path d="M0,32 C360,72 1080,0 1440,32 L1440,60 L0,60 Z" fill="#ffffff" />
+    <svg class="hero-wave" viewBox="0 0 1440 140" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0,40 C260,150 520,150 760,80 C1000,10 1220,0 1440,60 L1440,140 L0,140 Z" fill="#ffffff" />
     </svg>
   </section>
 
@@ -95,7 +95,6 @@ const journeyCards = [
           <button type="submit" class="search-btn">Søk</button>
         </form>
       </div>
-      <span class="hero-trust-divider" aria-hidden="true"></span>
       <a href={MARIE_URL} class="hero-byline">
         <picture>
           <source srcset="/marie-hermansen-240.webp" type="image/webp" />
@@ -111,7 +110,7 @@ const journeyCards = [
   </section>
 
   <!-- 2. Hva kjenner du deg igjen i? -->
-  <section class="section-alt no-top">
+  <section class="journey">
     <div class="container">
       <div class="section-head">
         <h2>Hva kjenner du deg igjen i?</h2>
@@ -129,6 +128,12 @@ const journeyCards = [
         ))}
       </div>
       <p class="journey-more"><a href="/ovelsesbibliotek/" class="card-link">Se hele øvelsesbiblioteket →</a></p>
+    </div>
+  </section>
+
+  <!-- 2b. Krystallsykehjelpen hjemme – egen seksjon med full luft -->
+  <section class="hjemme-wrap">
+    <div class="container">
 
       <div class="hjemme-section">
         <div class="hjemme-content">
@@ -155,7 +160,7 @@ const journeyCards = [
   </section>
 
   <!-- 3. Siste artikler – kompakte kort: bilde, kategori · dato, tittel -->
-  <section class="section-alt latest">
+  <section class="latest">
     <div class="container">
       <div class="latest-head">
         <h2>Siste artikler</h2>
@@ -192,18 +197,18 @@ const journeyCards = [
 
 <style>
   /* ---------- Hero ---------- */
-  .hero { background: var(--beige); padding: 52px 0 76px; position: relative; overflow: hidden; text-align: center; }
+  .hero { background: var(--beige); padding: 64px 0 120px; position: relative; overflow: hidden; text-align: center; }
   .hero-inner { display: flex; flex-direction: column; align-items: center; max-width: 760px; }
-  .hero-logo { display: block; width: 196px; height: 196px; margin-bottom: 24px; }
-  .eyebrow { font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 12px; display: inline-block; }
+  .hero-logo { display: block; width: 196px; height: 196px; margin-bottom: 32px; }
+  .eyebrow { font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 16px; display: inline-block; }
   .hero h1 {
     color: var(--navy-deep); font-weight: 500; font-size: clamp(2.1rem, 4.2vw, 3.25rem);
-    line-height: 1.08; letter-spacing: -0.015em; margin: 0 0 16px; text-wrap: balance;
+    line-height: 1.08; letter-spacing: -0.015em; margin: 0 0 22px; text-wrap: balance;
   }
   /* Kursiv i petrol (Fjord-paletten). */
   .hero h1 em { font-style: italic; font-weight: 400; color: var(--accent); }
-  .lead { font-size: 1.12rem; line-height: 1.6; color: var(--ink-soft); max-width: 44ch; margin: 0 0 28px; text-wrap: balance; }
-  .hero-wave { position: absolute; bottom: -2px; left: 0; width: 100%; height: 44px; line-height: 0; }
+  .lead { font-size: 1.12rem; line-height: 1.6; color: var(--ink-soft); max-width: 44ch; margin: 0 0 40px; text-wrap: balance; }
+  .hero-wave { position: absolute; bottom: -2px; left: 0; width: 100%; height: 100px; line-height: 0; }
 
   .hero-ctas { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
   .hero-btn-primary { background: var(--navy); color: #fff; }
@@ -213,26 +218,33 @@ const journeyCards = [
   .hero-ctas .btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
 
   @media (max-width: 640px) {
-    .hero { padding: 28px 0 50px; }
-    .hero-logo { width: 120px; height: 120px; margin-bottom: 16px; }
-    .eyebrow { font-size: 0.7rem; margin-bottom: 8px; }
-    .hero h1 { font-size: 1.95rem; margin-bottom: 12px; }
-    .lead { font-size: 1rem; margin-bottom: 22px; }
+    .hero { padding: 44px 0 76px; }
+    .hero-logo { width: 120px; height: 120px; margin-bottom: 28px; }
+    .eyebrow { font-size: 0.7rem; margin-bottom: 14px; }
+    .hero h1 { font-size: 1.95rem; margin-bottom: 18px; }
+    .lead { font-size: 1rem; margin-bottom: 32px; }
+    .hero-wave { height: 56px; }
     /* Knappene side om side på mobil, så heroen holdes lav. */
     .hero-ctas { flex-wrap: nowrap; width: 100%; gap: 10px; }
     .hero-ctas .btn { flex: 1; padding-left: 12px; padding-right: 12px; justify-content: center; text-align: center; }
   }
 
   /* ---------- Søk + faglig ansvarlig ---------- */
-  .hero-trust { background: var(--paper); padding: 28px 0 56px; }
-  .hero-trust-inner { max-width: 960px; display: grid; grid-template-columns: 1.25fr auto 1fr; gap: 32px; align-items: center; }
+  .hero-trust { background: var(--paper); padding: 48px 0 0; }
+  .hero-trust-inner { max-width: 960px; display: grid; grid-template-columns: 1.2fr 1fr; gap: 32px; align-items: end; }
   .hero-trust-search { min-width: 0; }
   .hero-trust-label {
-    display: block; font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase;
-    color: var(--ink-soft); font-weight: 700; margin-bottom: 10px;
+    display: block; font-size: 0.92rem; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--navy); font-weight: 700; margin-bottom: 16px;
   }
-  .hero-trust-divider { width: 1px; align-self: stretch; background: var(--line); }
-  .hero-byline { display: flex; align-items: center; gap: 16px; text-decoration: none; color: var(--ink-soft); font-size: 0.92rem; line-height: 1.45; }
+  /* Marie som et eget kort, så det ikke svever i luften. */
+  .hero-byline {
+    display: flex; align-items: center; gap: 16px; text-decoration: none; color: var(--ink-soft); font-size: 0.92rem; line-height: 1.45;
+    background: var(--sky); border: 1px solid var(--line); border-radius: 16px; padding: 16px 20px 16px 16px;
+    box-shadow: 0 8px 24px rgba(22, 56, 117, 0.06); transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+  .hero-byline:hover { border-color: var(--navy-2); box-shadow: 0 12px 28px rgba(22, 56, 117, 0.1); }
+  .hero-byline:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
   .hero-byline picture { flex-shrink: 0; }
   .hero-byline-photo { display: block; width: 88px; height: 88px; border-radius: 50%; object-fit: cover; box-shadow: 0 4px 12px rgba(22, 56, 117, 0.12); }
   .hero-byline-name { display: block; font-family: var(--font-display); font-size: 1.08rem; font-weight: 500; color: var(--navy); }
@@ -240,43 +252,49 @@ const journeyCards = [
   .hero-byline:hover .hero-byline-more { text-decoration: underline; }
 
   @media (max-width: 640px) {
-    .hero-trust { padding: 20px 0 40px; }
-    .hero-trust-inner { grid-template-columns: 1fr; gap: 20px; }
-    .hero-trust-divider { width: 100%; height: 1px; align-self: auto; }
+    .hero-trust { padding: 36px 0 0; }
+    .hero-trust-inner { grid-template-columns: 1fr; gap: 44px; }
     .hero-byline-photo { width: 72px; height: 72px; }
   }
 
   .search-box {
     display: flex; align-items: center; gap: 10px; background: #fff;
-    border: 1.5px solid var(--line); border-radius: 999px; padding: 5px 5px 5px 16px;
-    box-shadow: 0 8px 24px rgba(22, 56, 117, 0.06); width: 100%;
+    border: 1.5px solid var(--line); border-radius: 999px; padding: 7px 7px 7px 20px;
+    box-shadow: 0 14px 36px rgba(22, 56, 117, 0.14), 0 2px 6px rgba(22, 56, 117, 0.06); width: 100%;
     transition: border-color 0.15s ease, box-shadow 0.15s ease;
   }
   .search-box:focus-within { border-color: var(--accent); box-shadow: 0 8px 28px rgba(37, 100, 120, 0.18); }
   .search-box svg { flex-shrink: 0; color: var(--ink-soft); }
   .search-box input {
     border: none; outline: none; flex: 1; font-family: var(--font-body);
-    font-size: 0.92rem; color: var(--navy); background: transparent; padding: 8px 0; min-width: 0;
+    font-size: 1rem; color: var(--navy); background: transparent; padding: 10px 0; min-width: 0;
   }
   .search-btn {
     background: var(--navy); color: #fff; border: none; border-radius: 999px;
-    padding: 10px 18px; font-family: var(--font-body); font-weight: 600; font-size: 0.86rem;
+    padding: 12px 22px; font-family: var(--font-body); font-weight: 600; font-size: 0.95rem;
     cursor: pointer; flex-shrink: 0;
   }
 
-  .section-alt { background: var(--paper); padding: 60px 0; }
-  .section-alt.no-top { padding-top: 0; padding-bottom: 70px; }
+  /* Fast seksjonsrytme på forsiden: 96 px desktop, 64 px mobil.
+     Hvitt og lys fjord vekselvis skiller seksjonene uten streker. */
+  .journey, .hjemme-wrap, .latest { --space: 96px; }
+  @media (max-width: 640px) { .journey, .hjemme-wrap, .latest { --space: 80px; } }
+  .journey { background: var(--paper); padding: 72px 0 var(--space); }
+  /* Mobil: samme avstand over og under Marie-kortet (44 px). */
+  @media (max-width: 640px) { .journey { padding-top: 44px; } }
+  .hjemme-wrap { background: var(--paper); padding: 0 0 var(--space); }
+  .latest { background: var(--sky); padding: var(--space) 0; }
   section { padding: 60px 0; }
 
   .section-head { max-width: 62ch; margin-bottom: 36px; }
-  .section-alt.no-top .section-head { text-align: center; margin-left: auto; margin-right: auto; }
-  .section-alt.no-top .section-head .heading-rule { margin-left: auto; margin-right: auto; }
+  .journey .section-head { text-align: center; margin-left: auto; margin-right: auto; }
+  .journey .section-head .heading-rule { margin-left: auto; margin-right: auto; }
 
   .journey-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
   @media (max-width: 960px) { .journey-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (max-width: 560px) {
     .journey-grid { grid-template-columns: 1fr; gap: 10px; }
-    /* Mobil: bare tittel + lenke, så seksjonen holdes kort. */
+    /* Mobil: kompakte rader – tittel til venstre, pil til høyre. */
     .journey-card p { display: none; }
   }
   .journey-more { text-align: center; margin: 22px 0 0; }
@@ -284,7 +302,6 @@ const journeyCards = [
   .hjemme-section {
     background: var(--beige); border-radius: var(--radius); padding: 56px;
     display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 48px; align-items: center;
-    margin-top: 40px;
   }
   .hjemme-content .eyebrow { font-size: 0.78rem; letter-spacing: 0.09em; text-transform: uppercase; color: var(--navy-2); font-weight: 700; margin: 0 0 14px; display: block; }
   .hjemme-content h3 { font-family: var(--font-display); font-weight: 600; font-size: clamp(1.6rem, 2.8vw, 2.1rem); line-height: 1.15; margin: 0 0 16px; color: var(--navy); }
@@ -311,9 +328,17 @@ const journeyCards = [
     box-shadow: 0 12px 28px rgba(22, 56, 117, 0.06);
   }
   .journey-card:hover { transform: translateY(-2px); box-shadow: 0 18px 36px rgba(22, 56, 117, 0.1); }
-  .journey-card .card-body { padding: 24px; }
-  .journey-card h3 { font-size: 1.12rem; line-height: 1.25; margin: 0 0 8px; text-wrap: balance; }
+  .journey-card .card-body { padding: 20px; }
+  .journey-card h3 { font-size: 1.04rem; line-height: 1.25; margin: 0 0 8px; text-wrap: balance; }
   .journey-card p { font-size: 0.88rem; margin: 0 0 12px; color: var(--ink-soft); }
+  /* Mobil: kompakte rader – tittel til venstre, pil til høyre.
+     (Står etter grunnreglene så den vinner i kaskaden.) */
+  @media (max-width: 560px) {
+    .journey-card .card-body { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 20px 20px; }
+    .journey-card h3 { font-size: 1.08rem; margin: 0; }
+    .journey-card .card-link { font-size: 0; margin: 0; flex: none; }
+    .journey-card .card-link::after { content: "→"; font-size: 1.1rem; }
+  }
 
   .icon-circle {
     width: 52px; height: 52px; border-radius: 50%; background: var(--sky);
@@ -339,26 +364,31 @@ const journeyCards = [
   .latest-head h2 { margin: 0; }
   .latest-all { font-weight: 600; font-size: 0.92rem; color: var(--accent); text-decoration: none; white-space: nowrap; }
   .latest-all:hover { text-decoration: underline; }
-  .latest-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
-  .latest-card { display: flex; flex-direction: column; gap: 12px; text-decoration: none; color: inherit; }
-  .latest-card:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; border-radius: 12px; }
-  .latest-img { display: block; width: 100%; aspect-ratio: 3 / 2; height: auto; object-fit: cover; border-radius: 12px; transition: opacity 0.2s ease; }
+  .latest-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; }
+  .latest-card {
+    display: flex; flex-direction: column; gap: 14px; text-decoration: none; color: inherit;
+    background: var(--paper); border: 1px solid var(--line); border-radius: 16px; padding: 12px 12px 18px;
+    box-shadow: 0 8px 24px rgba(22, 56, 117, 0.06); transition: box-shadow 0.2s ease, transform 0.2s ease;
+  }
+  .latest-card:hover { box-shadow: 0 14px 32px rgba(22, 56, 117, 0.1); transform: translateY(-2px); }
+  .latest-card:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+  .latest-img { display: block; width: 100%; aspect-ratio: 3 / 2; height: auto; object-fit: cover; border-radius: 10px; transition: opacity 0.2s ease; }
   .latest-img-empty { background: var(--beige); }
   .latest-card:hover .latest-img { opacity: 0.92; }
-  .latest-body { display: block; min-width: 0; }
-  .latest-meta { display: block; font-size: 0.8rem; color: var(--ink-soft); margin-bottom: 4px; }
+  .latest-body { display: block; min-width: 0; padding: 0 6px; }
+  .latest-meta { display: block; font-size: 0.88rem; color: var(--ink-soft); margin-bottom: 4px; }
   .latest-title {
     display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-    font-family: var(--font-display); font-weight: 500; font-size: 1.1rem; line-height: 1.3; color: var(--navy); text-wrap: balance;
+    font-family: var(--font-display); font-weight: 500; font-size: 1.32rem; line-height: 1.28; color: var(--navy); text-wrap: balance;
   }
   .latest-card:hover .latest-title { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
   @media (max-width: 860px) and (min-width: 641px) { .latest-grid { gap: 18px; } }
   @media (max-width: 640px) {
     /* Mobil: kompakte rader med lite bilde til venstre. */
-    .latest-grid { grid-template-columns: 1fr; gap: 0; }
-    .latest-card { flex-direction: row; align-items: center; gap: 14px; padding: 14px 0; border-top: 1px solid var(--line); }
-    .latest-card:last-child { border-bottom: 1px solid var(--line); }
-    .latest-img { width: 88px; height: 88px; flex: none; aspect-ratio: 1; border-radius: 10px; }
-    .latest-title { font-size: 1rem; -webkit-line-clamp: 3; }
+    .latest-grid { grid-template-columns: 1fr; gap: 12px; }
+    .latest-card { flex-direction: row; align-items: center; gap: 14px; padding: 10px; }
+    .latest-body { padding: 0 6px 0 0; }
+    .latest-img { width: 120px; height: 120px; flex: none; aspect-ratio: 1; border-radius: 10px; }
+    .latest-title { font-size: 1.16rem; -webkit-line-clamp: 3; }
   }
 </style>
