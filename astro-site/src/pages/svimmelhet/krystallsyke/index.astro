@@ -364,7 +364,10 @@ const faqLd = {
     <div class="container">
       <div class="two-col two-col-center">
         <div class="marie-media">
-          <img src="/marie-portrait.jpg" alt="Marie Hermansen, kiropraktor hos Krystallsykehjelpen" />
+          <picture>
+            <source srcset="/marie-portrett-900.webp" type="image/webp" />
+            <img src="/marie-portrett-900.jpg" alt="Marie Hermansen, kiropraktor hos Krystallsykehjelpen" width="900" height="1125" loading="lazy" />
+          </picture>
         </div>
         <div>
           <span class="eyebrow">Hvem står bak</span>
@@ -601,7 +604,8 @@ const faqLd = {
   .marie-media {
     border-radius: 28px; aspect-ratio: 1 / 1; overflow: hidden; box-shadow: 0 8px 24px rgba(22, 56, 117, 0.06);
   }
-  .marie-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .marie-media picture { display: block; width: 100%; height: 100%; }
+  .marie-media img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 20%; display: block; }
   @media (max-width: 860px) { .marie-media { order: -1; aspect-ratio: 4 / 3; } }
   .marie-link {
     display: inline-block; color: var(--accent); font-weight: 700; font-size: 0.94rem; text-decoration: none;
