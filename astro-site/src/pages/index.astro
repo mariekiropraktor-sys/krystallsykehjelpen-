@@ -198,7 +198,7 @@ const journeyCards = [
 
 <style>
   /* ---------- Hero ---------- */
-  .hero { background: var(--beige); padding: 64px 0 150px; position: relative; overflow: hidden; text-align: center; }
+  .hero { background: var(--beige); padding: 64px 0 120px; position: relative; overflow: hidden; text-align: center; }
   .hero-inner { display: flex; flex-direction: column; align-items: center; max-width: 760px; }
   .hero-logo { display: block; width: 196px; height: 196px; margin-bottom: 32px; }
   .eyebrow { font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 16px; display: inline-block; }
@@ -209,7 +209,7 @@ const journeyCards = [
   /* Kursiv i petrol (Fjord-paletten). */
   .hero h1 em { font-style: italic; font-weight: 400; color: var(--accent); }
   .lead { font-size: 1.12rem; line-height: 1.6; color: var(--ink-soft); max-width: 44ch; margin: 0 0 40px; text-wrap: balance; }
-  .hero-wave { position: absolute; bottom: -2px; left: 0; width: 100%; height: 130px; line-height: 0; }
+  .hero-wave { position: absolute; bottom: -2px; left: 0; width: 100%; height: 100px; line-height: 0; }
 
   .hero-ctas { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
   .hero-btn-primary { background: var(--navy); color: #fff; }
@@ -219,19 +219,19 @@ const journeyCards = [
   .hero-ctas .btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
 
   @media (max-width: 640px) {
-    .hero { padding: 44px 0 100px; }
+    .hero { padding: 44px 0 76px; }
     .hero-logo { width: 120px; height: 120px; margin-bottom: 28px; }
     .eyebrow { font-size: 0.7rem; margin-bottom: 14px; }
     .hero h1 { font-size: 1.95rem; margin-bottom: 18px; }
     .lead { font-size: 1rem; margin-bottom: 32px; }
-    .hero-wave { height: 76px; }
+    .hero-wave { height: 56px; }
     /* Knappene side om side på mobil, så heroen holdes lav. */
     .hero-ctas { flex-wrap: nowrap; width: 100%; gap: 10px; }
     .hero-ctas .btn { flex: 1; padding-left: 12px; padding-right: 12px; justify-content: center; text-align: center; }
   }
 
   /* ---------- Søk + faglig ansvarlig ---------- */
-  .hero-trust { background: var(--paper); padding: 64px 0 0; }
+  .hero-trust { background: var(--paper); padding: 48px 0 0; }
   .hero-trust-inner { max-width: 960px; display: grid; grid-template-columns: 1.25fr auto 1fr; gap: 32px; align-items: center; }
   .hero-trust-search { min-width: 0; }
   .hero-trust-label {
@@ -247,7 +247,7 @@ const journeyCards = [
   .hero-byline:hover .hero-byline-more { text-decoration: underline; }
 
   @media (max-width: 640px) {
-    .hero-trust { padding: 56px 0 0; }
+    .hero-trust { padding: 36px 0 0; }
     .hero-trust-inner { grid-template-columns: 1fr; gap: 48px; }
     .hero-trust-divider { width: 100%; height: 1px; align-self: auto; }
     .hero-byline-photo { width: 72px; height: 72px; }
