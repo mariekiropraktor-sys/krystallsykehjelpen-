@@ -5,6 +5,7 @@ import { getPageSections } from "../lib/pageSections";
 import { safeFetch } from "../lib/safeFetch";
 import { inlineHtmlFromBlock } from "../lib/portableText";
 import { urlForImage } from "../lib/sanityImage";
+import { MARIE_URL } from "../config/marie";
 
 const sections = await getPageSections("hjem");
 
@@ -59,53 +60,60 @@ const journeyCards = [
   title="Krystallsyke og svimmelhet: kunnskap og øvelser | Krystallsykehjelpen"
   description="Lær om krystallsyke (BPPV) og svimmelhet – symptomer, undersøkelse og behandling. Faglig kvalitetssikret informasjon og øvelser fra erfaren kiropraktor."
   activePath="/"
-  marieBg="sky"
+  hideMarie
 >
-  <!-- 1. Hero -->
+  <!-- 1. Hero – logo sentrert, minimalistisk -->
   <section class="hero">
-    <div class="container hero-grid">
-      <div class="hero-text-top">
-        <span class="eyebrow">Norges kunnskapsressurs om balanse</span>
-        <h1>{sections.hero?.heading ?? (<>Trygg kunnskap når verden <em>plutselig snurrer</em></>)}</h1>
-        <p class="lead" set:html={sections.hero?.body?.[0]
-          ? inlineHtmlFromBlock(sections.hero.body[0])
-          : "Forstå symptomene, undersøkelsene og behandlingsmulighetene ved krystallsyke og svimmelhet — og finn riktig hjelp når du trenger det."} />
-      </div>
-
-      <div class="hero-image">
-        <picture class="hero-photo-frame">
-          <source media="(max-width: 768px)" srcset="/hero-forside-v8-mobil.webp" type="image/webp" width="1040" height="780" />
-          <source srcset="/hero-forside-v8.webp" type="image/webp" />
-          <img
-            src="/hero-forside-v8.jpg"
-            alt="Kvinne som er svimmel og holder seg til hodet, med illustrasjon av balanseorganet i det indre øret"
-            width="1672"
-            height="941"
-            loading="eager"
-            fetchpriority="high"
-            class="hero-photo"
-          />
-        </picture>
-      </div>
-
-      <div class="hero-bottom">
-        <div class="hero-ctas">
-          <a href="/blogg/er-dette-krystallsyke/" class="btn btn-primary">Jeg tror jeg har krystallsyke →</a>
-          <a href="/fa-hjelp/#bestill" class="btn btn-outline hero-btn-secondary">Bestill time</a>
-        </div>
-        <div class="hero-search-row">
-          <span class="hero-search-divider">eller søk direkte</span>
-          <form class="search-box" action="/sok/" method="get">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
-            <input type="text" name="q" placeholder="Søk på symptom, diagnose eller øvelse..." />
-            <button type="submit" class="search-btn">Søk</button>
-          </form>
-        </div>
+    <div class="container hero-inner">
+      <picture>
+        <source srcset="/logo/krystallsykehjelpen-logo-512.webp" type="image/webp" />
+        <img
+          src="/logo/krystallsykehjelpen-logo-512.png"
+          alt="Krystallsykehjelpen-logo: det indre øret med buegangene og sneglehuset"
+          width="196"
+          height="196"
+          loading="eager"
+          fetchpriority="high"
+          class="hero-logo"
+        />
+      </picture>
+      <span class="eyebrow">Krystallsyke og svimmelhet</span>
+      <h1>Trygg kunnskap når verden <em>plutselig snurrer</em></h1>
+      <p class="lead">Forstå svimmelheten din. Finn riktig behandling, øvelser og hjelp fra fagpersoner.</p>
+      <div class="hero-ctas">
+        <a href="/svimmelhet/" class="btn hero-btn-primary">Jeg er svimmel</a>
+        <a href="/fa-hjelp/" class="btn hero-btn-secondary">Finn behandling</a>
       </div>
     </div>
-    <svg class="hero-wave" viewBox="0 0 1440 60" preserveAspectRatio="none">
+    <svg class="hero-wave" viewBox="0 0 1440 60" preserveAspectRatio="none" aria-hidden="true">
       <path d="M0,32 C360,72 1080,0 1440,32 L1440,60 L0,60 Z" fill="#ffffff" />
     </svg>
+  </section>
+
+  <!-- 1b. Søk + faglig ansvarlig (flyttet ut av heroen) -->
+  <section class="hero-trust" aria-label="Søk og faglig ansvarlig">
+    <div class="container hero-trust-inner">
+      <div class="hero-trust-search">
+        <label class="hero-trust-label" for="hero-sok">Søk i kunnskapsbasen</label>
+        <form class="search-box" action="/sok/" method="get" role="search">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
+          <input id="hero-sok" type="text" name="q" placeholder="Symptom, diagnose eller øvelse" />
+          <button type="submit" class="search-btn">Søk</button>
+        </form>
+      </div>
+      <span class="hero-trust-divider" aria-hidden="true"></span>
+      <a href={MARIE_URL} class="hero-byline">
+        <picture>
+          <source srcset="/marie-hermansen-240.webp" type="image/webp" />
+          <img src="/marie-hermansen-240.jpg" alt="" width="72" height="72" loading="lazy" class="hero-byline-photo" />
+        </picture>
+        <span>
+          <span class="hero-byline-name">Marie Hermansen, kiropraktor</span>
+          Spesialisert på krystallsyke og svimmelhet
+          <span class="hero-byline-more">Møt Marie →</span>
+        </span>
+      </a>
+    </div>
   </section>
 
   <!-- 2. Hvor er du i forløpet? -->
@@ -230,59 +238,65 @@ const journeyCards = [
 </Layout>
 
 <style>
-  .hero { padding: 56px 0 90px; position: relative; overflow: hidden; }
-  .hero-grid {
-    display: grid;
-    grid-template-columns: 1.05fr 0.95fr;
-    grid-template-areas:
-      "text image"
-      "bottom image";
-    gap: 16px 48px;
-    align-items: start;
+  /* ---------- Hero ---------- */
+  .hero { background: var(--beige); padding: 52px 0 76px; position: relative; overflow: hidden; text-align: center; }
+  .hero-inner { display: flex; flex-direction: column; align-items: center; max-width: 760px; }
+  .hero-logo { display: block; width: 196px; height: 196px; margin-bottom: 24px; }
+  .eyebrow { font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 12px; display: inline-block; }
+  .hero h1 {
+    color: var(--navy-deep); font-weight: 500; font-size: clamp(2.1rem, 4.2vw, 3.25rem);
+    line-height: 1.08; letter-spacing: -0.015em; margin: 0 0 16px; text-wrap: balance;
   }
-  .hero-text-top { grid-area: text; }
-  .hero-image { grid-area: image; align-self: center; position: relative; }
-  .hero-bottom { grid-area: bottom; }
-  .eyebrow { font-size: 0.82rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 10px; display: inline-block; }
-  .lead { font-size: 1.1rem; max-width: 46ch; }
-  .hero-wave { position: absolute; bottom: -2px; left: 0; width: 100%; line-height: 0; }
+  /* Dempet kursiv: navy-2 i stedet for klar accent-blå. */
+  .hero h1 em { font-style: italic; font-weight: 400; color: var(--navy-2); }
+  .lead { font-size: 1.12rem; line-height: 1.6; color: var(--ink-soft); max-width: 44ch; margin: 0 0 28px; text-wrap: balance; }
+  .hero-wave { position: absolute; bottom: -2px; left: 0; width: 100%; height: 44px; line-height: 0; }
 
-  .hero-ctas { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; margin-top: 26px; margin-bottom: 26px; }
-  /* Sekundærknapp i hero: navy kant, så den ser klikkbar ut ved siden av hovedknappen. */
-  .hero-btn-secondary { border-color: var(--navy); }
+  .hero-ctas { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .hero-btn-primary { background: var(--navy); color: #fff; }
+  .hero-btn-primary:hover { background: var(--navy-deep); box-shadow: 0 6px 18px rgba(22, 56, 117, 0.25); }
+  .hero-btn-secondary { background: transparent; color: var(--navy); border: 1.5px solid rgba(22, 56, 117, 0.32); }
+  .hero-btn-secondary:hover { border-color: var(--navy); background: rgba(255, 255, 255, 0.5); }
+  .hero-ctas .btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
 
   @media (max-width: 640px) {
-    .hero-grid {
-      grid-template-columns: 1fr;
-      grid-template-areas:
-        "text"
-        "bottom"
-        "image";
-    }
-    /* Mobil: knapper og søk rett under teksten, bildet etter, så
-       hovedknappen er synlig uten å scrolle. */
-    .hero-image { margin-top: 18px; }
+    .hero { padding: 28px 0 50px; }
+    .hero-logo { width: 120px; height: 120px; margin-bottom: 16px; }
+    .eyebrow { font-size: 0.7rem; margin-bottom: 8px; }
+    .hero h1 { font-size: 1.95rem; margin-bottom: 12px; }
+    .lead { font-size: 1rem; margin-bottom: 22px; }
+    /* Knappene side om side på mobil, så heroen holdes lav. */
+    .hero-ctas { flex-wrap: nowrap; width: 100%; gap: 10px; }
+    .hero-ctas .btn { flex: 1; padding-left: 12px; padding-right: 12px; justify-content: center; text-align: center; }
   }
 
-  .hero-photo-frame { display: block; width: 100%; }
-  .hero-photo {
-    display: block; width: 100%; height: auto; border-radius: var(--radius); aspect-ratio: 4/3; object-fit: cover;
-    box-shadow: 0 20px 50px rgba(22,56,117,0.12); object-position: 85% 50%;
+  /* ---------- Søk + faglig ansvarlig ---------- */
+  .hero-trust { background: var(--paper); padding: 28px 0 8px; }
+  .hero-trust-inner { max-width: 960px; display: grid; grid-template-columns: 1.25fr auto 1fr; gap: 32px; align-items: center; }
+  .hero-trust-search { min-width: 0; }
+  .hero-trust-label {
+    display: block; font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--ink-soft); font-weight: 700; margin-bottom: 10px;
   }
-  @media (max-width: 768px) {
-    .hero-photo { aspect-ratio: 4/3; height: auto; object-fit: cover; object-position: 50% 50%; }
+  .hero-trust-divider { width: 1px; align-self: stretch; background: var(--line); }
+  .hero-byline { display: flex; align-items: center; gap: 16px; text-decoration: none; color: var(--ink-soft); font-size: 0.92rem; line-height: 1.45; }
+  .hero-byline picture { flex-shrink: 0; }
+  .hero-byline-photo { display: block; width: 72px; height: 72px; border-radius: 50%; object-fit: cover; box-shadow: 0 4px 12px rgba(22, 56, 117, 0.12); }
+  .hero-byline-name { display: block; font-family: var(--font-display); font-size: 1.08rem; font-weight: 500; color: var(--navy); }
+  .hero-byline-more { display: block; margin-top: 2px; color: var(--navy-2); font-weight: 600; font-size: 0.86rem; }
+  .hero-byline:hover .hero-byline-more { text-decoration: underline; }
+
+  @media (max-width: 640px) {
+    .hero-trust { padding: 20px 0 4px; }
+    .hero-trust-inner { grid-template-columns: 1fr; gap: 20px; }
+    .hero-trust-divider { width: 100%; height: 1px; align-self: auto; }
+    .hero-byline-photo { width: 60px; height: 60px; }
   }
 
-  .hero-search-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 0; }
-  .hero-search-divider {
-    display: flex; align-items: center; gap: 10px; color: var(--ink-soft);
-    font-size: 0.78rem; font-weight: 600; width: 100%; max-width: 480px;
-  }
-  .hero-search-divider::before, .hero-search-divider::after { content: ""; flex: 1; height: 1px; background: var(--line); }
   .search-box {
     display: flex; align-items: center; gap: 10px; background: #fff;
-    border: 1.5px solid var(--line); border-radius: 999px; padding: 6px 6px 6px 18px;
-    box-shadow: 0 8px 24px rgba(22, 56, 117, 0.08); max-width: 480px; width: 100%;
+    border: 1.5px solid var(--line); border-radius: 999px; padding: 5px 5px 5px 16px;
+    box-shadow: 0 8px 24px rgba(22, 56, 117, 0.06); width: 100%;
     transition: border-color 0.15s ease, box-shadow 0.15s ease;
   }
   .search-box:focus-within { border-color: var(--accent); box-shadow: 0 8px 28px rgba(47, 121, 201, 0.18); }
