@@ -4,7 +4,6 @@ import { safeFetch } from "../../../lib/safeFetch";
 import { blogPreviewClient, isPreviewingDrafts } from "../../../lib/blogPreviewClient";
 import { blocksToHtml, extractHeadings, estimateReadingTime } from "../../../lib/portableText";
 import { urlForImage } from "../../../lib/sanityImage";
-import Forfattersignatur from "../../../components/Forfattersignatur.astro";
 
 export async function getStaticPaths() {
   try {
@@ -139,7 +138,7 @@ const faqJsonLd = post?.faq?.length && {
               <div class="byline">
                 <picture>
                   <source srcset="/marie-hermansen-240.webp" type="image/webp" />
-                  <img src="/marie-hermansen-240.jpg" alt="" width="44" height="44" />
+                  <img src="/marie-hermansen-240.jpg" alt="" width="64" height="64" />
                 </picture>
                 <span>
                   <a href="/mott-marie/" class="byline-name">{post.author?.name || "Marie Hermansen"}, kiropraktor</a>
@@ -215,8 +214,6 @@ const faqJsonLd = post?.faq?.length && {
               ))}
             </section>
           ) : null}
-
-          <Forfattersignatur />
         </article>
 
         {headings.length > 1 && (
@@ -361,9 +358,9 @@ const faqJsonLd = post?.faq?.length && {
   .eyebrow { display: inline-block; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; color: var(--accent); margin-bottom: 14px; }
   .post-hero h1 { font-size: clamp(1.9rem, 4.2vw, 3rem); line-height: 1.1; text-wrap: balance; margin: 0; }
   .post-hero .lead { font-size: 1.12rem; line-height: 1.6; color: var(--ink-soft); margin: 18px 0 22px; max-width: 56ch; }
-  .byline { display: flex; align-items: center; gap: 12px; }
+  .byline { display: flex; align-items: center; gap: 14px; }
   .byline picture { flex-shrink: 0; display: block; }
-  .byline img { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; display: block; }
+  .byline img { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; display: block; }
   .byline-name { display: block; font-weight: 600; color: var(--navy); text-decoration: none; font-size: 0.95rem; }
   .byline-name:hover { text-decoration: underline; }
   .byline-meta { display: block; font-size: 0.86rem; color: var(--ink-soft); }
