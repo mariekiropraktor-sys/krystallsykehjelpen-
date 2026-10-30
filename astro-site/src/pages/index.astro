@@ -111,7 +111,7 @@ const journeyCards = [
   </section>
 
   <!-- 2. Hva kjenner du deg igjen i? -->
-  <section class="section-alt no-top">
+  <section class="journey">
     <div class="container">
       <div class="section-head">
         <h2>Hva kjenner du deg igjen i?</h2>
@@ -129,6 +129,12 @@ const journeyCards = [
         ))}
       </div>
       <p class="journey-more"><a href="/ovelsesbibliotek/" class="card-link">Se hele øvelsesbiblioteket →</a></p>
+    </div>
+  </section>
+
+  <!-- 2b. Krystallsykehjelpen hjemme – egen seksjon med full luft -->
+  <section class="hjemme-wrap">
+    <div class="container">
 
       <div class="hjemme-section">
         <div class="hjemme-content">
@@ -155,7 +161,7 @@ const journeyCards = [
   </section>
 
   <!-- 3. Siste artikler – kompakte kort: bilde, kategori · dato, tittel -->
-  <section class="section-alt latest">
+  <section class="latest">
     <div class="container">
       <div class="latest-head">
         <h2>Siste artikler</h2>
@@ -224,7 +230,7 @@ const journeyCards = [
   }
 
   /* ---------- Søk + faglig ansvarlig ---------- */
-  .hero-trust { background: var(--paper); padding: 28px 0 56px; }
+  .hero-trust { background: var(--paper); padding: 28px 0 0; }
   .hero-trust-inner { max-width: 960px; display: grid; grid-template-columns: 1.25fr auto 1fr; gap: 32px; align-items: center; }
   .hero-trust-search { min-width: 0; }
   .hero-trust-label {
@@ -240,7 +246,7 @@ const journeyCards = [
   .hero-byline:hover .hero-byline-more { text-decoration: underline; }
 
   @media (max-width: 640px) {
-    .hero-trust { padding: 20px 0 40px; }
+    .hero-trust { padding: 20px 0 0; }
     .hero-trust-inner { grid-template-columns: 1fr; gap: 20px; }
     .hero-trust-divider { width: 100%; height: 1px; align-self: auto; }
     .hero-byline-photo { width: 72px; height: 72px; }
@@ -264,13 +270,18 @@ const journeyCards = [
     cursor: pointer; flex-shrink: 0;
   }
 
-  .section-alt { background: var(--paper); padding: 60px 0; }
-  .section-alt.no-top { padding-top: 0; padding-bottom: 70px; }
+  /* Fast seksjonsrytme på forsiden: 96 px desktop, 64 px mobil.
+     Hvitt og lys fjord vekselvis skiller seksjonene uten streker. */
+  .journey, .hjemme-wrap, .latest { --space: 96px; }
+  @media (max-width: 640px) { .journey, .hjemme-wrap, .latest { --space: 64px; } }
+  .journey { background: var(--paper); padding: var(--space) 0; }
+  .hjemme-wrap { background: var(--paper); padding: 0 0 var(--space); }
+  .latest { background: var(--sky); padding: var(--space) 0; }
   section { padding: 60px 0; }
 
   .section-head { max-width: 62ch; margin-bottom: 36px; }
-  .section-alt.no-top .section-head { text-align: center; margin-left: auto; margin-right: auto; }
-  .section-alt.no-top .section-head .heading-rule { margin-left: auto; margin-right: auto; }
+  .journey .section-head { text-align: center; margin-left: auto; margin-right: auto; }
+  .journey .section-head .heading-rule { margin-left: auto; margin-right: auto; }
 
   .journey-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
   @media (max-width: 960px) { .journey-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
@@ -284,7 +295,6 @@ const journeyCards = [
   .hjemme-section {
     background: var(--beige); border-radius: var(--radius); padding: 56px;
     display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 48px; align-items: center;
-    margin-top: 40px;
   }
   .hjemme-content .eyebrow { font-size: 0.78rem; letter-spacing: 0.09em; text-transform: uppercase; color: var(--navy-2); font-weight: 700; margin: 0 0 14px; display: block; }
   .hjemme-content h3 { font-family: var(--font-display); font-weight: 600; font-size: clamp(1.6rem, 2.8vw, 2.1rem); line-height: 1.15; margin: 0 0 16px; color: var(--navy); }
