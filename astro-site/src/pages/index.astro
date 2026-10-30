@@ -242,7 +242,7 @@ const journeyCards = [
   .hero { background: var(--beige); padding: 52px 0 76px; position: relative; overflow: hidden; text-align: center; }
   .hero-inner { display: flex; flex-direction: column; align-items: center; max-width: 760px; }
   .hero-logo { display: block; width: 196px; height: 196px; margin-bottom: 24px; }
-  .eyebrow { font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 12px; display: inline-block; }
+  .eyebrow { font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--navy-2); font-weight: 700; margin-bottom: 12px; display: inline-block; }
   .hero h1 {
     color: var(--navy-deep); font-weight: 500; font-size: clamp(2.1rem, 4.2vw, 3.25rem);
     line-height: 1.08; letter-spacing: -0.015em; margin: 0 0 16px; text-wrap: balance;
@@ -255,7 +255,7 @@ const journeyCards = [
   .hero-ctas { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
   .hero-btn-primary { background: var(--navy); color: #fff; }
   .hero-btn-primary:hover { background: var(--navy-deep); box-shadow: 0 6px 18px rgba(22, 56, 117, 0.25); }
-  .hero-btn-secondary { background: transparent; color: var(--navy); border: 1.5px solid rgba(22, 56, 117, 0.32); }
+  .hero-btn-secondary { background: transparent; color: var(--navy); border: 1.5px solid rgba(22, 56, 117, 0.6); }
   .hero-btn-secondary:hover { border-color: var(--navy); background: rgba(255, 255, 255, 0.5); }
   .hero-ctas .btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
 
@@ -271,7 +271,7 @@ const journeyCards = [
   }
 
   /* ---------- Søk + faglig ansvarlig ---------- */
-  .hero-trust { background: var(--paper); padding: 28px 0 8px; }
+  .hero-trust { background: var(--paper); padding: 28px 0 56px; }
   .hero-trust-inner { max-width: 960px; display: grid; grid-template-columns: 1.25fr auto 1fr; gap: 32px; align-items: center; }
   .hero-trust-search { min-width: 0; }
   .hero-trust-label {
@@ -287,7 +287,7 @@ const journeyCards = [
   .hero-byline:hover .hero-byline-more { text-decoration: underline; }
 
   @media (max-width: 640px) {
-    .hero-trust { padding: 20px 0 4px; }
+    .hero-trust { padding: 20px 0 40px; }
     .hero-trust-inner { grid-template-columns: 1fr; gap: 20px; }
     .hero-trust-divider { width: 100%; height: 1px; align-self: auto; }
     .hero-byline-photo { width: 60px; height: 60px; }
