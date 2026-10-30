@@ -1,13 +1,10 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import MediaPlaceholder from "../components/MediaPlaceholder.astro";
-import { getPageSections } from "../lib/pageSections";
 import { safeFetch } from "../lib/safeFetch";
-import { inlineHtmlFromBlock } from "../lib/portableText";
 import { urlForImage } from "../lib/sanityImage";
 import { MARIE_URL } from "../config/marie";
 
-const sections = await getPageSections("hjem");
 
 const bookingUrl =
   "https://psno-patient-platform-fe.svc.pasientsky.no/embedded/planner/booking?serviceProviderId=54907264-049e-11eb-8fc8-26c6f94d64b7";
@@ -28,30 +25,28 @@ function formatDate(dateString) {
   return new Date(dateString).toLocaleDateString("nb-NO", { year: "numeric", month: "long", day: "numeric" });
 }
 
+// «Hva kjenner du deg igjen i?» – kortene er skrevet med ordene folk faktisk
+// søker på, og lenker til publiserte artikler som svarer på søket.
 const journeyCards = [
   {
-    title: "Jeg tror jeg har krystallsyke",
-    desc: "Kjenn igjen de typiske tegnene og finn ut om det du opplever passer med krystallsyke.",
-    href: "/blogg/er-dette-krystallsyke/",
-    comingSoon: false,
+    title: "Svimmel når du snur deg i sengen?",
+    desc: "Det typiske mønsteret ved krystallsyke, og når du bør søke hjelp.",
+    href: "/blogg/svimmel-nar-du-snur-deg-i-sengen/",
   },
   {
-    title: "Jeg har fått diagnosen",
-    desc: "Forstå hva som skjer i det indre øret og hvordan behandlingen fungerer.",
-    href: "/hjemme/",
-    comingSoon: false,
+    title: "Øvelser du kan gjøre hjemme",
+    desc: "Epley, Semont, BBQ-rull og flere, med film og steg for steg.",
+    href: "/blogg/krystallsyke-5-ovelser-som-hjelper/",
   },
   {
-    title: "Jeg trenger en øvelse",
-    desc: "Finn riktig manøver eller øvelse for din buegang i øvelsesbiblioteket.",
-    href: "/ovelsesbibliotek/",
-    comingSoon: false,
-  },
-  {
-    title: "Jeg er fortsatt svimmel",
-    desc: "Restsymptomer etter krystallsyke er vanlig — les hva som kan hjelpe.",
+    title: "Fortsatt svimmel etter behandling?",
+    desc: "Restsvimmelhet er vanlig, og betyr ikke at behandlingen har mislyktes.",
     href: "/blogg/restsvimmelhet-etter-krystallsyke/",
-    comingSoon: false,
+  },
+  {
+    title: "Svimmel av skjerm eller i butikken?",
+    desc: "Visuell svimmelhet: mulige årsaker og hvordan den kan trenes bort.",
+    href: "/blogg/svimmel-i-butikker-eller-av-skjerm/",
   },
 ];
 ---
@@ -109,38 +104,39 @@ const journeyCards = [
         </picture>
         <span>
           <span class="hero-byline-name">Marie Hermansen, kiropraktor</span>
-          Spesialisert på krystallsyke og svimmelhet
+          Særlig kompetanse innen krystallsyke og svimmelhet
           <span class="hero-byline-more">Møt Marie →</span>
         </span>
       </a>
     </div>
   </section>
 
-  <!-- 2. Hvor er du i forløpet? -->
+  <!-- 2. Hva kjenner du deg igjen i? -->
   <section class="section-alt no-top">
     <div class="container">
       <div class="section-head">
-        <h2>Hvor er du i forløpet?</h2>
+        <h2>Hva kjenner du deg igjen i?</h2>
         <hr class="heading-rule" />
       </div>
       <div class="journey-grid">
         {journeyCards.map((card) => (
-          <a href={card.href} class={`card journey-card ${card.comingSoon ? "coming-soon" : ""}`} title={card.comingSoon ? "Kommer snart" : undefined}>
+          <a href={card.href} class="card journey-card">
             <div class="card-body">
               <h3>{card.title}</h3>
               <p>{card.desc}</p>
-              <span class="card-link">{card.comingSoon ? "Kommer snart" : "Les mer →"}</span>
+              <span class="card-link">Les mer →</span>
             </div>
           </a>
         ))}
       </div>
+      <p class="journey-more"><a href="/ovelsesbibliotek/" class="card-link">Se hele øvelsesbiblioteket →</a></p>
 
       <div class="hjemme-section">
         <div class="hjemme-content">
           <span class="eyebrow">Krystallsykehjelpen hjemme</span>
-          <h3>Få hjelp hjemme – steg for steg</h3>
-          <p>Har du fått påvist krystallsyke? Krystallsykehjelpen hjemme guider deg videre med tydelige videoveiledninger, manøvrer og informasjon om hva du kan forvente etter behandling – og hva du kan gjøre dersom du fortsatt er svimmel.</p>
-          <a href="/hjemme/" class="btn btn-primary">Start Krystallsykehjelpen hjemme →</a>
+          <h3>Få hjelp hjemme, steg for steg</h3>
+          <p>Har du fått påvist krystallsyke? Videoveiledninger, manøvrer og hva du kan forvente etter behandling.</p>
+          <a href="/hjemme/" class="btn btn-primary">Start her</a>
         </div>
         <div class="hjemme-visual">
           <img
@@ -153,46 +149,7 @@ const journeyCards = [
     </div>
   </section>
 
-  <!-- 3. Forklaringsseksjon om det indre øret -->
-  <section>
-    <div class="container">
-      <div class="diagram-grid">
-        <div>
-          <span class="eyebrow">Om krystallsyke</span>
-          <h2>{sections["hva-skjer-i-oret"]?.heading ?? "Hva skjer i øret?"}</h2>
-          <hr class="heading-rule" />
-          {sections["hva-skjer-i-oret"]?.body?.length ? (
-            sections["hva-skjer-i-oret"].body.map((b) => <p set:html={inlineHtmlFromBlock(b)} />)
-          ) : (
-            <>
-              <p>I det indre øret har vi tre bueganger som registrerer bevegelse. I tillegg finnes et lite balanseorgan som heter utriculus. Der ligger det små kalkkrystaller (otokonier), festet til en geléaktig hinne (otolittmembranen).</p>
-              <p>Når noen av krystallene løsner fra utriculus og havner i en av buegangene, kan de gi feil signaler om bevegelse når du endrer stilling. Det er dette som gir de korte anfallene med svimmelhet.</p>
-            </>
-          )}
-          <a href="/svimmelhet/krystallsyke/" class="card-link">Les mer om hvordan balanseorganet fungerer →</a>
-        </div>
-        <div class="diagram-illustration">
-          <img src={urlForImage(sections["hva-skjer-i-oret"]?.mediaAsset, 760) ?? "/ear-diagram.jpg"} alt="Illustrasjon av buegangene i det indre øret" class="diagram-img" />
-          <p class="diagram-caption">Illustrasjon av det indre ørets balanseorgan. Ved krystallsyke (BPPV) har otokonier løsnet fra utriculus og kommet inn i en av buegangene, hvor de påvirker væskebevegelsen som igjen resulterer i svimmelhet.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 4. Øvelser-CTA-bånd -->
-  <section class="section-cta">
-    <div class="container cta-inner">
-      <div>
-        <h2>{sections.ovelser?.heading ?? "Øv riktig — trygt hjemmefra"}</h2>
-        <p class="sub" set:html={sections.ovelser?.body?.[0]
-          ? inlineHtmlFromBlock(sections.ovelser.body[0])
-          : "Se øvelsesbiblioteket med manøvre og habitueringsøvelser organisert etter buegang og behov."} />
-      </div>
-      <a href="/ovelsesbibliotek/" class="btn btn-outline">Til øvelsesbiblioteket →</a>
-    </div>
-  </section>
-
-  <!-- 5. Siste artikler -->
+  <!-- 3. Siste artikler -->
   <section class="section-alt">
     <div class="container">
       <div class="section-head">
@@ -221,17 +178,6 @@ const journeyCards = [
         <p>Ingen artikler publisert ennå.</p>
       )}
       <p class="mt"><a href="/blogg/" class="card-link">Se alle artikler →</a></p>
-    </div>
-  </section>
-
-  <!-- 6. Finn behandler-bånd -->
-  <section class="section-beige">
-    <div class="container cta-band">
-      <div>
-        <h2>Trenger du en behandler nær deg?</h2>
-        <p>Finn kiropraktorer, fysioterapeuter og andre behandlere som hjelper med krystallsyke i ditt område.</p>
-      </div>
-      <a href="/finn-behandler/" class="btn btn-primary">Finn behandler →</a>
     </div>
   </section>
 
@@ -313,15 +259,20 @@ const journeyCards = [
 
   .section-alt { background: var(--paper); padding: 60px 0; }
   .section-alt.no-top { padding-top: 0; padding-bottom: 70px; }
-  .section-beige { background: var(--beige); padding: 60px 0; }
   section { padding: 60px 0; }
 
   .section-head { max-width: 62ch; margin-bottom: 36px; }
   .section-alt.no-top .section-head { text-align: center; margin-left: auto; margin-right: auto; }
   .section-alt.no-top .section-head .heading-rule { margin-left: auto; margin-right: auto; }
 
-  .journey-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
-  @media (max-width: 560px) { .journey-grid { grid-template-columns: 1fr; } }
+  .journey-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+  @media (max-width: 960px) { .journey-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 560px) {
+    .journey-grid { grid-template-columns: 1fr; gap: 10px; }
+    /* Mobil: bare tittel + lenke, så seksjonen holdes kort. */
+    .journey-card p { display: none; }
+  }
+  .journey-more { text-align: center; margin: 22px 0 0; }
 
   .hjemme-section {
     background: var(--beige); border-radius: var(--radius); padding: 56px;
@@ -353,16 +304,8 @@ const journeyCards = [
   }
   .journey-card:hover { transform: translateY(-2px); box-shadow: 0 18px 36px rgba(22, 56, 117, 0.1); }
   .journey-card .card-body { padding: 24px; }
-  .journey-card h3 { font-size: 1rem; margin: 0 0 8px; }
+  .journey-card h3 { font-size: 1.12rem; line-height: 1.25; margin: 0 0 8px; text-wrap: balance; }
   .journey-card p { font-size: 0.88rem; margin: 0 0 12px; color: var(--ink-soft); }
-  .journey-card.coming-soon { opacity: 0.7; cursor: default; }
-  .journey-card.coming-soon .card-link { color: var(--ink-soft); }
-
-  .diagram-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
-  @media (max-width: 800px) { .diagram-grid { grid-template-columns: 1fr; } }
-  .diagram-illustration { background: var(--sky); border-radius: var(--radius); padding: 30px; }
-  .diagram-img { width: 100%; max-width: 380px; margin: 0 auto; display: block; }
-  .diagram-caption { font-size: 0.82rem; color: var(--ink-soft); text-align: center; margin: 14px auto 0; max-width: 380px; line-height: 1.5; }
 
   .icon-circle {
     width: 52px; height: 52px; border-radius: 50%; background: var(--sky);
@@ -371,13 +314,6 @@ const journeyCards = [
   .icon-circle svg { width: 26px; height: 26px; color: var(--navy-2); }
   .card-link { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: 0.9rem; text-decoration: none; color: var(--navy-2); margin-top: 4px; }
   .mt { margin-top: 20px; }
-
-  .section-cta { background: var(--navy); color: #fff; padding: 48px 0; }
-  .section-cta .cta-inner { display: flex; gap: 24px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
-  .section-cta h2 { color: #fff; margin-bottom: 8px; }
-  .section-cta .sub { color: #d9e9f6; margin: 0; max-width: 52ch; }
-  .btn-outline { background: var(--beige); color: var(--navy); }
-  @media (max-width: 700px) { .section-cta .cta-inner { flex-direction: column; align-items: flex-start; } }
 
   .card-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
   @media (max-width: 860px) { .card-grid { grid-template-columns: 1fr; } }
@@ -396,10 +332,5 @@ const journeyCards = [
     display: inline-block; font-size: 0.72rem; font-weight: 700; padding: 3px 10px;
     border-radius: 999px; background: var(--sky); color: var(--navy-2); margin-bottom: 6px; margin-right: 6px;
   }
-
-  .cta-band { border-radius: var(--radius); padding: 36px; display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; }
-  .cta-band h2 { margin-bottom: 6px; }
-  .cta-band p { margin: 0; }
-  @media (max-width: 700px) { .cta-band { flex-direction: column; align-items: flex-start; } }
 
 </style>
