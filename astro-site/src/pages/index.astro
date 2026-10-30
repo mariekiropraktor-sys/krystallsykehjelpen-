@@ -253,7 +253,7 @@ const journeyCards = [
 
   @media (max-width: 640px) {
     .hero-trust { padding: 36px 0 0; }
-    .hero-trust-inner { grid-template-columns: 1fr; gap: 28px; }
+    .hero-trust-inner { grid-template-columns: 1fr; gap: 44px; }
     .hero-byline-photo { width: 72px; height: 72px; }
   }
 
@@ -280,7 +280,8 @@ const journeyCards = [
   .journey, .hjemme-wrap, .latest { --space: 96px; }
   @media (max-width: 640px) { .journey, .hjemme-wrap, .latest { --space: 80px; } }
   .journey { background: var(--paper); padding: 72px 0 var(--space); }
-  @media (max-width: 640px) { .journey { padding-top: 52px; } }
+  /* Mobil: samme avstand over og under Marie-kortet (44 px). */
+  @media (max-width: 640px) { .journey { padding-top: 44px; } }
   .hjemme-wrap { background: var(--paper); padding: 0 0 var(--space); }
   .latest { background: var(--sky); padding: var(--space) 0; }
   section { padding: 60px 0; }
