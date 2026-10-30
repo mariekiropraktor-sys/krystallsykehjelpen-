@@ -59,13 +59,22 @@ const relatedPosts = relatedSlugs.length
       [],
     )
   : [];
+// Faste bilder og etiketter for «Les også»-lenker til sider som ikke er
+// blogginnlegg (de har ikke forsidebilde i Sanity).
+const PAGE_CARDS = {
+  "/svimmelhet/krystallsyke/": { kicker: "Krystallsyke", image: "/krystallsyke-hovedartikkel.jpg" },
+  "/krystallsyken/": { kicker: "Krystallsyke", image: "/krystallsyke-hovedartikkel.jpg" },
+};
+
 const relatedCards = (post?.relatedLinks ?? []).map((link) => {
   const slugMatch = link.url?.match(/^\/blogg\/([^/]+)\/?$/)?.[1];
   const match = slugMatch ? relatedPosts.find((r) => r.slug === slugMatch) : null;
+  const pagePath = link.url?.replace(/^https?:\/\/(www\.)?krystallsykehjelpen\.no/, "").replace(/\/?$/, "/");
+  const page = pagePath ? PAGE_CARDS[pagePath] : undefined;
   return {
     ...link,
-    kicker: match ? match.category || "Artikkel" : "Les mer",
-    imageUrl: match ? urlForImage(match.coverImage, 640) : undefined,
+    kicker: match ? match.category || "Artikkel" : page?.kicker ?? "Les mer",
+    imageUrl: match ? urlForImage(match.coverImage, 640) : page?.image,
   };
 });
 
