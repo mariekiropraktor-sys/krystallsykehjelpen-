@@ -279,7 +279,8 @@ const journeyCards = [
      Hvitt og lys fjord vekselvis skiller seksjonene uten streker. */
   .journey, .hjemme-wrap, .latest { --space: 96px; }
   @media (max-width: 640px) { .journey, .hjemme-wrap, .latest { --space: 80px; } }
-  .journey { background: var(--paper); padding: var(--space) 0; }
+  .journey { background: var(--paper); padding: 72px 0 var(--space); }
+  @media (max-width: 640px) { .journey { padding-top: 52px; } }
   .hjemme-wrap { background: var(--paper); padding: 0 0 var(--space); }
   .latest { background: var(--sky); padding: var(--space) 0; }
   section { padding: 60px 0; }
