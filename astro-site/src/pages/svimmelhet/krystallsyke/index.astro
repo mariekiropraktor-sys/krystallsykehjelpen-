@@ -55,15 +55,6 @@ const canalCards = [
   },
 ];
 
-const causesList = [
-  "Økende alder",
-  "Hodeskade",
-  "Sykdom i det indre øret",
-  "Mulig sammenheng med migrene",
-  "Mulig sammenheng med benskjørhet",
-  "Lave vitamin D-nivåer",
-];
-
 const diagSteps = [
   { title: "Sykehistorie", desc: "Hva utløser svimmelheten?" },
   { title: "Posisjonstester", desc: "Dix-Hallpike og liggende rulletest" },
@@ -180,9 +171,8 @@ const faqLd = {
         </div>
         <div class="explain-text">
           <p class="pull-quote">Små kalkpartikler som normalt ligger i utriculus, kan løsne og komme inn i en av de væskefylte buegangene.</p>
-          <p>Når hodet beveges, kan partiklene forskyve væsken i buegangen på en måte som ikke passer med den faktiske bevegelsen. Hjernen mottar da motstridende informasjon fra balanseorganene, synet og resten av kroppen — noe som kan oppleves som en intens rotasjonsfølelse.</p>
-          <p>Man skiller gjerne mellom <strong>canalolithiasis</strong>, hvor partiklene beveger seg fritt i væsken, og <strong>cupulolithiasis</strong>, hvor partiklene sitter fast på cupula. Skillet har betydning for hvilket symptommønster som oppstår og hvilken manøver som er mest relevant.</p>
-          <a href="#buegangene" class="link-arrow">Se de ulike buegangene →</a>
+          <p>Når hodet beveges, ruller partiklene og drar væsken i buegangen med seg. Hjernen får da beskjed om at hodet snurrer, selv om det står stille, og det kjennes som en kraftig rotasjonsfølelse.</p>
+          <a href="/svimmelhet/krystallsyke/hva-skjer-i-oret/" class="link-arrow">Se krystallene bevege seg i en interaktiv modell →</a>
         </div>
 
         <div class="media-frame explain-video">
@@ -272,17 +262,13 @@ const faqLd = {
     <div class="container">
       <span class="eyebrow">Bakgrunn</span>
       <h2>Hvorfor får man krystallsyke?</h2>
-      <p class="section-lead">Mange som får krystallsyke har ingen tydelig utløsende årsak. Enkelte faktorer ser ut til å gjøre det noe mer sannsynlig, uten at det betyr en sikker årsakssammenheng:</p>
-      <div class="cause-list">
-        {causesList.map((cause) => (
-          <div class="cause-item"><span class="cause-dot"></span><p>{cause}</p></div>
-        ))}
-      </div>
+      <p class="section-lead">Mange som får krystallsyke har ingen tydelig utløsende årsak. Høyere alder, hodeskade og sykdom i det indre øret er blant forholdene som ser ut til å gjøre det mer sannsynlig.</p>
+      <a href="/svimmelhet/krystallsyke/hva-skjer-i-oret/#hvorfor" class="link-arrow">Les mer om hvorfor krystallene løsner →</a>
     </div>
   </section>
 
   <!-- 9. DIAGNOSTIKK -->
-  <section class="sky-section">
+  <section class="sky-section" id="undersokelse">
     <div class="container">
       <div class="two-col two-col-center">
         <div>
