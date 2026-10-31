@@ -13,8 +13,11 @@ type PortableSpan = {
   marks?: string[];
 };
 
+type PortableMarkDef = { _key: string; _type: string; href?: string };
+
 type PortableBlock = {
   _type: string;
+  markDefs?: PortableMarkDef[];
   style?: string;
   listItem?: string;
   children?: PortableSpan[];
@@ -51,17 +54,30 @@ function slugify(text: string): string {
     .replace(/(^-|-$)/g, "");
 }
 
+// Godtar kun interne stier og vanlige trygge protokoller i lenker.
+function safeHref(href?: string): string | null {
+  if (!href) return null;
+  return /^(\/|#|https?:\/\/|mailto:|tel:)/i.test(href) ? href.replace(/"/g, "&quot;") : null;
+}
+
 // Rendrer innholdet i én blokk til inline HTML (uten omsluttende tag), slik
 // at malene selv kan bestemme hvilket element (p, span, osv.) og hvilken
-// klasse teksten skal ha.
+// klasse teksten skal ha. Støtter fet, kursiv og lenker (markDefs av typen
+// "link"). Lenker til «#bestill» åpner valgvinduet (BestillValg.astro).
 export function inlineHtmlFromBlock(block?: PortableBlock): string {
   if (!block?.children) return "";
+  const markDefs = block.markDefs ?? [];
   return block.children
     .map((span) => {
       let text = escapeHtml(span.text ?? "");
       for (const mark of span.marks ?? []) {
         if (mark === "strong") text = `<strong>${text}</strong>`;
         else if (mark === "em") text = `<em>${text}</em>`;
+        else {
+          const def = markDefs.find((d) => d._key === mark);
+          const href = def?._type === "link" ? safeHref(def.href) : null;
+          if (href) text = `<a href="${href}">${text}</a>`;
+        }
       }
       return text;
     })
