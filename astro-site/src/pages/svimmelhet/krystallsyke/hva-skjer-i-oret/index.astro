@@ -142,7 +142,7 @@ const pageLd = {
     </div>
     <div class="model">
       <div class="stage">
-        <svg id="scene" viewBox="0 0 560 470" role="img" aria-label="Modell av bakre buegang med ampulle, cupula og utriculus">
+        <svg id="scene" viewBox="0 0 572 470" role="img" aria-label="Modell av bakre buegang med ampulle, cupula og utriculus">
           <!-- hodeindikator (nesa peker fremover, mot utriculus) -->
           <g id="head" transform="translate(500 56) rotate(0)">
             <circle r="26" fill="var(--sky)" stroke="var(--navy)" stroke-width="2.5"/>
@@ -157,9 +157,11 @@ const pageLd = {
             <path d="M-42 0 Q0 -27 42 0 Q0 27 -42 0 Z" fill="var(--white)" stroke="var(--navy)" stroke-width="2.5"/>
             <g clip-path="url(#lid)"><g id="iris2"><circle r="14" fill="var(--accent)"/><g id="spokes" stroke="var(--sky)" stroke-width="1.1" stroke-opacity=".75"></g><circle r="5.5" fill="var(--navy)"/><path d="M0 -14 V-6" stroke="var(--white)" stroke-width="3" stroke-linecap="round"/><circle cy="-10.5" r="2.4" fill="var(--white)"/></g></g>
             <g id="fastArrow" opacity="0"><path d="M0 -24 V-40 M-5 -34 L0 -41 L5 -34" fill="none" stroke="var(--turkis)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></g>
+            <text x="-47" y="4" text-anchor="end" class="svgl" style="font-size:10px">H</text>
+            <text x="46" y="4" text-anchor="start" class="svgl" style="font-size:10px">V</text>
             <g id="rotArrow" opacity="0"><path d="M30 -16 A34 34 0 0 0 -30 -16 M-30 -16 l1 -9 M-30 -16 l8 -3" fill="none" stroke="var(--navy2)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></g>
           </g>
-          <text x="500" y="226" text-anchor="middle" class="svgl">Øyet</text>
+          <text x="500" y="226" text-anchor="middle" class="svgl">Øyet, sett forfra</text>
           <text x="500" y="242" text-anchor="middle" class="svgs" style="font-size:10.5px;font-weight:500" id="eyeLab">Rolig</text>
           <text x="500" y="256" text-anchor="middle" class="svgs" style="font-size:10.5px;font-weight:500" id="eyeLab2"></text>
 
@@ -253,7 +255,7 @@ const pageLd = {
           <button class="chip" id="bOrigin" aria-pressed="false" type="button" hidden>Se hvordan krystallsyke oppstår</button>
           <button class="chip quiet" id="bReset" type="button">Start på nytt</button>
         </div>
-        <p class="caption">Forenklet modell av <span class="lr" data-r="høyre" data-l="venstre">høyre</span> øre sett fra siden, ikke i riktig målestokk. Stillingene i Epleys manøver er tilnærmet, og animasjonen går raskere enn i virkeligheten.</p>
+        <p class="caption">Forenklet modell av <span class="lr" data-r="høyre" data-l="venstre">høyre</span> øre sett fra siden, ikke i riktig målestokk. H og V ved øyet viser pasientens høyre og venstre side. Stillingene i Epleys manøver er tilnærmet, og animasjonen går raskere enn i virkeligheten.</p>
       </div>
     </div>
     <div class="zooms">
