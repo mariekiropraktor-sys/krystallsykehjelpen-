@@ -59,24 +59,26 @@ const journeyCards = [
   <!-- 1. Hero – logo sentrert, minimalistisk -->
   <section class="hero">
     <div class="container hero-inner">
-      <picture>
-        <source srcset="/logo/krystallsykehjelpen-logo-512.webp" type="image/webp" />
+      <picture class="hero-art">
+        <source srcset="/hero-indre-ore.webp" type="image/webp" />
         <img
-          src="/logo/krystallsykehjelpen-logo-512.png"
-          alt="Krystallsykehjelpen-logo: det indre øret med buegangene og sneglehuset"
-          width="196"
-          height="196"
+          src="/hero-indre-ore.png"
+          alt="Illustrasjon av det indre øret med buegangene og sneglehuset"
+          width="900"
+          height="881"
           loading="eager"
           fetchpriority="high"
-          class="hero-logo"
+          class="hero-illustration"
         />
       </picture>
-      <span class="eyebrow">Krystallsyke og svimmelhet</span>
-      <h1>Trygg kunnskap når verden <em>plutselig snurrer</em></h1>
-      <p class="lead">Forstå svimmelheten din. Finn riktig behandling, øvelser og hjelp fra fagpersoner.</p>
-      <div class="hero-ctas">
-        <a href="/svimmelhet/" class="btn hero-btn-primary">Jeg er svimmel</a>
-        <a href="/fa-hjelp/" class="btn hero-btn-secondary">Finn behandling</a>
+      <div class="hero-text">
+        <span class="eyebrow">Krystallsyke og svimmelhet</span>
+        <h1>Trygg kunnskap når verden <em>plutselig snurrer</em></h1>
+        <p class="lead">Forstå svimmelheten din. Finn riktig behandling, øvelser og hjelp fra fagpersoner.</p>
+        <div class="hero-ctas">
+          <a href="/svimmelhet/" class="btn hero-btn-primary">Jeg er svimmel</a>
+          <a href="/fa-hjelp/" class="btn hero-btn-secondary">Finn behandling</a>
+        </div>
       </div>
     </div>
     <svg class="hero-wave" viewBox="0 0 1440 140" preserveAspectRatio="none" aria-hidden="true">
@@ -197,9 +199,20 @@ const journeyCards = [
 
 <style>
   /* ---------- Hero ---------- */
-  .hero { background: var(--beige); padding: 64px 0 120px; position: relative; overflow: hidden; text-align: center; }
-  .hero-inner { display: flex; flex-direction: column; align-items: center; max-width: 760px; }
-  .hero-logo { display: block; width: 196px; height: 196px; margin-bottom: 32px; }
+  /* Hero: tekst til venstre og illustrasjon til høyre på desktop;
+     under 860 px står illustrasjonen sentrert over teksten. */
+  .hero { background: var(--beige); padding: 64px 0 120px; position: relative; overflow: hidden; }
+  .hero-inner { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 48px; align-items: center; }
+  .hero-text { min-width: 0; position: relative; z-index: 1; }
+  .hero-art { display: block; justify-self: center; width: 100%; max-width: 440px; position: relative; z-index: 1; }
+  .hero-illustration { display: block; width: 100%; height: auto; }
+  @media (max-width: 860px) {
+    .hero { text-align: center; }
+    .hero-inner { grid-template-columns: 1fr; gap: 28px; max-width: 760px; }
+    .hero-art { order: -1; max-width: 260px; }
+    .hero-text .lead { margin-left: auto; margin-right: auto; }
+    .hero-ctas { justify-content: center; }
+  }
   .eyebrow { font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 16px; display: inline-block; }
   .hero h1 {
     color: var(--navy-deep); font-weight: 500; font-size: clamp(2.1rem, 4.2vw, 3.25rem);
@@ -210,7 +223,7 @@ const journeyCards = [
   .lead { font-size: 1.12rem; line-height: 1.6; color: var(--ink-soft); max-width: 44ch; margin: 0 0 40px; text-wrap: balance; }
   .hero-wave { position: absolute; bottom: -2px; left: 0; width: 100%; height: 100px; line-height: 0; }
 
-  .hero-ctas { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; }
   .hero-btn-primary { background: var(--navy); color: #fff; }
   .hero-btn-primary:hover { background: var(--navy-deep); box-shadow: 0 6px 18px rgba(22, 56, 117, 0.25); }
   .hero-btn-secondary { background: transparent; color: var(--navy); border: 1.5px solid rgba(22, 56, 117, 0.6); }
@@ -219,7 +232,8 @@ const journeyCards = [
 
   @media (max-width: 640px) {
     .hero { padding: 44px 0 76px; }
-    .hero-logo { width: 120px; height: 120px; margin-bottom: 28px; }
+    .hero-inner { gap: 24px; }
+    .hero-art { max-width: 190px; }
     .eyebrow { font-size: 0.7rem; margin-bottom: 14px; }
     .hero h1 { font-size: 1.95rem; margin-bottom: 18px; }
     .lead { font-size: 1rem; margin-bottom: 32px; }
