@@ -1,0 +1,881 @@
+---
+import Layout from "../../../../layouts/Layout.astro";
+
+// Underside i krystallsyke-klyngen (se Krystallsyke-temaklynge-plan.md i
+// prosjektet). Innholdet om hva som skjer i øret og hvorfor krystallene løsner
+// er flyttet hit fra /svimmelhet/krystallsyke/, som nå har et kort sammendrag
+// med lenke hit. Den interaktive modellen er ren SVG + JavaScript uten
+// biblioteker, og stilene er samlet under .hso-klassen så de ikke lekker ut.
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Hjem",
+      "item": "https://www.krystallsykehjelpen.no/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Svimmelhet",
+      "item": "https://www.krystallsykehjelpen.no/svimmelhet/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Krystallsyke",
+      "item": "https://www.krystallsykehjelpen.no/svimmelhet/krystallsyke/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "Hva skjer i øret",
+      "item": "https://www.krystallsykehjelpen.no/svimmelhet/krystallsyke/hva-skjer-i-oret/"
+    }
+  ]
+};
+
+const faqLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Er krystallsyke farlig?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Nei. Krystallsyke er ubehagelig, men ikke farlig. Ingenting i øret er ødelagt, krystallene er bare på feil sted. Plutselig svimmelhet sammen med lammelser, talevansker eller dobbeltsyn er noe annet, og da skal du ringe 113."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Hvorfor varer svimmelheten bare kort tid?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Svimmelheten varer så lenge krystallene ruller. Når de har lagt seg i bunnen av buegangen, stopper væsken, og signalet til hjernen roer seg. Derfor går anfallet over, selv om du blir liggende."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Kan krystallene løse seg opp av seg selv?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Det antas at løsnede krystaller kan løses opp eller tas opp igjen over tid, og krystallsyke går ofte over av seg selv. Riktig manøver gir likevel som regel raskere bedring."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Kan man se krystallene på MR?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Nei, krystallene er for små. Diagnosen stilles ut fra posisjonstester og øyebevegelser."
+      }
+    }
+  ]
+};
+
+const pageLd = {
+  "@context": "https://schema.org",
+  "@type": "MedicalWebPage",
+  "name": "Hva skjer i øret ved krystallsyke?",
+  "url": "https://www.krystallsykehjelpen.no/svimmelhet/krystallsyke/hva-skjer-i-oret/",
+  "inLanguage": "nb-NO",
+  "about": {
+    "@type": "MedicalCondition",
+    "name": "Benign paroksysmal posisjonsvertigo (krystallsyke)",
+    "alternateName": [
+      "BPPV",
+      "Krystallsyke"
+    ]
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Marie Hermansen",
+    "jobTitle": "Kiropraktor"
+  }
+};
+---
+
+<Layout
+  title="Hva skjer i øret ved krystallsyke? Se krystallene bevege seg | Krystallsykehjelpen"
+  description="Se med en interaktiv modell hvordan krystaller i bakre buegang gir svimmelhet og nystagmus, forskjellen på kanalolitiasis og kupulolitiasis, og hvorfor Epleys manøver virker."
+  activePath="/svimmelhet/krystallsyke/"
+>
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbLd)} />
+  <script type="application/ld+json" set:html={JSON.stringify(faqLd)} />
+  <script type="application/ld+json" set:html={JSON.stringify(pageLd)} />
+
+  <div class="hso">
+
+<section class="hero">
+  <div class="c">
+    <nav class="crumbs"><a href="/">Forside</a> / <a href="/svimmelhet/">Svimmelhet</a> / <a href="/svimmelhet/krystallsyke/">Krystallsyke</a> / Hva skjer i øret</nav>
+    <span class="eyebrow">Krystallsyke · Forklart</span>
+    <h1>Hva skjer i øret ved krystallsyke?</h1>
+    <p class="lead">Svimmelheten kommer av små krystaller som har havnet på feil sted i balanseorganet. Når du ser hvordan de beveger seg, blir det lettere å forstå hvorfor svimmelheten kommer når du legger deg ned, hvorfor den går over etter kort tid, og hvorfor riktig manøver hjelper.</p>
+    <div class="actions"><a class="btn" href="#modell">Se modellen ↓</a><a class="tlink" href="#hvorfor">Hvorfor løsner krystallene?</a></div>
+  </div>
+</section>
+
+<!-- MODELL -->
+<section class="sky" id="modell">
+  <div class="c">
+    <span class="eyebrow">Interaktiv modell</span>
+    <h2>Se krystallene bevege seg</h2>
+    <p class="narrow">Modellen viser bakre buegang i <span class="lr" data-r="høyre" data-l="venstre">høyre</span> øre, der krystallsyke oftest sitter. Sammenlign et friskt øre med krystallsyke, se hvordan krystallene havner i buegangen, og kjør Epleys manøver for å føre dem hjem igjen.</p>
+
+    <div class="toolbar">
+      <div class="tgroup"><span class="tlabel">Øre</span>
+        <div class="seg" role="group" aria-label="Velg øre">
+          <button type="button" id="bNormal" aria-pressed="false">Friskt øre</button>
+          <button type="button" id="bBppv" aria-pressed="true">Krystallsyke</button>
+          <button type="button" id="bCupu" aria-pressed="false">Kupulolitiasis</button>
+        </div></div>
+      <div class="tgroup"><span class="tlabel">Side</span>
+        <div class="seg" role="group" aria-label="Velg side">
+          <button type="button" id="bRight" aria-pressed="true">Høyre øre</button>
+          <button type="button" id="bLeft" aria-pressed="false">Venstre øre</button>
+        </div></div>
+    </div>
+    <div class="model">
+      <div class="stage">
+        <svg id="scene" viewBox="0 0 572 470" role="img" aria-label="Modell av bakre buegang med ampulle, cupula og utriculus">
+          <!-- hodeindikator (nesa peker fremover, mot utriculus) -->
+          <g id="head" transform="translate(500 56) rotate(0)">
+            <circle r="26" fill="var(--sky)" stroke="var(--navy)" stroke-width="2.5"/>
+            <path d="M-25 -5 l-10 5 l10 5" fill="var(--sky)" stroke="var(--navy)" stroke-width="2.5" stroke-linejoin="round"/>
+            <circle cx="-12" cy="-8" r="2.8" fill="var(--navy)"/>
+            <path d="M8 -4 q6 4 0 10" fill="none" stroke="var(--navy)" stroke-width="2"/>
+          </g>
+          <text x="500" y="106" text-anchor="middle" class="svgl" id="headLab">Sitter</text>
+          <!-- øyet: nystagmus styres av krystallenes bevegelse -->
+          <defs><clipPath id="lid"><path d="M-42 0 Q0 -27 42 0 Q0 27 -42 0 Z"/></clipPath></defs>
+          <g id="eye" transform="translate(500 180) scale(1.2)">
+            <path d="M-42 0 Q0 -27 42 0 Q0 27 -42 0 Z" fill="var(--white)" stroke="var(--navy)" stroke-width="2.5"/>
+            <g clip-path="url(#lid)"><g id="iris2"><circle r="14" fill="var(--accent)"/><g id="spokes" stroke="var(--sky)" stroke-width="1.1" stroke-opacity=".75"></g><circle r="5.5" fill="var(--navy)"/><path d="M0 -14 V-6" stroke="var(--white)" stroke-width="3" stroke-linecap="round"/><circle cy="-10.5" r="2.4" fill="var(--white)"/></g></g>
+            <g id="fastArrow" opacity="0"><path d="M0 -24 V-40 M-5 -34 L0 -41 L5 -34" fill="none" stroke="var(--turkis)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></g>
+            <text x="-47" y="4" text-anchor="end" class="svgl" style="font-size:10px">H</text>
+            <text x="46" y="4" text-anchor="start" class="svgl" style="font-size:10px">V</text>
+            <g id="rotArrow" opacity="0"><path d="M30 -16 A34 34 0 0 0 -30 -16 M-30 -16 l1 -9 M-30 -16 l8 -3" fill="none" stroke="var(--navy2)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></g>
+          </g>
+          <text x="500" y="226" text-anchor="middle" class="svgl">Øyet, sett forfra</text>
+          <text x="500" y="242" text-anchor="middle" class="svgs" style="font-size:10.5px;font-weight:500" id="eyeLab">Rolig</text>
+          <text x="500" y="256" text-anchor="middle" class="svgs" style="font-size:10.5px;font-weight:500" id="eyeLab2"></text>
+
+          <g class="svgm">
+            <path d="M28 404 v40" stroke="var(--muted)" stroke-width="2"/>
+            <path d="M22 438 l6 9 l6 -9" fill="none" stroke="var(--muted)" stroke-width="2"/>
+            <text x="40" y="432">Tyngdekraft</text>
+          </g>
+
+          <g id="canal" transform="translate(240 240) rotate(0)">
+            <!-- felles skank, opp mot øvre buegang -->
+            <path d="M-90.1 -63.1 L-80 -158" fill="none" stroke="var(--navy)" stroke-width="30" stroke-linecap="round" opacity=".22"/>
+            <path d="M-90.1 -63.1 L-80 -158" fill="none" stroke="var(--ivory)" stroke-width="25" stroke-linecap="round" opacity=".55"/>
+            <!-- beinkanal med perilymfe -->
+            <path class="arc" d="M-90.1 63.1 A110 110 0 1 0 -90.1 -63.1" stroke="var(--navy)" stroke-width="32"/>
+            <path class="arc" d="M-90.1 63.1 A110 110 0 1 0 -90.1 -63.1" stroke="var(--ivory)" stroke-width="27"/>
+            <!-- hinnegang med endolymfe -->
+            <path class="arc" d="M-90.1 63.1 A110 110 0 1 0 -90.1 -63.1 L-106 -40 M-90.1 63.1 L-106 40" stroke="var(--navy2)" stroke-width="14"/>
+            <path class="arc" d="M-90.1 63.1 A110 110 0 1 0 -90.1 -63.1 L-106 -40 M-90.1 63.1 L-106 40" stroke="var(--sky)" stroke-width="10"/>
+            <g class="flow"><path class="arc" d="M-90.1 63.1 A110 110 0 1 0 -90.1 -63.1" stroke="var(--turkis)" stroke-width="3"/></g>
+            <!-- utriculus med macula og otokonier -->
+            <ellipse cx="-124" cy="0" rx="36" ry="54" fill="var(--ivory)" stroke="var(--navy)" stroke-width="3"/>
+            <ellipse cx="-124" cy="0" rx="28" ry="46" fill="var(--sky)" stroke="var(--navy2)" stroke-width="2"/>
+            <path d="M-148 16 Q-130 50 -103 34" fill="none" stroke="var(--navy2)" stroke-width="7" stroke-linecap="round"/>
+            <g id="oto"></g>
+            <!-- ampulle med crista og cupula, ved ampulleenden av buegangen -->
+            <g transform="rotate(125) translate(110 0)">
+              <ellipse rx="24" ry="27" fill="var(--ivory)" stroke="var(--navy)" stroke-width="3"/>
+              <ellipse rx="16" ry="20" fill="var(--sky)" stroke="var(--navy2)" stroke-width="2"/>
+              <path d="M17 -9 Q5 0 17 9 Z" fill="var(--navy2)"/>
+              <path id="cupula" fill="var(--turkis)" fill-opacity=".55" stroke="var(--navy2)" stroke-width="1.5"/>
+            </g>
+            <path id="track" d="M-90.1 63.1 A110 110 0 1 0 -90.1 -63.1 L-106 -40 Q-140 -4 -126 30" fill="none"/>
+            <g id="crys"></g>
+          </g>
+          <g id="labels" class="svgl"></g>
+        </svg>
+        <div class="live" aria-live="polite">
+          <span class="livelab" id="stTitle">Hva skjer når du legger deg ned</span>
+          <p id="liveTxt">Trykk på en knapp under for å starte.</p>
+          <p class="status"><span>Øyet</span> <span id="eyeTxt">Rolige. Ingen nystagmus.</span></p>
+          <div hidden>
+            <ol class="steps" id="stepsDH">
+            <li data-s="1"><span class="dot"></span><span><b>Hodet endrer stilling.</b> Buegangen snus med hodet.</span></li>
+            <li data-s="2"><span class="dot"></span><span><b>Krystallene ruller</b> etter et par sekunder, bort fra ampullen og mot det nye laveste punktet.</span></li>
+            <li data-s="3"><span class="dot"></span><span><b>Væsken dras med og bøyer cupula.</b> Sansecellene sender beskjed om at hodet snurrer. Du blir svimmel, og øynene rykker.</span></li>
+            <li data-s="4"><span class="dot"></span><span><b>Krystallene ligger stille.</b> Cupula retter seg opp igjen, og svimmelheten gir seg.</span></li>
+          </ol>
+            <ol class="steps" id="stepsEp" hidden>
+            <li data-s="1"><span class="dot"></span><span><b>Hodet bakover, vridd mot <span class="lr" data-r="høyre" data-l="venstre">høyre</span>.</b> Krystallene ruller bort fra ampullen.</span></li>
+            <li data-s="2"><span class="dot"></span><span><b>Hodet vris over mot <span class="lr" data-r="venstre" data-l="høyre">venstre</span>.</b> Krystallene ruller videre rundt buegangen.</span></li>
+            <li data-s="3"><span class="dot"></span><span><b>Rull over på <span class="lr" data-r="venstre" data-l="høyre">venstre</span> side, nesa mot gulvet.</b> Krystallene når felles skank og faller ut i utriculus.</span></li>
+            <li data-s="4"><span class="dot"></span><span><b>Sett deg opp.</b> Krystallene ligger i utriculus, der de ikke gir svimmelhet.</span></li>
+          </ol>
+            <ol class="steps" id="stepsN" hidden>
+            <li data-s="1"><span class="dot"></span><span><b>Hodet beveger seg.</b> Buegangen følger med.</span></li>
+            <li data-s="2"><span class="dot"></span><span><b>Væsken henger litt etter</b> og bøyer cupula kort, bare mens hodet er i bevegelse.</span></li>
+            <li data-s="3"><span class="dot"></span><span><b>Øynene holder blikket stødig</b> ved å bevege seg motsatt av hodet. Det er en normal refleks.</span></li>
+            <li data-s="4"><span class="dot"></span><span><b>Hodet står stille, cupula retter seg opp.</b> Krystallene ligger fast på macula. Ingen svimmelhet.</span></li>
+          </ol>
+            <ol class="steps" id="stepsC" hidden>
+            <li data-s="1"><span class="dot"></span><span><b>Hodet endrer stilling.</b> Buegangen snus med hodet.</span></li>
+            <li data-s="2"><span class="dot"></span><span><b>Krystallene sitter fast på cupula</b> og gjør den tung.</span></li>
+            <li data-s="3"><span class="dot"></span><span><b>Tyngdekraften bøyer cupula med en gang.</b> Svimmelhet og nystagmus starter uten forsinkelse.</span></li>
+            <li data-s="4"><span class="dot"></span><span><b>Det varer så lenge du ligger</b> i samme stilling, og gir seg først når du setter deg opp.</span></li>
+          </ol>
+            <ol class="steps" id="stepsUp" hidden>
+              <li data-s="1"><span class="dot"></span><span><b>Du setter deg opp.</b> Buegangen snus tilbake med hodet.</span></li>
+              <li data-s="2"><span class="dot"></span><span><b>Krystallene ruller tilbake</b> mot ampullen, nå i motsatt retning.</span></li>
+              <li data-s="3"><span class="dot"></span><span><b>Væsken bøyer cupula motsatt vei.</b> Mange kjenner en kortere og svakere svimmelhet, og øynene rykker nedover, vridd mot det andre øret.</span></li>
+              <li data-s="4"><span class="dot"></span><span><b>Krystallene ligger igjen nederst ved ampullen.</b> De er klare til å gi svimmelhet neste gang du legger deg ned.</span></li>
+            </ol>
+            <ol class="steps" id="stepsCu" hidden>
+              <li data-s="1"><span class="dot"></span><span><b>Du setter deg opp.</b> Buegangen snus tilbake med hodet.</span></li>
+              <li data-s="2"><span class="dot"></span><span><b>Tyngdekraften slipper taket i cupula,</b> og den retter seg opp igjen.</span></li>
+              <li data-s="3"><span class="dot"></span><span><b>Svimmelheten og nystagmus stopper</b> nesten med en gang. Krystallene sitter fortsatt fast på cupula.</span></li>
+            </ol>
+            <ol class="steps" id="stepsO" hidden>
+            <li data-s="1"><span class="dot"></span><span><b>Krystaller løsner fra macula</b> i utriculus, ofte uten kjent årsak.</span></li>
+            <li data-s="2"><span class="dot"></span><span><b>Når du ligger, flyter de mot åpningen</b> til felles skank, som da vender nedover.</span></li>
+            <li data-s="3"><span class="dot"></span><span><b>De faller inn i bakre buegang</b> og ruller til det laveste punktet. Ampullen kommer de ikke inn i, fordi cupula stenger.</span></li>
+            <li data-s="4"><span class="dot"></span><span><b>Når du setter deg opp, ruller de ned mot ampullen.</b> Nå ligger de klare til å gi svimmelhet neste gang du legger deg ned.</span></li>
+          </ol>
+          </div>
+        </div>
+
+        <div class="controls" role="group" aria-label="Velg stilling">
+          <button class="chip" id="bSit" aria-pressed="true" type="button">Sett deg opp</button>
+          <button class="chip" id="bLie" aria-pressed="false" type="button">Legg deg ned</button>
+          <button class="chip" id="bEpley" aria-pressed="false" type="button">Kjør Epleys manøver</button>
+          <button class="chip" id="bOrigin" aria-pressed="false" type="button" hidden>Se hvordan krystallsyke oppstår</button>
+          <button class="chip quiet" id="bReset" type="button">Start på nytt</button>
+        </div>
+        <p class="caption">Forenklet modell av <span class="lr" data-r="høyre" data-l="venstre">høyre</span> øre sett fra siden, ikke i riktig målestokk. H og V ved øyet viser pasientens høyre og venstre side. Stillingene i Epleys manøver er tilnærmet, og animasjonen går raskere enn i virkeligheten.</p>
+      </div>
+    </div>
+    <div class="zooms">
+        <div class="panel">
+          <h3 class="ph">Inni utriculus</h3>
+          <svg viewBox="0 0 260 150" class="zoom uz" id="uz" aria-hidden="true">
+            <rect x="0" y="0" width="260" height="150" rx="14" fill="var(--sky)"/>
+            <g id="uzCells"></g>
+            <rect x="14" y="78" width="232" height="22" rx="6" fill="var(--turkis)" fill-opacity=".38" stroke="var(--navy2)" stroke-width="1.2"/>
+            <g id="uzOto"></g>
+            <text x="130" y="142" text-anchor="middle" class="svgs">Macula med sanseceller</text>
+            <text x="250" y="94" text-anchor="end" class="svgs" style="font-size:10.5px">Geléhinne</text>
+            <text x="12" y="22" class="svgs">Otokonier (krystaller)</text>
+          </svg>
+          <p class="zcap" id="uzTxt">Krystallene ligger festet i en geléhinne over sansecellene. Når du heller på hodet, glir hinnen litt, og sansecellene merker det.</p>
+        </div>
+        <div class="panel">
+          <h3 class="ph">Inni ampullen</h3>
+          <svg viewBox="0 0 260 150" class="zoom" aria-hidden="true">
+            <path d="M0 40 H70 Q130 0 190 40 H260 V110 H190 Q130 150 70 110 H0 Z" fill="var(--sky)" stroke="var(--navy2)" stroke-width="2"/>
+            <path d="M88 116 Q130 86 172 116 Z" fill="var(--navy2)"/>
+            <g id="cilia" stroke="var(--navy)" stroke-width="1.6" stroke-linecap="round"></g>
+            <path id="zcup" fill="var(--turkis)" fill-opacity=".45" stroke="var(--navy2)" stroke-width="1.5"/>
+            <g id="zdots"></g>
+            <g class="zflow" stroke="var(--turkis)" stroke-width="2.5" fill="none" stroke-linecap="round">
+              <path id="zarrow" d="M20 75 h36 m-8 -6 l8 6 l-8 6"/>
+            </g>
+            <text x="6" y="140" class="svgs">← Utriculus</text>
+            <text x="254" y="140" text-anchor="end" class="svgs">Buegangen →</text>
+            <text x="130" y="134" text-anchor="middle" class="svgs">Crista</text>
+            <text x="130" y="26" text-anchor="middle" class="svgs">Cupula</text>
+          </svg>
+          <p class="zcap" id="zTxt">Cupula står rett. Sansecellene sender et jevnt hvilesignal.</p>
+        </div>
+    </div>
+    <details class="legendbox">
+      <summary>Delene i modellen</summary>
+      <dl class="legend">
+          <div><dt>Utriculus</dt><dd>Sekken der krystallene hører hjemme. Her ligger de fast i en geléhinne over sansecellene.</dd></div>
+          <div><dt>Macula og otokonier</dt><dd>Sansefeltet i utriculus (mørk stripe) med krystallene oppå. Merker tyngdekraft og når hodet heller.</dd></div>
+          <div><dt>Bakre buegang</dt><dd>En ring av bein (lys) med en tynn hinnegang inni (blå), fylt med væske som heter endolymfe.</dd></div>
+          <div><dt>Ampulle</dt><dd>Utvidelsen i enden av buegangen, der den går inn i utriculus.</dd></div>
+          <div><dt>Crista og cupula</dt><dd>Crista er en liten kam med sanseceller. Over den står cupula, en gelé som stenger buegangen som en svingdør.</dd></div>
+          <div><dt>Felles skank</dt><dd>Den andre enden av buegangen, som den deler med øvre buegang. Det er her krystallene går ut ved Epleys manøver.</dd></div>
+        </dl>
+    </details>
+  </div>
+</section>
+
+<!-- KRYSTALLENE -->
+<section>
+  <div class="c two">
+    <div>
+      <span class="eyebrow">Krystallene</span>
+      <h2>Riktige krystaller, feil sted</h2>
+      <p class="pull">Små kalkkrystaller som normalt ligger i utriculus, kan løsne og havne i en av de væskefylte buegangene.</p>
+    </div>
+    <div>
+      <p>I balanseorganet ligger tusenvis av bitte små krystaller av kalsiumkarbonat, <b>otokonier</b>. De hører hjemme i <b>utriculus</b>, der de hjelper deg å merke tyngdekraften og om hodet heller.</p>
+      <p><b>Buegangene</b> er laget for å merke at hodet <i>snur</i> seg, ikke for å merke tyngdekraften. Når tunge krystaller havner der, ruller de med tyngdekraften og drar væsken med seg. Da sender buegangen et signal om at hodet snurrer, selv om du ligger helt stille.</p>
+      <p>Signalet passer ikke med det øynene og resten av kroppen forteller hjernen. Det er den uoverensstemmelsen som kjennes som kraftig snurring og kvalme.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TO VARIANTER -->
+<section class="beige">
+  <div class="c">
+    <span class="eyebrow">To varianter</span>
+    <h2>Krystallene kan flyte fritt eller sitte fast</h2>
+    <p class="narrow">Hvordan krystallene ligger, avgjør hvordan svimmelheten oppleves og hvilken manøver som passer. Det er en av grunnene til at riktig undersøkelse betyr så mye.</p>
+    <div class="cmpfig">
+      <svg viewBox="0 0 560 250" id="cv" role="img" aria-label="Sammenligning av fritt flytende krystaller og krystaller som sitter fast på cupula">
+        <g id="cvL"></g><g id="cvR" transform="translate(290 0)"></g>
+        <g id="cvG" transform="translate(280 62)">
+          <circle r="15" fill="var(--white)" stroke="var(--line)" stroke-width="1.5"/>
+          <g id="cvArrow"><path d="M0 -8 V8 M-5 3 L0 9 L5 3" fill="none" stroke="var(--navy)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></g>
+          <text y="30" text-anchor="middle" class="svgs" style="font-size:10px">Tyngde</text>
+        </g>
+      </svg>
+      <div class="controls" role="group" aria-label="Velg stilling for sammenligningen">
+        <button class="chip" id="cvLie" type="button" aria-pressed="false">Legg deg ned</button>
+        <button class="chip" id="cvSit" type="button" aria-pressed="true">Sett deg opp</button>
+      </div>
+      <p class="caption">Ampullen forstørret. Kurvene viser hvor mye cupula bøyes over tid, det vil si hvor svimmel du blir og hvor mye øynene rykker. Ca. ett minutt vises på noen sekunder.</p>
+    </div>
+    <div class="compare">
+      <div class="cmp">
+        <small>Vanligst</small>
+        <h3>Krystallene flyter fritt</h3>
+        <p>Krystallene ligger løst i væsken i buegangen. Når hodet beveges, ruller de, drar væsken med seg og stopper når de har nådd bunnen. Det er dette modellen over viser.</p>
+        <dl><dt>Starter</dt><dd>Etter noen sekunder</dd><dt>Varer</dt><dd>Kort, som regel under ett minutt</dd><dt>Gjentas</dt><dd>Blir ofte svakere hvis du gjentar bevegelsen</dd></dl>
+      </div>
+      <div class="cmp">
+        <small>Sjeldnere</small>
+        <h3>Krystallene sitter fast på cupula</h3>
+        <p>Krystallene har festet seg på cupula, den lille «svingdøren» i buegangen. Den blir tung og bøyes så lenge hodet holdes i samme stilling.</p>
+        <dl><dt>Starter</dt><dd>Nesten med en gang</dd><dt>Varer</dt><dd>Så lenge stillingen holdes</dd><dt>Gjentas</dt><dd>Avtar lite</dd></dl>
+      </div>
+    </div>
+    <details class="pro">
+      <summary><span class="tag">For fagfolk</span> Kanalolitiasis, kupulolitiasis og Ewalds lover</summary>
+      <div class="body">
+        <p><b>Kanalolitiasis</b> (frie otokonier i endolymfen) gir nystagmus med latens på noen sekunder, kort varighet (vanligvis &lt; 60 s), crescendo–decrescendo og trettbarhet ved gjentatt testing. Ved oppsetting reverseres nystagmus ofte.</p>
+        <p><b>Kupulolitiasis</b> (otokonier festet til cupula, eller en «tung» cupula) gir kort eller ingen latens og vedvarende nystagmus så lenge stillingen holdes. Mest beskrevet i horisontal buegang, med apogeotrop nystagmus.</p>
+        <ul>
+          <li>I de vertikale buegangene er ampullofugal strøm eksitatorisk (Ewalds 3. lov). Ved Dix-Hallpike beveger otokoniene seg bort fra ampullen i bakre buegang, som da stimuleres.</li>
+          <li>Bakre buegang ved kanalolitiasis: oppadslående, torsjonell nystagmus med øvre pol mot underliggende øre.</li>
+          <li>Partikler kan også ligge i den korte armen nær ampullen, eller i buegangen nær utriculus, noe som kan gi atypiske funn.</li>
+        </ul>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- HVORFOR -->
+<section id="hvorfor">
+  <div class="c two">
+    <div>
+      <span class="eyebrow">Bakgrunn</span>
+      <h2>Hvorfor løsner krystallene?</h2>
+      <p>Hos mange finnes det ingen tydelig utløsende årsak. Noen forhold ser ut til å gjøre det mer sannsynlig, uten at det betyr en sikker årsakssammenheng.</p>
+    </div>
+    <div>
+      <ul class="dots">
+        <li><b>Økende alder.</b> Krystallene og festet deres endrer seg med årene.</li>
+        <li><b>Hodeskade</b>, også mindre slag eller fall.</li>
+        <li><b>Sykdom i det indre øret</b>, for eksempel etter betennelse i balansenerven.</li>
+        <li><b>Lange perioder i samme stilling</b>, som ved sengeleie eller lang tid i tannlegestolen.</li>
+        <li>Mulig sammenheng med <b>migrene</b>, <b>benskjørhet</b> og <b>lave vitamin D-nivåer</b>.</li>
+      </ul>
+      <p style="margin-top:18px">Krystallsyke kan komme tilbake. <a class="tlink" href="/blogg/hvorfor-kommer-krystallsyken-tilbake/">Les om tilbakefall</a></p>
+    </div>
+  </div>
+</section>
+
+<!-- BEHANDLING KORT -->
+<section class="navyS">
+  <div class="c two">
+    <div>
+      <span class="eyebrow">Derfor virker behandlingen</span>
+      <h2>Krystallene må tilbake dit de kom fra</h2>
+    </div>
+    <div>
+      <p>En reponeringsmanøver er en rekke hodestillinger som får krystallene til å rulle gjennom buegangen og ut i utriculus igjen. Der gjør de ingen skade.</p>
+      <p>Hver buegang har sin egen manøver, og retningen avhenger av hvilket øre det gjelder. <b>Feil manøver eller feil side hjelper ikke</b>, og derfor bør buegang og side avklares ved undersøkelse før du gjør øvelsene selv.</p>
+      <p style="margin-top:20px"><a class="tlink" style="color:var(--white)" href="/svimmelhet/krystallsyke/#behandling">Les om behandling av krystallsyke</a></p>
+    </div>
+  </div>
+</section>
+
+<!-- VIDERE -->
+<section class="sky">
+  <div class="c">
+    <span class="eyebrow">Les videre</span>
+    <h2>Mer om krystallsyke</h2>
+    <div class="next">
+      <a class="nx" href="/svimmelhet/krystallsyke/#buegangene"><h3>De tre buegangene</h3><p>Bakre, horisontal og øvre buegang gir ulike typer krystallsyke.</p><span class="more">Se de tre typene →</span></a>
+      <a class="nx" href="/svimmelhet/krystallsyke/#undersokelse"><h3>Undersøkelsen</h3><p>Slik avklares buegang og side med posisjonstester.</p><span class="more">Les om undersøkelsen →</span></a>
+      <a class="nx" href="/blogg/epleys-manover-virker-ikke/"><h3>Når Epley ikke virker</h3><p>Vanlige grunner til at manøveren ikke hjelper, og hva du kan gjøre.</p><span class="more">Les artikkelen →</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section>
+  <div class="c narrow">
+    <span class="eyebrow">Spørsmål og svar</span>
+    <h2>Det mange lurer på</h2>
+    <div class="faq">
+      <details open><summary>Er krystallsyke farlig?</summary><p>Nei. Krystallsyke er ubehagelig, men ikke farlig. Ingenting i øret er ødelagt, krystallene er bare på feil sted. Plutselig svimmelhet sammen med lammelser, talevansker eller dobbeltsyn er noe annet, og da skal du ringe 113.</p></details>
+      <details><summary>Hvorfor varer svimmelheten bare kort tid?</summary><p>Svimmelheten varer så lenge krystallene ruller. Når de har lagt seg i bunnen av buegangen, stopper væsken, og signalet til hjernen roer seg. Derfor går anfallet over, selv om du blir liggende.</p></details>
+      <details><summary>Kan krystallene løse seg opp av seg selv?</summary><p>Det antas at løsnede krystaller kan løses opp eller tas opp igjen over tid, og krystallsyke går ofte over av seg selv. Riktig manøver gir likevel som regel raskere bedring.</p></details>
+      <details><summary>Kan man se krystallene på MR?</summary><p>Nei, krystallene er for små. Diagnosen stilles ut fra posisjonstester og øyebevegelser.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="beige cta">
+  <div class="c">
+    <span class="eyebrow">Få hjelp</span>
+    <h2>Usikker på hvilken buegang det gjelder?</h2>
+    <p>En undersøkelse avklarer buegang og side, slik at du får riktig manøver.</p>
+    <div class="actions"><a class="btn" href="/fa-hjelp/">Få hjelp →</a></div>
+  </div>
+</section>
+
+  </div>
+</Layout>
+
+<script>
+// @ts-nocheck
+
+(function(){
+  // ---- Geometri (buegangens egen ramme, origo i ringens sentrum) ----
+  var R=110, CX=240, CY=240, D=Math.PI/180;
+  var A0=145, A1=-145, AMP=125;            // ampulleende, felles skank, ampulle (grader)
+  var pts=[], len=[0];
+  for(var a=A0;a>=A1;a-=0.5) pts.push([R*Math.cos(a*D),R*Math.sin(a*D)]);
+  var ARC_END=pts.length-1, e=pts[ARC_END], i, t, u;
+  for(i=1;i<=20;i++){t=i/20;pts.push([e[0]+(-106-e[0])*t,e[1]+(-40-e[1])*t])}
+  for(i=1;i<=40;i++){t=i/40;u=1-t;pts.push([u*u*-106+2*u*t*-140+t*t*-126,u*u*-40+2*u*t*-4+t*t*30])}
+  for(i=1;i<pts.length;i++) len.push(len[i-1]+Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]));
+  var TOTAL=len[len.length-1], L_ARC=len[ARC_END];
+  var S_MIN=(A0-AMP+12)/360*2*Math.PI*R;   // cupula stenger: krystallene kommer ikke forbi
+  var S0=(A0-90)/360*2*Math.PI*R;          // laveste punkt når man sitter
+  function at(s){
+    s=Math.max(0,Math.min(TOTAL,s));
+    var lo=0,hi=len.length-1;
+    while(hi-lo>1){var m=(lo+hi)>>1;if(len[m]<s)lo=m;else hi=m}
+    var f=(s-len[lo])/((len[hi]-len[lo])||1);
+    return [pts[lo][0]+(pts[hi][0]-pts[lo][0])*f,pts[lo][1]+(pts[hi][1]-pts[lo][1])*f];
+  }
+  function worldY(s,th){var p=at(s),r=th*D;return p[0]*Math.sin(r)+p[1]*Math.cos(r)}
+
+  // ---- Tilstand ----
+  // ear: 'bppv' eller 'normal'. loose: løse krystaller finnes. home: ført tilbake til utriculus.
+  var st={side:1,eyePh:0,bCup:0,ear:'bppv',theta:0,s:S0,v:0,loose:true,home:false,entering:false,bRot:0,
+          tw:null,release:0,quiet:0,queue:[],mode:'dh',busy:false,started:false};
+  var G=900,F=7,LAT=1300;
+
+  function stepPhysics(dt){
+    if(!st.loose||st.home||st.entering) return;
+    if(st.s>L_ARC+4){ // inne i utriculus: krystallene synker ned mot macula
+      st.v=110; st.s+=st.v*dt;
+      if(st.s>=TOTAL){st.s=TOTAL;st.v=0;st.home=true}
+      return;
+    }
+    var sl=(worldY(st.s+1.5,st.theta)-worldY(st.s-1.5,st.theta))/3;
+    st.v+=(G*sl-F*st.v)*dt; st.s+=st.v*dt;
+    if(st.s<S_MIN){st.s=S_MIN;st.v=Math.max(0,st.v)}
+  }
+
+  // ---- Eksponert for test i node ----
+  
+  // ---- DOM ----
+  var $=function(id){return document.getElementById(id)};
+  var SNS='http://www.w3.org/2000/svg';
+  var canal=$('canal'),head=$('head'),crys=$('crys'),labels=$('labels'),scene=$('scene'),eye=$('eye');
+  var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function mk(tag,attrs,parent){var n=document.createElementNS(SNS,tag);for(var k in attrs)n.setAttribute(k,attrs[k]);parent.appendChild(n);return n}
+
+  // otokonier som ligger fast på macula
+  for(i=0;i<11;i++){var q=i/10,uu=1-q,x=uu*uu*-146+2*uu*q*-129+q*q*-105,y=uu*uu*10+2*uu*q*42+q*q*27;
+    mk('rect',{x:(x-2.2).toFixed(1),y:(y-2.2).toFixed(1),width:4.4,height:4.4,rx:1,fill:'#fff',stroke:'#163875','stroke-width':1.2,transform:'rotate('+(i*37%90)+' '+x.toFixed(1)+' '+y.toFixed(1)+')'},$('oto'))}
+  // løse krystaller (en klump)
+  var OFF=[-9,-4.5,0,4.5,9],SZ=[3.6,3.2,4,3.3,3.7];
+  var dots=OFF.map(function(o,i){return mk('circle',{r:SZ[i],fill:'#fff',stroke:'#1e4c96','stroke-width':1.8},crys)});
+  // etiketter som holder seg vannrette mens modellen roterer
+  var LAB=[
+    {t:'Utriculus',p:[-124,-56],o:22},
+    {t:'Macula',p:[-140,30],o:26},
+    {t:'Ampulle',p:[R*Math.cos(AMP*D),R*Math.sin(AMP*D)],o:40},
+    {t:'Bakre buegang',p:[R,0],o:30},
+    {t:'Felles skank',p:[-80,-158],o:18}
+  ].map(function(l){l.el=mk('text',{},labels);l.el.textContent=l.t;return l});
+  var cil=[];for(i=0;i<6;i++)cil.push(mk('line',{},$('cilia')));
+  // forstørrelse av utriculus: sanseceller, geléhinne og otokonier
+  for(i=0;i<12;i++){var cx0=24+i*19;mk('rect',{x:cx0-5,y:104,width:10,height:22,rx:4,fill:'var(--ivory)',stroke:'var(--navy)','stroke-width':1.2},$('uzCells'));
+    mk('path',{d:'M'+(cx0-2)+' 104 V86 M'+cx0+' 104 V83 M'+(cx0+2)+' 104 V88',stroke:'var(--navy)','stroke-width':1.2,fill:'none'},$('uzCells'))}
+  var FREE={6:[-28,-46],8:[10,-52],10:[34,-40]};
+  for(i=0;i<16;i++){var ox=20+i*14.4,oy=i%2?66:71,fr=FREE[i];
+    var oc=mk('rect',{x:ox,y:oy,width:11,height:8,rx:1.5,fill:'#fff',stroke:'var(--navy)','stroke-width':1.3,transform:'rotate('+((i*29)%40-20)+' '+(ox+5.5)+' '+(oy+4)+')'},$('uzOto'));
+    if(fr){var g=document.createElementNS(SNS,'g');g.setAttribute('class','free');g.style.setProperty('--dx',fr[0]+'px');g.style.setProperty('--dy',fr[1]+'px');g.style.transformBox='fill-box';g.style.transformOrigin='center';$('uzOto').appendChild(g);g.appendChild(oc);oc.setAttribute('stroke','var(--navy2)')}}
+  function loosen(on){$('uz').classList.toggle('loosen',on);
+    $('uzTxt').textContent=on?'Noen krystaller har løsnet fra geléhinnen og flyter fritt i væsken. Det er disse som kan havne i en buegang.':'Krystallene ligger festet i en geléhinne over sansecellene. Når du heller på hodet, glir hinnen litt, og sansecellene merker det.'}
+
+  var cupG=mk('g',{},canal),zd=$('zdots'),A_C=Math.cos(AMP*D),A_S=Math.sin(AMP*D),CF=[.3,.48,.66,.84];
+  var cupDots=CF.map(function(f,i){return mk('circle',{r:i%2?3:3.4,fill:'#fff',stroke:'#1e4c96','stroke-width':1.6},cupG)});
+  var zDots=CF.map(function(f,i){return mk('circle',{r:i%2?4:4.6,fill:'#fff',stroke:'#1e4c96','stroke-width':1.6},zd)});
+  function drawCupDots(b){
+    var on=st.ear==='cupu';cupG.style.display=zd.style.display=on?'':'none';if(!on)return;
+    var k=-b*16,z=b*34;
+    CF.forEach(function(f,i){var lx=15-30*f,ly=k*f-5.5,X=A_C*(lx+110)-A_S*ly,Y=A_S*(lx+110)+A_C*ly;
+      cupDots[i].setAttribute('cx',X.toFixed(1));cupDots[i].setAttribute('cy',Y.toFixed(1));
+      zDots[i].setAttribute('cx',(161-8*f+z*f).toFixed(1));zDots[i].setAttribute('cy',(104-70*f).toFixed(1))});
+  }
+  // øyet: langsom drift nedover og raskt rykk opp (oppadslående, vridd nystagmus)
+  var iris2=$('iris2'),rotArrow=$('rotArrow'),fastArrow=$('fastArrow'),eyeLab=$('eyeLab'),eyeLab2=$('eyeLab2');
+  for(var sp=0;sp<12;sp++){var ag=sp*30*D;mk('line',{x1:(6.5*Math.sin(ag)).toFixed(1),y1:(-6.5*Math.cos(ag)).toFixed(1),x2:(13*Math.sin(ag)).toFixed(1),y2:(-13*Math.cos(ag)).toFixed(1)},$('spokes'))}
+  function drawEye(I){ // I: -1..1, fortegn = retning, størrelse = styrke
+    var mag=Math.abs(I);
+    if(mag<.08||reduce){var vor=-st.bRot*7;iris2.setAttribute('transform','translate(0 '+vor.toFixed(1)+')');fastArrow.setAttribute('opacity',0);rotArrow.setAttribute('opacity',0);
+      eyeLab2.textContent='';eyeLab.textContent=Math.abs(st.bRot)>.08?'Holder blikket stødig':reduce&&mag>=.08?'Nystagmus':'Rolig';st.eyePh=0;return}
+    st.eyePh+=(1+1.8*mag)*(st.eyeDt||.016);var u=st.eyePh%1,sgn=I>0?1:-1;
+    var w=u<.8?u/.8:1-(u-.8)/.2;                 // 0→1 langsomt, 1→0 raskt
+    var A=6*mag,T=30*mag,y=sgn*(-A+2*A*w),rot=st.side*sgn*(-T+2*T*w);
+    iris2.setAttribute('transform','translate(0 '+y.toFixed(1)+') rotate('+rot.toFixed(1)+')');
+    fastArrow.setAttribute('opacity',(u>=.8?1:.35)*Math.min(1,mag*1.6));
+    fastArrow.setAttribute('transform',sgn>0?'':'rotate(180)');
+    rotArrow.setAttribute('opacity',(u>=.8?1:.4)*Math.min(1,mag*1.6));rotArrow.setAttribute('transform',st.side*sgn>0?'':'scale(-1 1)');
+    eyeLab.textContent=sgn>0?'Rykk oppover,':'Rykk nedover,';
+    var hit=(sgn>0)===(st.side>0)?'høyre':'venstre';eyeLab2.textContent=st.ear==='cupu'&&sgn>0?'vridd mot '+hit+' øre':'vridd mot '+hit+' øre';
+  }
+  function cupulaPath(b){ // b: -1..1, positiv = bøyd bort fra utriculus
+    var k=-b*16;
+    $('cupula').setAttribute('d','M15 -6 Q2 '+(-6+k*0.6).toFixed(1)+' -15 '+(-5+k).toFixed(1)+' L-15 '+(5+k).toFixed(1)+' Q2 '+(6+k*0.6).toFixed(1)+' 15 6 Z');
+    var z=b*34;
+    $('zcup').setAttribute('d','M104 104 Q'+(106+z*0.4).toFixed(1)+' 70 '+(112+z).toFixed(1)+' 34 L'+(148+z).toFixed(1)+' 34 Q'+(154+z*0.4).toFixed(1)+' 70 156 104 Z');
+    cil.forEach(function(c,i){var x0=110+i*8;c.setAttribute('x1',x0);c.setAttribute('y1',104);c.setAttribute('x2',(x0+z*0.45).toFixed(1));c.setAttribute('y2',80)});
+  }
+  function earMode(){return st.ear==='normal'?'n':st.ear==='cupu'?'c':'dh'}
+  function rolling(){return st.loose&&!st.home&&!st.entering&&Math.abs(st.v)>10}
+  function draw(){
+    canal.setAttribute('transform','translate('+CX+' '+CY+') scale('+st.side+' 1) rotate('+st.theta.toFixed(2)+')');
+    head.setAttribute('transform','translate(500 56) scale('+st.side+' 1) rotate('+st.theta.toFixed(2)+')');
+    crys.style.display=st.loose?'':'none';
+    dots.forEach(function(d,i){var p=st.home?[-130+OFF[i]*1.6,24-Math.abs(OFF[i])*0.3]:at(Math.max(S_MIN,Math.min(TOTAL,st.s+OFF[i])));d.setAttribute('cx',p[0].toFixed(1));d.setAttribute('cy',p[1].toFixed(1))});
+    var r=st.theta*D,c=Math.cos(r),sn=Math.sin(r);
+    LAB.forEach(function(l){var x=st.side*(l.p[0]*c-l.p[1]*sn),y=l.p[0]*sn+l.p[1]*c,m=Math.hypot(x,y)||1;
+      l.el.setAttribute('x',(CX+x+x/m*l.o).toFixed(1));l.el.setAttribute('y',(CY+y+y/m*l.o+4).toFixed(1));
+      l.el.setAttribute('text-anchor',x<-20?'end':x>20?'start':'middle')});
+    var roll=rolling(),head_moving=Math.abs(st.bRot)>.08,cupN=st.bCup>.15;
+    drawEye(roll?Math.min(1,Math.abs(st.v)/110)*(st.v<0?-.6:1):cupN?st.bCup:0);
+    var b=roll?Math.max(-1,Math.min(1,st.v/90)):st.ear==='cupu'?Math.min(1,st.bCup+st.bRot*.3):st.bRot;
+    drawCupDots(b);
+    cupulaPath(b);
+    eye.classList.toggle('nyst',roll||cupN);eye.classList.toggle('rev',roll&&st.v<0);eye.classList.toggle('weak',roll&&st.v<0);
+    scene.classList.toggle('flowing',roll);scene.classList.toggle('rev',st.v<0);
+    var za=$('zarrow');za.parentNode.classList.toggle('on',roll||head_moving);
+    za.setAttribute('d',b>=0?'M196 75 h44 m-8 -6 l8 6 l-8 6':'M64 75 h-44 m8 -6 l-8 6 l8 6');
+    $('eyeTxt').textContent=cupN?'Nystagmus med en gang. Den varer så lenge du ligger i samme stilling.':roll?(st.v>0?'Nystagmus: rykk oppover og vridd mot det nederste øret.':'Svakere nystagmus, motsatt vei.')
+      :head_moving?'Øynene beveger seg motsatt av hodet og holder blikket stødig. Normal refleks.'
+      :st.home?'Rolige. Krystallene er i utriculus.':'Rolige. Ingen nystagmus.';
+    $('zTxt').textContent=cupN?'Krystallene gjør cupula tung. Tyngdekraften holder den bøyd så lenge du ligger, og hjernen får et vedvarende signal.':st.ear==='cupu'?'Krystallene sitter fast på cupula. Så lenge du sitter, står den nesten rett.':roll?(st.v>0?'Krystallene drar væsken bort fra utriculus og bøyer cupula. Sansecellene sender mer signal: hjernen tror hodet snurrer.':'Væsken strømmer mot utriculus. Cupula bøyes motsatt vei, og signalet blir svakere enn normalt.')
+      :head_moving?'Hodet beveger seg. Væsken henger litt etter og bøyer cupula kort. Helt normalt.'
+      :st.entering?'Krystallene kan ikke komme inn gjennom ampullen. Cupula stenger.'
+      :'Cupula står rett. Sansecellene sender et jevnt hvilesignal.';
+    return roll;
+  }
+  var LISTS={dh:'stepsDH',ep:'stepsEp',n:'stepsN',o:'stepsO',c:'stepsC',up:'stepsUp',cu:'stepsCu'};
+  function steps(n){var list=$(LISTS[st.mode]);[].forEach.call(list.children,function(li){li.classList.toggle('on',n>0&&+li.dataset.s<=n)});
+    var li=n>0&&list.querySelector('li[data-s="'+n+'"]');$('liveTxt').innerHTML=li?li.lastElementChild.innerHTML:'Trykk på en knapp under for å starte.'}
+  var curStep=0;function upTo(n){if(n>curStep){curStep=n;steps(n)}if(st.mode==='o'&&n>=1)loosen(true)}
+  function setMode(m){st.mode=m;curStep=0;for(var k in LISTS)$(LISTS[k]).hidden=k!==m;steps(0);
+    $('stTitle').textContent={dh:st.home?'Krystallene er hjemme':'Hva skjer når du legger deg ned',ep:'Epleys manøver for '+(st.side>0?'høyre':'venstre')+' bakre buegang',n:'Et friskt øre',o:'Slik oppstår krystallsyke',c:'Krystaller fast på cupula',up:'Hva skjer når du setter deg opp',cu:'Når du setter deg opp igjen'}[m]}
+  function press(b){['bSit','bLie','bEpley','bOrigin'].forEach(function(id){$(id).setAttribute('aria-pressed',id===b)})}
+  function setEar(ear){
+    st.ear=ear;st.tw=null;st.queue=[];st.busy=false;st.started=false;st.theta=0;st.v=0;st.bRot=0;st.entering=false;st.home=false;
+    st.loose=ear==='bppv';st.s=S0;
+    $('bNormal').setAttribute('aria-pressed',ear==='normal');$('bBppv').setAttribute('aria-pressed',ear==='bppv');$('bCupu').setAttribute('aria-pressed',ear==='cupu');st.bCup=0;
+    $('bEpley').hidden=ear!=='bppv';$('bOrigin').hidden=ear!=='normal';
+    press('bSit');setMode(earMode());loosen(ear!=='normal');$('headLab').textContent='Sitter';draw();
+  }
+
+  // ---- Bevegelser ----
+  function rotate(to,label){$('headLab').textContent=label;st.tw={from:st.theta,to:to,t0:performance.now(),dur:reduce?0:1100};kick()}
+  var raf=0,last=0;
+  function kick(){if(!raf){last=performance.now();raf=requestAnimationFrame(loop)}}
+  function loop(now){
+    raf=0;var dt=Math.min(.05,(now-last)/1000)||.016;last=now;
+    var omega=0;
+    st.eyeDt=dt;
+    if(st.tw){var k=st.tw.dur?Math.min(1,(now-st.tw.t0)/st.tw.dur):1,ee=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
+      var prev=st.theta;st.theta=st.tw.from+(st.tw.to-st.tw.from)*ee;omega=(st.theta-prev)/dt;
+      if(st.mode==='n')upTo(1);if((st.mode==='dh'||st.mode==='up')&&st.loose&&!st.home)upTo(1);if(st.mode==='cu')upTo(1);
+      if(k>=1){st.tw=null;st.release=now+(reduce?0:LAT);st.quiet=0}}
+    // cupula i et friskt øre: bøyes kort mens hodet roterer, retter seg opp når hodet står stille
+    var target=reduce?0:Math.max(-1,Math.min(1,omega/170));
+    st.bRot+=(target-st.bRot)*Math.min(1,dt/(st.tw?.12:.45));
+    if(st.mode==='n'&&Math.abs(st.bRot)>.15)upTo(3);
+    // kupulolitiasis: tung cupula bøyes av tyngdekraften så lenge stillingen holdes
+    st.bCup=st.ear==='cupu'?.85*Math.max(0,Math.min(1,st.theta/120)):0;
+    if(st.mode==='cu'&&st.tw&&st.bCup<.7)upTo(2);
+    if(st.mode==='c'){if(st.tw)upTo(1);if(st.tw&&st.bCup>.05)upTo(2);if(st.bCup>.15)upTo(3)}
+    if(st.entering){ // krystallene løsner og flyter mot felles skank
+      if(now>=st.release){upTo(2);st.s-=(reduce?999:70)*dt;if(st.s<=L_ARC-6){st.s=L_ARC-6;st.entering=false;st.v=0;upTo(3)}}
+    }else if(!st.tw&&now>=st.release){
+      if(reduce&&st.loose&&!st.home){for(var n=0;n<2000;n++)stepPhysics(.01);st.v=0}else stepPhysics(dt);
+      if((st.mode==='dh'||st.mode==='up')&&rolling()){if(!st.rollT)st.rollT=now;upTo(now-st.rollT<1100?2:3)}else if(!rolling())st.rollT=0;
+    }
+    var roll=draw();
+    var settled=!st.tw&&!st.entering&&now>=st.release&&!roll&&Math.abs(st.bRot)<.05&&(!st.loose||st.home||Math.abs(st.v)<3);
+    if(settled){st.quiet+=dt}else st.quiet=0;
+    if(settled&&st.quiet>.35){
+      if(((st.mode==='dh'||st.mode==='up')&&st.started&&st.loose&&!st.home)||st.mode==='n'||(st.mode==='c'&&st.bCup>.15))upTo(4);
+      if(st.mode==='cu')upTo(3);
+      if(st.queue.length){var nx=st.queue.shift();setTimeout(nx,reduce?0:700);return}
+      st.busy=false;if(!(st.bCup>.15&&!reduce))return;
+    }
+    raf=requestAnimationFrame(loop);
+  }
+  function start(mode,btn){if(st.busy)return false;st.busy=true;st.started=true;press(btn);if(st.mode!==mode||mode!=='ep')setMode(mode);return true}
+
+  $('bSit').addEventListener('click',function(){var m=st.ear==='cupu'?'cu':st.ear==='bppv'&&st.loose&&!st.home?'up':earMode();if(start(m,'bSit'))rotate(0,'Sitter')});
+  $('bLie').addEventListener('click',function(){if(start(earMode(),'bLie'))rotate(120,'Ligger, hodet bakover')});
+  $('bEpley').addEventListener('click',function(){
+    if(!start('ep','bEpley'))return;
+    var A=st.side>0?'høyre':'venstre',B=st.side>0?'venstre':'høyre';
+    var seq=[[120,'Hodet bakover, mot '+A],[210,'Hodet vridd mot '+B],[300,B.charAt(0).toUpperCase()+B.slice(1)+' side, nesa ned'],[360,'Sitter']];
+    function run(i){upTo(i+1);rotate(seq[i][0],seq[i][1]);
+      st.queue=i<seq.length-1?[function(){run(i+1)}]:[function(){st.theta=0;st.busy=false;draw();$('stTitle').textContent='Krystallene er ført tilbake til utriculus'}]}
+    if(Math.abs(st.theta)>1){rotate(0,'Sitter');st.queue=[function(){run(0)}]}else run(0);
+  });
+  $('bOrigin').addEventListener('click',function(){
+    if(!start('o','bOrigin'))return;
+    function detach(){st.loose=true;st.home=false;st.entering=true;st.s=TOTAL;st.v=0;upTo(1);st.release=performance.now()+(reduce?0:1200);
+      st.queue=[function(){upTo(4);rotate(0,'Sitter');st.queue=[function(){st.ear='bppv';$('bNormal').setAttribute('aria-pressed',false);$('bBppv').setAttribute('aria-pressed',true);
+        $('bEpley').hidden=false;$('bOrigin').hidden=true;st.busy=false;$('stTitle').textContent='Nå har du krystallsyke';}]}];kick()}
+    if(Math.abs(st.theta-120)>1){rotate(120,'Ligger, hodet bakover');st.queue=[detach]}else detach();
+  });
+  $('bReset').addEventListener('click',function(){setEar(st.ear)});
+  $('bNormal').addEventListener('click',function(){setEar('normal')});
+  $('bBppv').addEventListener('click',function(){setEar('bppv')});
+  $('bCupu').addEventListener('click',function(){setEar('cupu')});
+  function setSide(sd){st.side=sd;$('bRight').setAttribute('aria-pressed',sd>0);$('bLeft').setAttribute('aria-pressed',sd<0);
+    [].forEach.call(document.querySelectorAll('.lr'),function(e){e.textContent=sd>0?e.dataset.r:e.dataset.l});setEar(st.ear)}
+  $('bRight').addEventListener('click',function(){setSide(1)});
+  $('bLeft').addEventListener('click',function(){setSide(-1)});
+  setEar('bppv');
+})();
+// ---- Sammenligning: fritt flytende krystaller (kanalolitiasis) og krystaller på cupula (kupulolitiasis) ----
+(function(){
+  var SNS='http://www.w3.org/2000/svg',$=function(id){return document.getElementById(id)};
+  var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function mk(tag,a,p){var n=document.createElementNS(SNS,tag);for(var k in a)n.setAttribute(k,a[k]);p.appendChild(n);return n}
+  var T=7,AX=58,GX0=16,GX1=254,GY=196,GA=30;
+  function E(x){x=Math.max(0,Math.min(1,x));return x<.5?2*x*x:1-Math.pow(-2*x+2,2)/2}
+  function build(g,title){
+    mk('text',{x:135,y:16,'text-anchor':'middle',class:'svgl'},g).textContent=title;
+    mk('path',{d:'M6 42 H34 Q'+AX+' 22 84 42 H262 V96 H84 Q'+AX+' 116 34 96 H6 Z',fill:'var(--sky)',stroke:'var(--navy2)','stroke-width':2},g);
+    mk('path',{d:'M38 100 Q'+AX+' 80 78 100 Z',fill:'var(--navy2)'},g);
+    var cup=mk('path',{fill:'var(--turkis)','fill-opacity':.45,stroke:'var(--navy2)','stroke-width':1.5},g);
+    mk('text',{x:AX,y:112,'text-anchor':'middle',class:'svgs',style:'font-size:10px'},g).textContent='Cupula';
+    mk('text',{x:8,y:36,class:'svgs',style:'font-size:10px'},g).textContent='← Utriculus';
+    mk('text',{x:260,y:36,'text-anchor':'end',class:'svgs',style:'font-size:10px'},g).textContent='Buegangen →';
+    // graf
+    mk('line',{x1:GX0,y1:GY,x2:GX1,y2:GY,stroke:'var(--line)','stroke-width':1.5},g);
+    mk('line',{x1:GX0,y1:GY-GA-4,x2:GX0,y2:GY+GA+4,stroke:'var(--line)','stroke-width':1.5},g);
+    mk('text',{x:GX0+4,y:GY-GA-8,class:'svgs',style:'font-size:10px'},g).textContent='Svimmelhet';
+    mk('text',{x:GX1,y:GY+GA+16,'text-anchor':'end',class:'svgs',style:'font-size:10px'},g).textContent='Tid (ca. 1 min) →';
+    var line=mk('polyline',{fill:'none',stroke:'var(--accent)','stroke-width':2.5,'stroke-linejoin':'round'},g);
+    var note=mk('text',{x:GX0+8,y:GY+GA+16,class:'svgs',style:'font-size:10px;font-weight:500'},g);
+    var cr=mk('g',{},g);
+    var dots=[0,1,2,3].map(function(i){return mk('circle',{r:3.6,fill:'#fff',stroke:'var(--navy2)','stroke-width':1.6},cr)});
+    return {cup:cup,line:line,dots:dots,note:note};
+  }
+  function cupD(b){var x=AX+b*28;return 'M'+(AX-12)+' 98 Q'+(AX-12+b*10)+' 70 '+(x-10)+' 46 L'+(x+10)+' 46 Q'+(AX+12+b*10)+' 70 '+(AX+12)+' 98 Z'}
+  var L=build($('cvL'),'Fritt i buegangen (kanalolitiasis)');
+  var Rr=build($('cvR'),'Fast på cupula (kupulolitiasis)');
+  var dir='sit',t0=0,raf=0,init=true;
+  // posisjon og bøyning som funksjon av tid
+  function canalX(t){return dir==='lie'?96+142*E((t-1.4)/3.4):238-142*E((t-1.0)/3.4)}
+  function canalB(t){return (canalX(t+.02)-canalX(t-.02))/.04/84*.85}
+  function cupB(t){var k=E(t/.6);return dir==='lie'?.85*k:.85*(1-k)}
+  function frame(now){
+    var t=reduce?T:Math.min(T,(now-t0)/1000);
+    var ang=dir==='lie'?-90*E(t/.6):-90+90*E(t/.6);
+    $('cvArrow').setAttribute('transform','rotate('+ang.toFixed(1)+')');
+    var bl=canalB(t),br=cupB(t),x=canalX(t);
+    L.cup.setAttribute('d',cupD(bl));Rr.cup.setAttribute('d',cupD(br));
+    L.dots.forEach(function(d,i){d.setAttribute('cx',(x+i*7.5).toFixed(1));d.setAttribute('cy',i%2?88:91)});
+    var tx=AX+br*28;Rr.dots.forEach(function(d,i){d.setAttribute('cx',(tx+8+i*1.5-(i>1?br*4:0)).toFixed(1));d.setAttribute('cy',52+i*9)});
+    // kurver
+    var pl=[],pr=[];for(var s=0;s<=t+1e-6;s+=.05){var gx=(GX0+s/T*(GX1-GX0)).toFixed(1);pl.push(gx+','+(GY-canalB(s)*GA).toFixed(1));pr.push(gx+','+(GY-cupB(s)*GA).toFixed(1))}
+    L.line.setAttribute('points',init?'':pl.join(' '));Rr.line.setAttribute('points',init?'':pr.join(' '));
+    if(dir==='lie'){L.note.textContent=t>1.3?'Starter etter noen sekunder, går over':'Ingen svimmelhet ennå …';Rr.note.textContent='Starter med en gang, varer mens du ligger'}
+    else{L.note.textContent=t>0.1?'Kort svimmelhet motsatt vei':'';Rr.note.textContent='Gir seg når du setter deg opp'}
+    if(t<T)raf=requestAnimationFrame(frame);else raf=0;
+  }
+  function go(d){if(d===dir)return;dir=d;init=false;$('cvLie').setAttribute('aria-pressed',d==='lie');$('cvSit').setAttribute('aria-pressed',d==='sit');
+    t0=performance.now();cancelAnimationFrame(raf);raf=requestAnimationFrame(frame)}
+  $('cvLie').addEventListener('click',function(){go('lie')});
+  $('cvSit').addEventListener('click',function(){go('sit')});
+  // hvilestilling: sitter, krystallene ligger ved cupula
+  t0=performance.now()-T*1000;frame(performance.now());L.note.textContent='';Rr.note.textContent='';
+})();
+
+</script>
+
+<style is:global>
+.hso{--ivory:#f6f0e4;--white:#fff;--muted:rgba(22,56,117,.62);--shadow:0 8px 24px rgba(22,56,117,.07);color:var(--ink)}
+.hso section{padding:80px 0}
+@media(max-width:700px){.hso section{padding:56px 0}}
+.hso h1{font-size:clamp(2rem,4.6vw,3rem);line-height:1.1;text-wrap:balance}
+.hso h2{font-size:clamp(1.5rem,3vw,2.1rem);line-height:1.18;margin-bottom:14px;text-wrap:balance}
+.hso h3{line-height:1.3}
+.hso p{font-size:1.08rem;line-height:1.65;color:var(--ink-soft);margin:0}
+.hso p+p{margin-top:16px}
+.hso b,.hso strong{color:var(--navy)}
+.hso a{text-decoration:none}
+.hso .hero{background:linear-gradient(180deg,var(--beige) 0%,var(--sky) 100%);padding:64px 0 72px}
+.hso .crumbs{font-size:.85rem;color:var(--muted);margin-bottom:24px}
+.hso .crumbs a{color:var(--navy-2);font-weight:600}
+.hso .hero .lead{margin:18px 0 26px;max-width:640px}
+.hso .c{max-width:1120px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+.hso .narrow{max-width:720px}
+.hso .eyebrow{font-size:12.8px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:14px;display:block}
+.hso .sky{background:var(--sky)}
+.hso .beige{background:var(--beige)}
+.hso .btn{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:15px;padding:13px 22px;border-radius:999px;border:1.5px solid transparent;cursor:pointer;font-family:inherit;background:var(--navy-2);color:var(--white)}
+.hso .btn.ghost{background:var(--white);color:var(--navy);border-color:var(--navy)}
+.hso .btn:focus-visible,.hso .chip:focus-visible,.hso summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.hso .tlink{font-weight:700;color:var(--navy);border-bottom:2px solid var(--turquoise);padding-bottom:2px}
+.hso .actions{display:flex;flex-wrap:wrap;align-items:center;gap:20px}
+.hso .model{display:grid;grid-template-columns:1.45fr .55fr;gap:20px;align-items:start;margin-top:16px}
+@media(max-width:900px){.hso .model{grid-template-columns:1fr}}
+.hso .stage{background:var(--white);border-radius:24px;box-shadow:var(--shadow);padding:16px;min-width:0}
+.hso .stage svg{width:100%;height:auto;display:block}
+.hso .controls{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.hso .chip{font-family:inherit;font-size:14.5px;font-weight:600;color:var(--navy);background:var(--sky);border:1.5px solid transparent;border-radius:999px;padding:9px 15px;cursor:pointer}
+.hso .chip[aria-pressed="true"]{background:var(--white);border-color:var(--turquoise)}
+.hso .chip:disabled{opacity:.45;cursor:default}
+.hso .side{display:grid;gap:16px;min-width:0;position:sticky;top:84px}
+@media(max-width:900px){.hso .side{position:static}}
+.hso .panel{background:var(--white);border-radius:20px;box-shadow:var(--shadow);padding:20px 22px}
+.hso .panel h3{font-size:18px;margin-bottom:6px}
+.hso .panel p{font-size:16px}
+.hso .steps{list-style:none;display:grid;gap:10px;margin-top:4px}
+.hso .steps li{display:flex;gap:12px;align-items:flex-start;font-size:15.5px;line-height:1.5;color:var(--ink-soft);opacity:.45;transition:opacity .3s}
+.hso .steps li.on{opacity:1}
+.hso .steps li.on b{color:var(--navy)}
+.hso .steps .dot{flex:none;width:12px;height:12px;border-radius:50%;margin-top:6px;border:2px solid var(--turquoise);background:var(--white)}
+.hso .steps li.on .dot{background:var(--turquoise)}
+.hso .eyebox{display:flex;align-items:center;gap:16px}
+.hso .eyebox svg{width:132px;flex:none}
+.hso .eyebox p{font-size:15px;line-height:1.5}
+.hso .timer{font-variant-numeric:tabular-nums;font-weight:700;color:var(--navy);font-size:14px}
+.hso #iris{transform-box:fill-box;transform-origin:center}
+.hso .nyst #iris{animation:hso-beat .9s infinite}
+.hso .nyst.weak #iris{animation-duration:1.4s}
+.hso .nyst.rev #iris{animation-name:hso-beatRev}
+@keyframes hso-beat{0%{transform:translateY(-5px) rotate(-6deg)}78%{transform:translateY(5px) rotate(6deg)}100%{transform:translateY(-5px) rotate(-6deg)}}
+@keyframes hso-beatRev{0%{transform:translateY(5px) rotate(6deg)}78%{transform:translateY(-5px) rotate(-6deg)}100%{transform:translateY(5px) rotate(6deg)}}
+.hso .flow{opacity:0;transition:opacity .3s}
+.hso .flowing .flow{opacity:1}
+.hso .flow path{stroke-dasharray:6 10;animation:hso-dash 1s linear infinite}
+.hso .flowing.rev .flow path{animation-direction:reverse}
+@keyframes hso-dash{to{stroke-dashoffset:-16}}
+@media(prefers-reduced-motion:reduce){.hso .nyst #iris,.hso .flow path{animation:none}}
+.hso .svgl{font-family:var(--font-body);font-size:12px;font-weight:700;fill:var(--navy)}
+.hso .svgm{font-family:var(--font-body);font-size:12px;fill:var(--muted)}
+.hso .svgs{font-family:var(--font-body);font-size:11.5px;font-weight:600;fill:var(--navy)}
+.hso .arc{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.hso .zoom{width:100%;height:auto;display:block}
+.hso .zcap{font-size:14.5px;line-height:1.5;margin-top:8px}
+.hso .zflow{opacity:0;transition:opacity .3s}
+.hso .zflow.on{opacity:1}
+.hso .legend{display:grid;grid-template-columns:1fr 1fr;gap:12px 20px;margin-top:18px;border-top:1px solid var(--line);padding-top:16px}
+@media(max-width:600px){.hso .legend{grid-template-columns:1fr}}
+.hso .legend dt{font-weight:700;color:var(--navy);font-size:14.5px}
+.hso .legend dd{font-size:14px;line-height:1.5;color:var(--ink-soft)}
+.hso .seg{display:inline-flex;flex-wrap:wrap;margin-right:8px;background:var(--sky);border-radius:999px;padding:4px;margin-top:14px;gap:4px}
+.hso .seg button{font-family:inherit;font-size:14.5px;font-weight:700;color:var(--navy);background:none;border:0;border-radius:999px;padding:8px 16px;cursor:pointer}
+.hso .seg button[aria-pressed="true"]{background:var(--navy-2);color:var(--white)}
+.hso .seg button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.hso .cmpfig{background:var(--white);border-radius:22px;box-shadow:var(--shadow);padding:18px;margin-top:26px}
+.hso .cmpfig svg{width:100%;height:auto;display:block}
+.hso .uz .free{transition:transform 2.6s cubic-bezier(.4,.1,.3,1),opacity 2.6s}
+.hso .uz.loosen .free{transform:translate(var(--dx),var(--dy)) rotate(55deg)}
+@media(prefers-reduced-motion:reduce){.hso .uz .free{transition:none}}
+.hso .toolbar{display:flex;flex-wrap:wrap;gap:14px 28px;margin-top:26px;align-items:center}
+.hso .tgroup{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.hso .tlabel{font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--muted)}
+.hso .toolbar .seg{margin:0}
+.hso .chip.quiet{background:none;text-decoration:underline;text-underline-offset:3px;color:var(--navy-2)}
+.hso .status{margin-top:16px;padding-top:14px;border-top:1px solid var(--line);font-size:15px;line-height:1.5;color:var(--navy)}
+.hso .status span:first-child{font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--muted);margin-right:6px}
+.hso .ph{font-size:16px;margin-bottom:8px}
+.hso .zooms{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+@media(max-width:760px){.hso .zooms{grid-template-columns:1fr}}
+.hso .zooms>*{min-width:0}
+.hso .legendbox{margin-top:16px;background:var(--white);border-radius:18px;box-shadow:var(--shadow)}
+.hso .legendbox summary{list-style:none;cursor:pointer;padding:16px 50px 16px 22px;font-weight:700;color:var(--navy);position:relative}
+.hso .legendbox summary::-webkit-details-marker{display:none}
+.hso .legendbox summary::after{content:"+";position:absolute;right:20px;top:9px;font-size:24px;font-weight:400;color:var(--navy-2)}
+.hso .legendbox[open] summary::after{content:"–"}
+.hso .legendbox .legend{margin:0 22px;padding:16px 0 20px}
+.hso .caption{font-size:13.5px;color:var(--muted);margin-top:10px;line-height:1.5}
+.hso .two{display:grid;grid-template-columns:1fr 1fr;gap:56px}
+@media(max-width:860px){.hso .two{grid-template-columns:1fr;gap:18px}}
+.hso .two>*{min-width:0}
+.hso .pull{font-family:var(--font-display);font-size:23px;line-height:1.4;color:var(--navy);border-left:3px solid var(--turquoise);padding-left:20px;margin-top:16px}
+.hso .dots{list-style:none;display:grid;gap:10px;margin-top:18px}
+.hso .dots li{position:relative;padding-left:24px;font-size:17px;line-height:1.55;color:var(--ink-soft)}
+.hso .dots li::before{content:"";position:absolute;left:0;top:8px;width:10px;height:10px;border-radius:50%;background:var(--turquoise)}
+.hso .compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:28px}
+@media(max-width:760px){.hso .compare{grid-template-columns:1fr}}
+.hso .cmp{background:var(--white);border-radius:18px;padding:22px;box-shadow:var(--shadow)}
+.hso .cmp small{font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--accent)}
+.hso .cmp h3{margin:6px 0 8px}
+.hso .cmp p{font-size:16px}
+.hso .cmp dl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin-top:14px;font-size:14.5px}
+.hso .cmp dt{font-weight:700;color:var(--navy)}
+.hso .cmp dd{color:var(--ink-soft)}
+.hso .pro{margin-top:26px;border:1.5px solid var(--navy-2);border-radius:18px;background:var(--white);overflow:hidden}
+.hso .pro summary{list-style:none;cursor:pointer;padding:17px 52px 17px 20px;position:relative;display:flex;align-items:center;gap:12px;font-weight:700;color:var(--navy);font-size:16px}
+.hso .pro summary::-webkit-details-marker{display:none}
+.hso .pro summary .tag{font-size:11px;letter-spacing:.1em;text-transform:uppercase;background:var(--navy-2);color:var(--white);border-radius:999px;padding:4px 10px;flex:none}
+.hso .pro summary::after{content:"+";position:absolute;right:20px;top:11px;font-size:26px;font-weight:400;color:var(--navy-2)}
+.hso .pro[open] summary::after{content:"–"}
+.hso .pro .body{padding:4px 20px 20px;border-top:1px solid var(--line)}
+.hso .pro .body p,.hso .pro .body li{font-size:15.5px;line-height:1.6;color:var(--ink-soft)}
+.hso .pro .body p{margin-top:12px}
+.hso .pro ul{list-style:none;display:grid;gap:8px;margin-top:12px}
+.hso .pro li{position:relative;padding-left:22px}
+.hso .pro li::before{content:"";position:absolute;left:0;top:8px;width:9px;height:9px;border-radius:50%;background:var(--turquoise)}
+.hso .navyS{background:var(--navy)}
+.hso .navyS h2,.hso .navyS h3{color:var(--white)}
+.hso .navyS p{color:#cfdcf0}
+.hso .navyS .eyebrow{color:var(--turquoise)}
+.hso .navyS b{color:var(--white)}
+.hso .next{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:26px}
+@media(max-width:860px){.hso .next{grid-template-columns:1fr}}
+.hso .nx{background:var(--white);border-radius:18px;padding:22px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:8px}
+.hso .nx p{font-size:15.5px}
+.hso .nx .more{margin-top:auto;padding-top:6px;font-weight:700;color:var(--navy-2);font-size:14.5px}
+.hso .faq{margin-top:20px;border-top:1px solid var(--line)}
+.hso .faq details{border-bottom:1px solid var(--line)}
+.hso .faq summary{list-style:none;cursor:pointer;padding:19px 40px 19px 0;font-weight:600;font-size:17px;color:var(--navy);position:relative}
+.hso .faq summary::-webkit-details-marker{display:none}
+.hso .faq summary::after{content:"+";position:absolute;right:6px;top:14px;font-size:24px;color:var(--navy-2);font-weight:400}
+.hso .faq details[open] summary::after{content:"–"}
+.hso .faq details p{font-size:16.5px;padding-bottom:20px}
+.hso .cta{text-align:center}
+.hso .cta p{max-width:600px;margin:0 auto 24px}
+.hso .cta .actions{justify-content:center}
+.hso .model{grid-template-columns:1fr!important}
+.hso .live{margin-top:12px;background:var(--sky);border-radius:16px;padding:14px 18px;min-height:112px}
+.hso .livelab{display:block;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--accent);margin-bottom:4px}
+.hso .live #liveTxt{font-size:16.5px;line-height:1.55;color:var(--ink-soft,#55616f);margin:0}
+.hso .live .status{margin-top:10px;padding-top:10px}
+</style>
