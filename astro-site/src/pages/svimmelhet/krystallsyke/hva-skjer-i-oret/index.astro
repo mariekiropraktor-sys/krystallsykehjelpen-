@@ -197,6 +197,44 @@ const pageLd = {
           </g>
           <g id="labels" class="svgl"></g>
         </svg>
+        <div class="live" aria-live="polite">
+          <span class="livelab" id="stTitle">Hva skjer når du legger deg ned</span>
+          <p id="liveTxt">Trykk på en knapp under for å starte.</p>
+          <p class="status"><span>Øyet</span> <span id="eyeTxt">Rolige. Ingen nystagmus.</span></p>
+          <div hidden>
+            <ol class="steps" id="stepsDH">
+            <li data-s="1"><span class="dot"></span><span><b>Hodet endrer stilling.</b> Buegangen snus med hodet.</span></li>
+            <li data-s="2"><span class="dot"></span><span><b>Krystallene ruller</b> etter et par sekunder, bort fra ampullen og mot det nye laveste punktet.</span></li>
+            <li data-s="3"><span class="dot"></span><span><b>Væsken dras med og bøyer cupula.</b> Sansecellene sender beskjed om at hodet snurrer. Du blir svimmel, og øynene rykker.</span></li>
+            <li data-s="4"><span class="dot"></span><span><b>Krystallene ligger stille.</b> Cupula retter seg opp igjen, og svimmelheten gir seg.</span></li>
+          </ol>
+            <ol class="steps" id="stepsEp" hidden>
+            <li data-s="1"><span class="dot"></span><span><b>Hodet bakover, vridd mot <span class="lr" data-r="høyre" data-l="venstre">høyre</span>.</b> Krystallene ruller bort fra ampullen.</span></li>
+            <li data-s="2"><span class="dot"></span><span><b>Hodet vris over mot <span class="lr" data-r="venstre" data-l="høyre">venstre</span>.</b> Krystallene ruller videre rundt buegangen.</span></li>
+            <li data-s="3"><span class="dot"></span><span><b>Rull over på <span class="lr" data-r="venstre" data-l="høyre">venstre</span> side, nesa mot gulvet.</b> Krystallene når felles skank og faller ut i utriculus.</span></li>
+            <li data-s="4"><span class="dot"></span><span><b>Sett deg opp.</b> Krystallene ligger i utriculus, der de ikke gir svimmelhet.</span></li>
+          </ol>
+            <ol class="steps" id="stepsN" hidden>
+            <li data-s="1"><span class="dot"></span><span><b>Hodet beveger seg.</b> Buegangen følger med.</span></li>
+            <li data-s="2"><span class="dot"></span><span><b>Væsken henger litt etter</b> og bøyer cupula kort, bare mens hodet er i bevegelse.</span></li>
+            <li data-s="3"><span class="dot"></span><span><b>Øynene holder blikket stødig</b> ved å bevege seg motsatt av hodet. Det er en normal refleks.</span></li>
+            <li data-s="4"><span class="dot"></span><span><b>Hodet står stille, cupula retter seg opp.</b> Krystallene ligger fast på macula. Ingen svimmelhet.</span></li>
+          </ol>
+            <ol class="steps" id="stepsC" hidden>
+            <li data-s="1"><span class="dot"></span><span><b>Hodet endrer stilling.</b> Buegangen snus med hodet.</span></li>
+            <li data-s="2"><span class="dot"></span><span><b>Krystallene sitter fast på cupula</b> og gjør den tung.</span></li>
+            <li data-s="3"><span class="dot"></span><span><b>Tyngdekraften bøyer cupula med en gang.</b> Svimmelhet og nystagmus starter uten forsinkelse.</span></li>
+            <li data-s="4"><span class="dot"></span><span><b>Det varer så lenge du ligger</b> i samme stilling, og gir seg først når du setter deg opp.</span></li>
+          </ol>
+            <ol class="steps" id="stepsO" hidden>
+            <li data-s="1"><span class="dot"></span><span><b>Krystaller løsner fra macula</b> i utriculus, ofte uten kjent årsak.</span></li>
+            <li data-s="2"><span class="dot"></span><span><b>Når du ligger, flyter de mot åpningen</b> til felles skank, som da vender nedover.</span></li>
+            <li data-s="3"><span class="dot"></span><span><b>De faller inn i bakre buegang</b> og ruller til det laveste punktet. Ampullen kommer de ikke inn i, fordi cupula stenger.</span></li>
+            <li data-s="4"><span class="dot"></span><span><b>Når du setter deg opp, ruller de ned mot ampullen.</b> Nå ligger de klare til å gi svimmelhet neste gang du legger deg ned.</span></li>
+          </ol>
+          </div>
+        </div>
+
         <div class="controls" role="group" aria-label="Velg stilling">
           <button class="chip" id="bSit" aria-pressed="true" type="button">Sitter</button>
           <button class="chip" id="bLie" aria-pressed="false" type="button">Legg deg ned</button>
@@ -205,42 +243,6 @@ const pageLd = {
           <button class="chip quiet" id="bReset" type="button">Start på nytt</button>
         </div>
         <p class="caption">Forenklet modell av <span class="lr" data-r="høyre" data-l="venstre">høyre</span> øre sett fra siden, ikke i riktig målestokk. Stillingene i Epleys manøver er tilnærmet, og animasjonen går raskere enn i virkeligheten.</p>
-      </div>
-      <div class="side">
-        <div class="panel" aria-live="polite">
-          <h3 id="stTitle">Hva skjer når du legger deg ned</h3>
-          <ol class="steps" id="stepsDH">
-            <li data-s="1"><span class="dot"></span><span><b>Hodet endrer stilling.</b> Buegangen snus med hodet.</span></li>
-            <li data-s="2"><span class="dot"></span><span><b>Krystallene ruller</b> etter et par sekunder, bort fra ampullen og mot det nye laveste punktet.</span></li>
-            <li data-s="3"><span class="dot"></span><span><b>Væsken dras med og bøyer cupula.</b> Sansecellene sender beskjed om at hodet snurrer. Du blir svimmel, og øynene rykker.</span></li>
-            <li data-s="4"><span class="dot"></span><span><b>Krystallene ligger stille.</b> Cupula retter seg opp igjen, og svimmelheten gir seg.</span></li>
-          </ol>
-          <ol class="steps" id="stepsEp" hidden>
-            <li data-s="1"><span class="dot"></span><span><b>Hodet bakover, vridd mot <span class="lr" data-r="høyre" data-l="venstre">høyre</span>.</b> Krystallene ruller bort fra ampullen.</span></li>
-            <li data-s="2"><span class="dot"></span><span><b>Hodet vris over mot <span class="lr" data-r="venstre" data-l="høyre">venstre</span>.</b> Krystallene ruller videre rundt buegangen.</span></li>
-            <li data-s="3"><span class="dot"></span><span><b>Rull over på <span class="lr" data-r="venstre" data-l="høyre">venstre</span> side, nesa mot gulvet.</b> Krystallene når felles skank og faller ut i utriculus.</span></li>
-            <li data-s="4"><span class="dot"></span><span><b>Sett deg opp.</b> Krystallene ligger i utriculus, der de ikke gir svimmelhet.</span></li>
-          </ol>
-          <ol class="steps" id="stepsN" hidden>
-            <li data-s="1"><span class="dot"></span><span><b>Hodet beveger seg.</b> Buegangen følger med.</span></li>
-            <li data-s="2"><span class="dot"></span><span><b>Væsken henger litt etter</b> og bøyer cupula kort, bare mens hodet er i bevegelse.</span></li>
-            <li data-s="3"><span class="dot"></span><span><b>Øynene holder blikket stødig</b> ved å bevege seg motsatt av hodet. Det er en normal refleks.</span></li>
-            <li data-s="4"><span class="dot"></span><span><b>Hodet står stille, cupula retter seg opp.</b> Krystallene ligger fast på macula. Ingen svimmelhet.</span></li>
-          </ol>
-          <ol class="steps" id="stepsC" hidden>
-            <li data-s="1"><span class="dot"></span><span><b>Hodet endrer stilling.</b> Buegangen snus med hodet.</span></li>
-            <li data-s="2"><span class="dot"></span><span><b>Krystallene sitter fast på cupula</b> og gjør den tung.</span></li>
-            <li data-s="3"><span class="dot"></span><span><b>Tyngdekraften bøyer cupula med en gang.</b> Svimmelhet og nystagmus starter uten forsinkelse.</span></li>
-            <li data-s="4"><span class="dot"></span><span><b>Det varer så lenge du ligger</b> i samme stilling, og gir seg først når du setter deg opp.</span></li>
-          </ol>
-          <ol class="steps" id="stepsO" hidden>
-            <li data-s="1"><span class="dot"></span><span><b>Krystaller løsner fra macula</b> i utriculus, ofte uten kjent årsak.</span></li>
-            <li data-s="2"><span class="dot"></span><span><b>Når du ligger, flyter de mot åpningen</b> til felles skank, som da vender nedover.</span></li>
-            <li data-s="3"><span class="dot"></span><span><b>De faller inn i bakre buegang</b> og ruller til det laveste punktet. Ampullen kommer de ikke inn i, fordi cupula stenger.</span></li>
-            <li data-s="4"><span class="dot"></span><span><b>Når du setter deg opp, ruller de ned mot ampullen.</b> Nå ligger de klare til å gi svimmelhet neste gang du legger deg ned.</span></li>
-          </ol>
-          <p class="status"><span>Øyet</span> <span id="eyeTxt">Rolige. Ingen nystagmus.</span></p>
-        </div>
       </div>
     </div>
     <div class="zooms">
@@ -572,7 +574,8 @@ const pageLd = {
     return roll;
   }
   var LISTS={dh:'stepsDH',ep:'stepsEp',n:'stepsN',o:'stepsO',c:'stepsC'};
-  function steps(n){[].forEach.call($(LISTS[st.mode]).children,function(li){li.classList.toggle('on',n>0&&+li.dataset.s<=n)})}
+  function steps(n){var list=$(LISTS[st.mode]);[].forEach.call(list.children,function(li){li.classList.toggle('on',n>0&&+li.dataset.s<=n)});
+    var li=n>0&&list.querySelector('li[data-s="'+n+'"]');$('liveTxt').innerHTML=li?li.lastElementChild.innerHTML:'Trykk på en knapp under for å starte.'}
   var curStep=0;function upTo(n){if(n>curStep){curStep=n;steps(n)}if(st.mode==='o'&&n>=1)loosen(true)}
   function setMode(m){st.mode=m;curStep=0;for(var k in LISTS)$(LISTS[k]).hidden=k!==m;steps(0);
     $('stTitle').textContent={dh:st.home?'Krystallene er hjemme':'Hva skjer når du legger deg ned',ep:'Epleys manøver for '+(st.side>0?'høyre':'venstre')+' bakre buegang',n:'Et friskt øre',o:'Slik oppstår krystallsyke',c:'Krystaller fast på cupula'}[m]}
@@ -855,4 +858,9 @@ const pageLd = {
 .hso .cta{text-align:center}
 .hso .cta p{max-width:600px;margin:0 auto 24px}
 .hso .cta .actions{justify-content:center}
+.hso .model{grid-template-columns:1fr!important}
+.hso .live{margin-top:12px;background:var(--sky);border-radius:16px;padding:14px 18px;min-height:112px}
+.hso .livelab{display:block;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--accent);margin-bottom:4px}
+.hso .live #liveTxt{font-size:16.5px;line-height:1.55;color:var(--ink-soft,#55616f);margin:0}
+.hso .live .status{margin-top:10px;padding-top:10px}
 </style>
