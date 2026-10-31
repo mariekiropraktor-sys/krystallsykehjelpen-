@@ -1,7 +1,7 @@
 // Delt navigasjonsdata for Header.astro (menypanelets fire faner) og
 // Footer.astro, slik at lenketekst/URL aldri kommer ut av synk mellom de to.
 //
-// "Alle former for svimmelhet →" og de publiserte diagnosesidene (utenom
+// "Utvalgte former for svimmelhet →" og de publiserte diagnosesidene (utenom
 // krystallsyke, som står fast) hentes dynamisk fra Sanity — se
 // getNavigationTabs() nederst. navigationTabs under er kun den statiske
 // grunnstrukturen/fallback.
@@ -18,7 +18,7 @@ export type NavItem =
       href: string;
       description?: string;
       enabled?: boolean; // default true — sett false for lenker til sider som ikke finnes ennå
-      sub?: boolean; // true = vises innrykket som underpunkt (diagnoser under «Alle former for svimmelhet»)
+      sub?: boolean; // true = vises innrykket som underpunkt (diagnoser under «Utvalgte former for svimmelhet»)
     }
   | { kind: "divider" };
 
@@ -31,7 +31,7 @@ export const navigationTabs: NavTab[] = [
   {
     label: "Svimmelhet",
     items: [
-      { kind: "link", label: "Alle former for svimmelhet →", href: "/svimmelhet/", enabled: false },
+      { kind: "link", label: "Utvalgte former for svimmelhet →", href: "/svimmelhet/", enabled: false },
       { kind: "link", label: "Krystallsyke (BPPV)", href: "/svimmelhet/krystallsyke/", sub: true },
     ],
   },
@@ -79,7 +79,7 @@ export const footerBehandlingExtras: NavItem[] = [
   { kind: "link", label: "Få hjelp", href: "/fa-hjelp/" },
 ];
 
-// Bygger navigasjonsfanene dynamisk: slår på "Alle former for svimmelhet →"
+// Bygger navigasjonsfanene dynamisk: slår på "Utvalgte former for svimmelhet →"
 // kun når svimmelhetPage er publisert med visible:true, og setter inn
 // publiserte diagnosesider (utenom krystallsyke, som allerede står fast i
 // grunnstrukturen) rett etter "Krystallsyke (BPPV)", sortert på order.
