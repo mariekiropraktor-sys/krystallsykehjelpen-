@@ -87,11 +87,11 @@ export default defineType({
     defineField({
       name: "flowACanalOptions",
       title: "Sti A, steg 2 – svaralternativer",
-      description: "Rekkefølge må matche bakre/horisontal/fremre buegang i den rekkefølgen",
+      description: "Rekkefølge må matche bakre/horisontal/øvre buegang i den rekkefølgen",
       type: "array",
       group: "flyt",
       of: [{ type: "string" }],
-      initialValue: ["Bakre buegang", "Laterale buegang", "Fremre buegang"],
+      initialValue: ["Bakre buegang", "Horisontal buegang", "Øvre buegang"],
     }),
     defineField({ name: "flowASafetyHeading", title: "Sti A, resultat – sikkerhetsvarsel overskrift", type: "string", group: "flyt", initialValue: "Viktig" }),
     defineField({
