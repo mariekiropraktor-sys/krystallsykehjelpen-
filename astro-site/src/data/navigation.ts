@@ -29,10 +29,20 @@ export interface NavTab {
 
 export const navigationTabs: NavTab[] = [
   {
+    // Egen fane for krystallsyke – sidens hovedtema. Undersidene står i
+    // leserens rekkefølge (symptomer → behandling); legg nye inn på riktig plass.
+    label: "Krystallsyke",
+    items: [
+      { kind: "link", label: "Om krystallsyke (BPPV) →", href: "/svimmelhet/krystallsyke/" },
+      { kind: "link", label: "Hva skjer i øret", href: "/svimmelhet/krystallsyke/hva-skjer-i-oret/", sub: true },
+      // Midlertidig til avsnittet på hovedsiden – byttes til /svimmelhet/krystallsyke/behandling/ når den er bygget.
+      { kind: "link", label: "Slik behandles krystallsyke", href: "/svimmelhet/krystallsyke/#behandling", sub: true },
+    ],
+  },
+  {
     label: "Svimmelhet",
     items: [
       { kind: "link", label: "Utvalgte former for svimmelhet →", href: "/svimmelhet/", enabled: false },
-      { kind: "link", label: "Krystallsyke (BPPV)", href: "/svimmelhet/krystallsyke/", sub: true },
     ],
   },
   {
@@ -43,10 +53,8 @@ export const navigationTabs: NavTab[] = [
     ],
   },
   {
-    label: "Behandling",
+    label: "Få behandling",
     items: [
-      // Midlertidige lenker til avsnitt på eksisterende sider — byttes til egne sider når de er bygget.
-      { kind: "link", label: "Slik behandles krystallsyke", href: "/svimmelhet/krystallsyke/#behandling", description: "Undersøkelse, manøvrer og forløp" },
       { kind: "link", label: "Time på klinikken", href: "/priser/#klinikk", description: "Fetsund, Garderbakken 1" },
       { kind: "link", label: "Videokonsultasjon", href: "/tjenester/videokonsultasjon/", description: "Vurdering og veiledning hjemmefra" },
       { kind: "link", label: "Hjemmebesøk", href: "/tjenester/hjemmebesok/", description: "Ved akutt krystallsyke, kveld og helg" },
@@ -71,7 +79,7 @@ export const topLevelLinks: { label: string; href: string }[] = [
   { label: "Spørsmål og svar", href: "/faq/" },
 ];
 
-// Footer viser samme fire faner (kun enabled lenker), pluss et par
+// Footer viser samme faner (kun enabled lenker), pluss et par
 // footer-spesifikke lenker under "Behandling" (booking + Få hjelp) som ikke
 // hører hjemme i menypanelet.
 export const footerBehandlingExtras: NavItem[] = [
@@ -81,8 +89,8 @@ export const footerBehandlingExtras: NavItem[] = [
 
 // Bygger navigasjonsfanene dynamisk: slår på "Utvalgte former for svimmelhet →"
 // kun når svimmelhetPage er publisert med visible:true, og setter inn
-// publiserte diagnosesider (utenom krystallsyke, som allerede står fast i
-// grunnstrukturen) rett etter "Krystallsyke (BPPV)", sortert på order.
+// publiserte diagnosesider (utenom krystallsyke, som har egen fane) rett
+// etter hub-lenken, sortert på order.
 // Bruker svimmelhetPreviewClient, så upubliserte utkast også dukker opp i
 // menyen lokalt når SANITY_PREVIEW_DRAFTS+SANITY_READ_TOKEN er satt — se
 // den filen. En faktisk build ser alltid kun publiserte dokumenter.
@@ -103,10 +111,10 @@ export async function getNavigationTabs(): Promise<NavTab[]> {
       item.kind === "link" && item.href === "/svimmelhet/" ? { ...item, enabled: Boolean(svimmelhetVisible) } : item,
     );
 
-    const krystallsykeIndex = svimmelhetTab.items.findIndex(
-      (item) => item.kind === "link" && item.href === "/svimmelhet/krystallsyke/",
+    const hubIndex = svimmelhetTab.items.findIndex(
+      (item) => item.kind === "link" && item.href === "/svimmelhet/",
     );
-    const insertAt = krystallsykeIndex === -1 ? svimmelhetTab.items.length : krystallsykeIndex + 1;
+    const insertAt = hubIndex === -1 ? svimmelhetTab.items.length : hubIndex + 1;
     const newItems: NavItem[] = extraDiagnoses.map((d) => ({
       kind: "link" as const,
       label: d.title,

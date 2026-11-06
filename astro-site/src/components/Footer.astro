@@ -9,15 +9,20 @@ function visibleLinks(tabLabel) {
   return (tab?.items ?? []).filter((item) => item.kind === "link" && item.enabled !== false);
 }
 
+const krystallsykeLinks = visibleLinks("Krystallsyke");
 const svimmelhetLinks = visibleLinks("Svimmelhet");
 const hjelpDegSelvLinks = visibleLinks("Hjelp deg selv");
-const behandlingLinks = [...visibleLinks("Behandling"), ...footerBehandlingExtras];
+const behandlingLinks = [...visibleLinks("Få behandling"), ...footerBehandlingExtras];
 const omLinks = visibleLinks("Om");
 ---
 
 <footer class="site-footer">
   <div class="container">
     <div class="footer-grid">
+      <div>
+        <h4>Krystallsyke</h4>
+        {krystallsykeLinks.map((link) => <a href={link.href}>{link.label}</a>)}
+      </div>
       <div>
         <h4>Svimmelhet</h4>
         {svimmelhetLinks.map((link) => <a href={link.href}>{link.label}</a>)}
@@ -27,7 +32,7 @@ const omLinks = visibleLinks("Om");
         {hjelpDegSelvLinks.map((link) => <a href={link.href}>{link.label}</a>)}
       </div>
       <div>
-        <h4>Behandling</h4>
+        <h4>Få behandling</h4>
         {behandlingLinks.map((link) => <a href={link.href}>{link.label}</a>)}
       </div>
       <div>
@@ -58,7 +63,7 @@ const omLinks = visibleLinks("Om");
   }
   .footer-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(6, 1fr);
     gap: 32px;
     margin-bottom: 32px;
   }
@@ -89,6 +94,9 @@ const omLinks = visibleLinks("Om");
   }
   .site-footer .footer-bottom .footer-legal { display: inline; margin: 0; font-size: inherit; color: inherit; text-decoration: underline; text-underline-offset: 2px; }
   .site-footer .footer-bottom .footer-legal:hover { color: #fff; }
+  @media (max-width: 1000px) {
+    .footer-grid { grid-template-columns: repeat(3, 1fr); }
+  }
   @media (max-width: 720px) {
     .footer-grid { grid-template-columns: 1fr 1fr; }
   }

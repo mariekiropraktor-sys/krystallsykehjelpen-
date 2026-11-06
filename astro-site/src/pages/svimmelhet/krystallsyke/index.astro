@@ -161,6 +161,27 @@ const faqLd = {
     <div class="fact-strip-spacer"></div>
   </div>
 
+  <!-- FORDYP DEG: undersidene i temaklyngen. Ett bredt kort så lenge det
+       bare finnes én underside; bytt til kortrad når flere er publisert. -->
+  <section class="deep-section" aria-labelledby="fordyp-tittel">
+    <div class="container">
+      <span class="eyebrow">Fordyp deg</span>
+      <h2 id="fordyp-tittel">Les mer om krystallsyke</h2>
+      <p class="section-lead">Vil du forstå mer? Her går vi i dybden, med interaktive modeller du kan utforske selv.</p>
+      <a href="/svimmelhet/krystallsyke/hva-skjer-i-oret/" class="deep-feature">
+        <div class="deep-feature-text">
+          <span class="deep-kicker">Interaktiv modell</span>
+          <h3>Hva skjer i øret ved krystallsyke?</h3>
+          <p>Se krystallene løsne og bevege seg i buegangen når du snur hodet, og forstå hvorfor det snurrer.</p>
+          <span class="deep-go">Utforsk modellen →</span>
+        </div>
+        <div class="deep-feature-img">
+          <img src="/buegang-bakre.webp" alt="" width="600" height="600" loading="lazy" />
+        </div>
+      </a>
+    </div>
+  </section>
+
   <!-- 3+4. HVA SKJER I ØRET + ANIMASJON -->
   <section id="symptomer-forstaa">
     <div class="container">
@@ -621,5 +642,28 @@ const faqLd = {
 
   a:focus-visible, button:focus-visible, summary:focus-visible {
     outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px;
+  }
+  /* Fordyp deg */
+  .deep-section { padding: 56px 0 24px; }
+  .deep-section .section-lead { margin-bottom: 24px; }
+  .deep-feature {
+    display: grid; grid-template-columns: 1.3fr 1fr; overflow: hidden;
+    background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius);
+    box-shadow: 0 12px 30px rgba(22, 56, 117, 0.07); text-decoration: none;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .deep-feature:hover { transform: translateY(-2px); box-shadow: 0 16px 36px rgba(22, 56, 117, 0.12); }
+  .deep-feature-text { padding: 32px; display: flex; flex-direction: column; gap: 10px; justify-content: center; min-width: 0; }
+  .deep-feature-text h3 { font-size: 1.35rem; margin: 0; }
+  .deep-feature-text p { margin: 0; color: var(--ink-soft); max-width: 46ch; }
+  .deep-kicker { font-size: 0.74rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--turquoise); }
+  .deep-go { font-weight: 700; font-size: 0.92rem; color: var(--navy-2); margin-top: 4px; }
+  .deep-feature-img { background: var(--navy); display: flex; align-items: center; justify-content: center; min-height: 220px; }
+  .deep-feature-img img { width: 100%; max-width: 320px; height: auto; display: block; }
+  @media (max-width: 760px) {
+    .deep-feature { grid-template-columns: 1fr; }
+    .deep-feature-text { padding: 24px 20px; }
+    .deep-feature-img { min-height: 0; }
+    .deep-feature-img img { max-width: 240px; }
   }
 </style>
