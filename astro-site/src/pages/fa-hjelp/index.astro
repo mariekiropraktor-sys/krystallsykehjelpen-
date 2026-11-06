@@ -27,6 +27,41 @@ const bookingUrl =
     </div>
   </section>
 
+  <section class="contact-section">
+    <div class="container">
+      <div class="contact-box">
+        <div class="contact-intro">
+          <span class="eyebrow">Ta kontakt</span>
+          <h2>Har du spørsmål før du bestiller?</h2>
+          <p>Lurer du på om vi kan hjelpe deg, eller hvilken time som passer? Ring eller send en melding, så svarer Marie så snart hun kan.</p>
+        </div>
+        <div class="contact-options">
+          <a href="tel:+4746384492" class="contact-option">
+            <span class="icon-circle" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7c.1 1 .4 1.9.7 2.8a2 2 0 01-.5 2.1L8 9.9a16 16 0 006 6l1.3-1.3a2 2 0 012.1-.5c.9.3 1.8.6 2.8.7a2 2 0 011.7 2z" /></svg>
+            </span>
+            <span class="option-text">
+              <span class="option-label">Ring</span>
+              <span class="option-main">+47 463 84 492</span>
+              <span class="option-sub">Står Marie i behandling, ringer hun deg tilbake.</span>
+            </span>
+          </a>
+          <a href="/kontakt/" class="contact-option">
+            <span class="icon-circle" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2" /><path d="M22 6l-10 7L2 6" /></svg>
+            </span>
+            <span class="option-text">
+              <span class="option-label">Send en melding</span>
+              <span class="option-main">Kontaktskjema</span>
+              <span class="option-sub">Eller e-post til mariekiropraktor@gmail.com. Svar innen én virkedag.</span>
+            </span>
+          </a>
+          <p class="contact-safety"><strong>Ved akutte, alvorlige symptomer:</strong> ring 113. Legevakt: 116 117.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section class="section-alt">
     <div class="container">
       <h2>Vil du finne ut mer selv?</h2>
@@ -193,4 +228,32 @@ const bookingUrl =
 
   .closing { font-size: 0.95rem; line-height: 1.65; color: var(--ink-soft); max-width: 64ch; margin: 0; }
   .closing strong { color: var(--navy); }
+  /* Kontaktboks rett under hero */
+  .contact-section { background: var(--paper); padding: 56px 0 8px; }
+  .contact-box {
+    background: var(--sky); border-radius: 22px; padding: 40px;
+    display: grid; grid-template-columns: 1fr 1.1fr; gap: 40px; align-items: center;
+  }
+  @media (max-width: 860px) {
+    .contact-box { grid-template-columns: 1fr; padding: 28px 20px; gap: 24px; }
+  }
+  .contact-intro { min-width: 0; }
+  .contact-intro h2 { margin: 0 0 12px; }
+  .contact-intro p { font-size: 1rem; line-height: 1.65; color: var(--ink-soft); margin: 0; max-width: 42ch; }
+  .contact-options { min-width: 0; display: grid; gap: 14px; }
+  .contact-option {
+    background: var(--paper); border-radius: var(--radius); padding: 20px 22px;
+    display: grid; grid-template-columns: 48px 1fr; gap: 16px; align-items: center;
+    box-shadow: 0 10px 26px rgba(22, 56, 117, 0.07); text-decoration: none;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .contact-option:hover { transform: translateY(-2px); box-shadow: 0 14px 32px rgba(22, 56, 117, 0.12); }
+  .contact-option .icon-circle { width: 48px; height: 48px; margin: 0; }
+  .contact-option .icon-circle svg { width: 22px; height: 22px; }
+  .option-text { min-width: 0; display: grid; gap: 2px; }
+  .option-label { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--accent); }
+  .option-main { font-family: var(--font-display); font-size: 1.2rem; font-weight: 600; color: var(--navy); overflow-wrap: anywhere; }
+  .option-sub { font-size: 0.88rem; color: var(--ink-soft); }
+  .contact-safety { font-size: 0.85rem; color: var(--ink-soft); margin: 0; padding-left: 2px; }
+  .contact-safety strong { color: var(--navy-2); }
 </style>
