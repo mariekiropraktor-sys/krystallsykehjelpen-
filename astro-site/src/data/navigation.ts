@@ -35,6 +35,7 @@ export const navigationTabs: NavTab[] = [
     items: [
       { kind: "link", label: "Om krystallsyke (BPPV) →", href: "/svimmelhet/krystallsyke/" },
       { kind: "link", label: "Hva skjer i øret", href: "/svimmelhet/krystallsyke/hva-skjer-i-oret/", sub: true },
+      { kind: "link", label: "Buegangene", href: "/svimmelhet/krystallsyke/buegangene/", sub: true },
       // Midlertidig til avsnittet på hovedsiden – byttes til /svimmelhet/krystallsyke/behandling/ når den er bygget.
       { kind: "link", label: "Slik behandles krystallsyke", href: "/svimmelhet/krystallsyke/#behandling", sub: true },
     ],

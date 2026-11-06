@@ -1,0 +1,558 @@
+---
+import Layout from "../../../../layouts/Layout.astro";
+
+// Underside i krystallsyke-klyngen (se Krystallsyke-temaklynge-plan.md i
+// prosjektet). Eier mønstrene per buegang: utløser, test, nystagmus og manøver.
+// Undersøkelse og nystagmus generelt får egne sider senere – ikke gjenta dem her.
+// Den interaktive figuren er ren SVG + JavaScript uten biblioteker, og stilene
+// er samlet under .bgg-klassen så de ikke lekker ut.
+
+const base = "https://www.krystallsykehjelpen.no";
+
+const faq = [
+  {
+    q: "Kan jeg finne ut selv hvilken buegang det gjelder?",
+    a: "Hva som utløser svimmelheten gir et hint, men det sikreste svaret kommer fra en test der noen ser på øynene dine. Gjetter du feil buegang eller side, hjelper ikke øvelsene.",
+  },
+  {
+    q: "Kan krystallene flytte seg fra én buegang til en annen?",
+    a: "Ja. Det skjer av og til under behandling. Da endrer svimmelheten seg, og testen viser et nytt mønster. Det betyr ikke at behandlingen var feil, men at neste manøver må tilpasses.",
+  },
+  {
+    q: "Hvorfor er horisontal buegang ofte så kraftig?",
+    a: "Horisontal buegang reagerer sterkt på vending, og når du snur deg i sengen, roterer den i sitt eget plan. Svimmelheten blir ofte kraftig og kvalmen tydelig, men tilstanden er like ufarlig som i bakre buegang.",
+  },
+];
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Hjem", item: `${base}/` },
+    { "@type": "ListItem", position: 2, name: "Svimmelhet", item: `${base}/svimmelhet/` },
+    { "@type": "ListItem", position: 3, name: "Krystallsyke", item: `${base}/svimmelhet/krystallsyke/` },
+    { "@type": "ListItem", position: 4, name: "Buegangene", item: `${base}/svimmelhet/krystallsyke/buegangene/` },
+  ],
+};
+
+const faqLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faq.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+};
+
+const pageLd = {
+  "@context": "https://schema.org",
+  "@type": "MedicalWebPage",
+  name: "Tre buegange, tre typer krystallsyke",
+  url: `${base}/svimmelhet/krystallsyke/buegangene/`,
+  inLanguage: "nb-NO",
+  about: { "@type": "MedicalCondition", name: "Benign paroksysmal posisjonsvertigo (krystallsyke)", alternateName: ["BPPV", "Krystallsyke"] },
+  author: { "@type": "Person", name: "Marie Hermansen", jobTitle: "Kiropraktor" },
+};
+
+const ex = (cat: string, slug: string) => `/ovelsesbibliotek/${cat}/${slug}/`;
+---
+
+<Layout
+  title="Buegangene ved krystallsyke: bakre, horisontal og øvre | Krystallsykehjelpen"
+  description="Krystallsyke kan sitte i tre ulike buegange. Se hva som utløser svimmelheten, hvordan hver av dem testes, hvilket øyemønster de gir og hvilken manøver som hjelper."
+  activePath="/svimmelhet/krystallsyke/buegangene/"
+>
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbLd)} />
+  <script type="application/ld+json" set:html={JSON.stringify(faqLd)} />
+  <script type="application/ld+json" set:html={JSON.stringify(pageLd)} />
+
+  <div class="bgg">
+
+<section class="hero">
+  <div class="c">
+    <nav class="crumbs"><a href="/">Forside</a> / <a href="/svimmelhet/">Svimmelhet</a> / <a href="/svimmelhet/krystallsyke/">Krystallsyke</a> / Buegangene</nav>
+    <span class="eyebrow">Krystallsyke · Tre typer</span>
+    <h1>Tre buegange, tre typer krystallsyke</h1>
+    <p class="lead">Krystallene kan havne i hver av de tre buegangene. Hvilken buegang det gjelder, avgjør hva som utløser svimmelheten, hvilket mønster øynene viser, og hvilken manøver som hjelper.</p>
+    <div class="facts">
+      <div><b>8–9 av 10</b><strong>Bakre buegang</strong><span>Den klart vanligste</span></div>
+      <div><b>1–2 av 10</b><strong>Horisontal buegang</strong><span>Kraftig ved vending i sengen</span></div>
+      <div><b>Sjelden</b><strong>Øvre buegang</strong><span>Krystallene renner lett ut igjen</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="afterhero">
+  <div class="c two">
+    <div>
+      <span class="eyebrow">Hvorfor buegangen betyr noe</span>
+      <h2>Hver buegang har sitt eget mønster</h2>
+      <p class="pull">Øynene beveger seg i samme plan som buegangen som sender feil signal. Derfor avslører mønsteret hvor krystallene er.</p>
+    </div>
+    <div>
+      <p>De tre buegangene står omtrent vinkelrett på hverandre, som tre vegger i et hjørne. Hver av dem merker rotasjon i sitt eget plan: å se opp og legge seg ned, å snu hodet til siden, eller å vippe det skrått.</p>
+      <p>Når krystaller ruller i en buegang, sender den beskjed om at hodet roterer i nettopp det planet. Øynene svarer med rykk i samme plan. Derfor tester vi med ulike stillinger, og derfor finnes det ulike manøvrer for hver buegang.</p>
+      <p><a class="tlink" href="/svimmelhet/krystallsyke/hva-skjer-i-oret/">Se hvordan krystallene beveger seg</a></p>
+    </div>
+  </div>
+</section>
+
+<nav class="c jump" aria-label="Hopp til buegang">
+  <a href="#bakre">Bakre buegang</a><a href="#horisontal">Horisontal buegang</a><a href="#ovre">Øvre buegang</a>
+</nav>
+
+<section class="white canalsec" id="bakre">
+  <div class="c">
+    <span class="eyebrow">Vanligst</span>
+    <h2>Krystallsyke i bakre buegang</h2>
+    <p class="narrow">Den klart vanligste typen. Svimmelheten kommer når du legger deg ned, setter deg opp eller ser opp, og varer kort.</p>
+    <div class="canal">
+      <div class="card">
+        <div class="illu"><img src="/buegang-bakre.webp" alt="Illustrasjon av det indre øret der bakre buegang er uthevet" width="600" height="600" loading="lazy" decoding="async" /></div>
+        <dl class="facts2">
+          <div><dt>Utløses av</dt><dd>Å legge seg ned, sette seg opp, se opp eller bøye seg fremover.</dd></div>
+          <div><dt>Test</dt><dd>Dix-Hallpike: hodet vris 45° mot den ene siden og legges bakover.</dd></div>
+          <div><dt>Behandling</dt><dd><span class="links"><a href={ex("bakre-buegang", "epley-hoyre")}>Epley høyre</a><a href={ex("bakre-buegang", "epley-venstre")}>Epley venstre</a><a href={ex("bakre-buegang", "semont-hoyre")}>Semont høyre</a><a href={ex("bakre-buegang", "semont-venstre")}>Semont venstre</a></span></dd></div>
+        </dl>
+      </div>
+      <div class="card eyecard" data-canal="bakre">
+        <h4>Slik testes det</h4>
+        <p class="sub">Dix-Hallpike: hodet vris 45° mot den ene siden og legges bakover, så det henger litt over kanten.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="canalsec" id="horisontal">
+  <div class="c">
+    <span class="eyebrow">Kraftig ved vending</span>
+    <h2>Krystallsyke i horisontal buegang</h2>
+    <p class="narrow">Gir ofte kraftig svimmelhet og kvalme når du snur deg fra side til side i sengen. Testes på en annen måte enn bakre buegang, og behandles med andre manøvrer.</p>
+    <div class="canal">
+      <div class="card">
+        <div class="illu"><img src="/buegang-horisontal.webp" alt="Illustrasjon av det indre øret der horisontal buegang er uthevet" width="600" height="600" loading="lazy" decoding="async" /></div>
+        <dl class="facts2">
+          <div><dt>Utløses av</dt><dd>Å snu seg fra side til side i sengen. Svimmelheten er ofte kraftig, og kvalme er vanlig.</dd></div>
+          <div><dt>Test</dt><dd>Liggende rulletest: du ligger på ryggen, og hodet snus til hver side.</dd></div>
+          <div><dt>Behandling</dt><dd><span class="links"><a href={ex("horisontale-buegang", "barbecue-rull-hoyre")}>Barbecue-rull høyre</a><a href={ex("horisontale-buegang", "barbecue-rull-venstre")}>Barbecue-rull venstre</a><a href={ex("horisontale-buegang", "gufoni-hoyre")}>Gufoni høyre</a><a href={ex("horisontale-buegang", "gufoni-venstre")}>Gufoni venstre</a></span></dd></div>
+        </dl>
+      </div>
+      <div class="card eyecard" data-canal="hor">
+        <h4>Slik testes det</h4>
+        <p class="sub">Liggende rulletest: du ligger på ryggen med hodet litt løftet, og hodet snus til hver side.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="white canalsec" id="ovre">
+  <div class="c">
+    <span class="eyebrow">Sjeldnere</span>
+    <h2>Krystallsyke i øvre buegang</h2>
+    <p class="narrow">Den sjeldneste typen, fordi krystallene lett renner ut av denne buegangen igjen. Gir svimmelhet når hodet legges bakover.</p>
+    <div class="canal">
+      <div class="card">
+        <div class="illu"><img src="/buegang-fremre.webp" alt="Illustrasjon av det indre øret der øvre buegang er uthevet" width="600" height="600" loading="lazy" decoding="async" /></div>
+        <dl class="facts2">
+          <div><dt>Utløses av</dt><dd>Å legge seg ned med hodet bakover, eller å bøye seg fremover.</dd></div>
+          <div><dt>Test</dt><dd>Dyp hodehenging, eller Dix-Hallpike til en av sidene. Mønsteret kan komme uavhengig av hvilken side som testes.</dd></div>
+          <div><dt>Behandling</dt><dd><span class="links"><a href={ex("ovre-buegang", "yacovino")}>Dyp hodehenging (Yacovino)</a></span></dd></div>
+        </dl>
+      </div>
+      <div class="card eyecard" data-canal="ovre">
+        <h4>Slik testes det</h4>
+        <p class="sub">Dyp hodehenging: du legges bakover med hodet rett, så det henger godt ned over kanten.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="c">
+    <span class="eyebrow">Viktig å vite</span>
+    <h2>Når mønsteret ikke passer</h2>
+    <div class="warn">
+      <div class="ic" aria-hidden="true">!</div>
+      <div>
+        <h3>Det kan være noe annet enn krystallsyke</h3>
+        <p>Nystagmus som er nedadslående uten vridning, som ikke avtar ved gjentatte tester, som skifter retning uten at stillingen endres, eller som kommer sammen med dobbeltsyn, talevansker, lammelser eller store problemer med å gå, kan ha en annen årsak. Da skal du undersøkes av lege. Ring 113 ved plutselige nevrologiske symptomer.</p>
+      </div>
+    </div>
+
+    <details class="pro">
+      <summary><span class="t">For fagfolk</span> Apogeotrop variant, bow-and-lean og flere buegange</summary>
+      <div class="body">
+        <p><b>Geotrop variant</b> (vist over): horisontal nystagmus mot underliggende øre til begge sider, sterkest når det syke øret ligger ned. Typisk kanalolitiasis i den lange armen.</p>
+        <p><b>Apogeotrop variant:</b> horisontal nystagmus mot overliggende øre til begge sider, ofte vedvarende. Sterkest når det <i>friske</i> øret ligger ned. Tyder på partikler i den korte armen nær ampullen eller kupulolitiasis, og krever ofte andre teknikker, eventuelt omdanning til geotrop variant først. Ewalds 2. lov forklarer sideregelen: ampullopetal strøm er sterkere eksitatorisk i horisontal buegang.</p>
+        <ul>
+          <li><b>Bow-and-lean-test</b> og nystagmus i sittende med hodet bøyd frem eller bakover kan hjelpe ved usikker side.</li>
+          <li><b>Pseudo-spontan nystagmus</b> kan ses i sittende ved horisontal BPPV og må ikke forveksles med vestibulær nevritt.</li>
+          <li><b>Overgang mellom buegange</b> under behandling er vanlig. Et nytt mønster etter en manøver betyr ofte at krystallene har flyttet seg, ikke at diagnosen var feil.</li>
+          <li><b>Flere buegange</b> kan være rammet samtidig, særlig etter hodeskade.</li>
+          <li><b>Øvre buegang</b> gir nedadslående nystagmus. Den sentrale differensialdiagnosen må alltid vurderes, særlig ved ren vertikal nystagmus uten trettbarhet.</li>
+        </ul>
+      </div>
+    </details>
+  </div>
+</section>
+
+<section class="white">
+  <div class="c narrow">
+    <span class="eyebrow">Spørsmål og svar</span>
+    <h2>Det mange lurer på</h2>
+    <div class="faq">
+      {faq.map((f, i) => (
+        <details open={i === 0}><summary>{f.q}</summary><p>{f.a}</p></details>
+      ))}
+    </div>
+  </div>
+</section>
+
+<section class="navyS">
+  <div class="c">
+    <span class="eyebrow">Få hjelp</span>
+    <h2>Usikker på hvilken buegang det gjelder?</h2>
+    <p>En undersøkelse avklarer buegang, side og variant, slik at du får riktig manøver.</p>
+    <a class="btn onnavy" href="/fa-hjelp/">Få hjelp →</a>
+  </div>
+</section>
+
+  </div>
+</Layout>
+
+<script>
+(function () {
+  const SNS = "http://www.w3.org/2000/svg";
+  const reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function mk(t: string, a: Record<string, any>, p?: Element | null): any {
+    const n = document.createElementNS(SNS, t);
+    for (const k in a) n.setAttribute(k, String(a[k]));
+    if (p) p.appendChild(n);
+    return n;
+  }
+  function el(t: string, a: Record<string, any>, p?: Element | null, txt?: string): any {
+    const n = document.createElement(t);
+    for (const k in a) n.setAttribute(k, String(a[k]));
+    if (txt) n.textContent = txt;
+    if (p) p.appendChild(n);
+    return n;
+  }
+
+  // Felles øye: v (+1 = rykk opp), h (+1 = rykk mot pasientens høyre), t (+1 = øvre pol mot pasientens høyre)
+  function makeEye(card: any) {
+    el("h4", {}, card, "Øynene");
+    el("p", { class: "sub" }, card, "Sett forfra. H og V er pasientens høyre og venstre side.");
+    const svg = mk("svg", { viewBox: "0 0 260 130", class: "eyesvg", role: "img", "aria-label": "Øye sett forfra som viser nystagmus" }, card);
+    mk("defs", {}, svg).appendChild(mk("clipPath", { id: "lid-" + card.dataset.canal })).appendChild(mk("path", { d: "M-62 0 Q0 -40 62 0 Q0 40 -62 0 Z" }));
+    const g = mk("g", { transform: "translate(130 66)" }, svg);
+    mk("path", { d: "M-62 0 Q0 -40 62 0 Q0 40 -62 0 Z", fill: "#fff", stroke: "var(--navy)", "stroke-width": 3 }, g);
+    const iris = mk("g", {}, mk("g", { "clip-path": "url(#lid-" + card.dataset.canal + ")" }, g));
+    mk("circle", { r: 20, fill: "var(--accent)" }, iris);
+    for (let i = 0; i < 12; i++) {
+      const a = (i * Math.PI) / 6;
+      mk("line", { x1: (9 * Math.sin(a)).toFixed(1), y1: (-9 * Math.cos(a)).toFixed(1), x2: (19 * Math.sin(a)).toFixed(1), y2: (-19 * Math.cos(a)).toFixed(1), stroke: "var(--sky)", "stroke-width": 1.3, "stroke-opacity": 0.75 }, iris);
+    }
+    mk("circle", { r: 8, fill: "var(--navy)" }, iris);
+    mk("circle", { cy: -14.5, r: 3.2, fill: "#fff" }, iris);
+    mk("text", { x: -72, y: 5, "text-anchor": "end", class: "svgl" }, g).textContent = "H";
+    mk("text", { x: 72, y: 5, class: "svgl" }, g).textContent = "V";
+    const arr = mk("g", { opacity: 0 }, g);
+    mk("path", { d: "M0 -34 V-56 M-7 -48 L0 -57 L7 -48", fill: "none", stroke: "var(--turquoise)", "stroke-width": 4, "stroke-linecap": "round", "stroke-linejoin": "round" }, arr);
+    const rot = mk("g", { opacity: 0 }, g);
+    mk("path", { d: "M44 -22 A49 49 0 0 0 -44 -22 M-44 -22 l1 -11 M-44 -22 l10 -3", fill: "none", stroke: "var(--navy-2)", "stroke-width": 3, "stroke-linecap": "round", "stroke-linejoin": "round" }, rot);
+    const st: any = { p: null, t0: 0, ph: 0, raf: 0, last: 0 };
+    function env(t: number, p: any) {
+      if (t < p.lat) return 0;
+      if (p.dur === Infinity) return Math.min(1, (t - p.lat) / 0.4);
+      const u = (t - p.lat) / p.dur;
+      return u >= 1 ? 0 : Math.sin(Math.PI * u);
+    }
+    function frame(now: number) {
+      const dt = Math.min(0.05, (now - st.last) / 1000) || 0.016;
+      st.last = now;
+      const p = st.p;
+      if (!p) return;
+      const t = (now - st.t0) / 1000;
+      const e = reduce ? (t >= p.lat ? 1 : 0) : env(t, p) * p.amp;
+      st.ph += (1 + 1.8 * e) * dt;
+      const u = st.ph % 1, w = u < 0.8 ? u / 0.8 : 1 - (u - 0.8) / 0.2, k = 1 - 2 * w;
+      const fx = -p.h, fy = -p.v, m = Math.hypot(fx, fy) || 1, A = 9 * e;
+      const x = reduce ? 0 : (fx / m) * A * k, y = reduce ? 0 : (fy / m) * A * k, r = reduce ? 0 : -p.t * 26 * e * k;
+      iris.setAttribute("transform", "translate(" + x.toFixed(1) + " " + y.toFixed(1) + ") rotate(" + r.toFixed(1) + ")");
+      const on = e > 0.08, fast = u >= 0.8 ? 1 : 0.35;
+      arr.setAttribute("opacity", on && (p.v || p.h) ? fast * Math.min(1, e * 1.6) : 0);
+      arr.setAttribute("transform", "rotate(" + ((Math.atan2(fx, -fy) * 180) / Math.PI).toFixed(0) + ")");
+      rot.setAttribute("opacity", on && p.t ? fast * Math.min(1, e * 1.6) * Math.min(1, Math.abs(p.t) * 1.5) : 0);
+      rot.setAttribute("transform", p.t > 0 ? "" : "scale(-1 1)");
+      if (p.onTick) p.onTick(t, e);
+      if (p.dur === Infinity || t < p.lat + p.dur + 0.2) st.raf = requestAnimationFrame(frame);
+      else {
+        iris.setAttribute("transform", "");
+        arr.setAttribute("opacity", 0);
+        rot.setAttribute("opacity", 0);
+        if (p.onEnd) p.onEnd();
+      }
+    }
+    return {
+      play(p: any) { cancelAnimationFrame(st.raf); st.p = p; st.t0 = st.last = performance.now(); st.ph = 0; st.raf = requestAnimationFrame(frame); },
+      stop() { cancelAnimationFrame(st.raf); st.p = null; iris.setAttribute("transform", ""); arr.setAttribute("opacity", 0); rot.setAttribute("opacity", 0); },
+    };
+  }
+
+  // Teststilling: enkel figur som viser hvordan testen gjøres
+  function makeFig(card: any, kind: string) {
+    const sub = card.querySelector(".sub");
+    const svg = mk("svg", { viewBox: "0 0 280 150", class: "figsvg", role: "img", "aria-label": "Figur som viser teststillingen" });
+    card.insertBefore(svg, sub.nextSibling);
+    const cap = el("p", { class: "figcap" }, null, "");
+    card.insertBefore(cap, svg.nextSibling);
+    const hr = el("hr", { class: "divider" });
+    card.insertBefore(hr, cap.nextSibling);
+    const st: any = { a: 270, e: 0, turn: 0, raf: 0 };
+    if (kind === "roll") {
+      // sett fra hodeenden
+      mk("rect", { x: 40, y: 112, width: 200, height: 12, rx: 6, fill: "var(--beige)" }, svg);
+      mk("rect", { x: 78, y: 92, width: 124, height: 24, rx: 12, fill: "var(--sky)", stroke: "var(--navy)", "stroke-width": 2.5 }, svg);
+      const hg = mk("g", { transform: "translate(140 72)" }, svg);
+      mk("circle", { r: 26, fill: "var(--ivory)", stroke: "var(--navy)", "stroke-width": 2.5 }, hg);
+      const nose = mk("g", {}, hg);
+      mk("path", { d: "M-7 -24 L0 -36 L7 -24", fill: "var(--ivory)", stroke: "var(--navy)", "stroke-width": 2.5, "stroke-linejoin": "round" }, nose);
+      mk("circle", { cx: -9, cy: -10, r: 2.6, fill: "var(--navy)" }, nose);
+      mk("circle", { cx: 9, cy: -10, r: 2.6, fill: "var(--navy)" }, nose);
+      mk("text", { x: 30, y: 80, class: "svgl" }, svg).textContent = "H";
+      mk("text", { x: 242, y: 80, class: "svgl" }, svg).textContent = "V";
+      const REST = "Du ligger på ryggen. Sett fra hodeenden.";
+      cap.textContent = REST;
+      return {
+        go(turn: number, label: string) {
+          const from = st.turn, t0 = performance.now();
+          cap.textContent = label;
+          cancelAnimationFrame(st.raf);
+          (function f(now: number) {
+            const k = reduce ? 1 : Math.min(1, (now - t0) / 700), e = k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+            st.turn = from + (turn - from) * e;
+            nose.setAttribute("transform", "rotate(" + -st.turn * 90 + ")");
+            if (k < 1) st.raf = requestAnimationFrame(f);
+          })(t0);
+        },
+        reset() { st.turn = 0; nose.setAttribute("transform", ""); cap.textContent = REST; },
+      };
+    }
+    // sett fra siden: benk, kropp som legges bakover, hodet henger over kanten
+    mk("rect", { x: 96, y: 100, width: 160, height: 12, rx: 6, fill: "var(--beige)" }, svg);
+    mk("path", { d: "M150 96 L238 96", stroke: "var(--navy)", "stroke-width": 12, "stroke-linecap": "round" }, svg);
+    const torso = mk("line", { stroke: "var(--navy)", "stroke-width": 14, "stroke-linecap": "round" }, svg);
+    const neck = mk("line", { stroke: "var(--navy)", "stroke-width": 6, "stroke-linecap": "round" }, svg);
+    const hd = mk("g", {}, svg);
+    mk("circle", { r: 14, fill: "var(--ivory)", stroke: "var(--navy)", "stroke-width": 2.5 }, hd);
+    mk("path", { d: "M12 -5 L20 0 L12 5", fill: "var(--ivory)", stroke: "var(--navy)", "stroke-width": 2.5, "stroke-linejoin": "round" }, hd);
+    const D = Math.PI / 180;
+    function draw() {
+      const hx = 150, hy = 96, sx = hx + 58 * Math.cos(st.a * D), sy = hy + 58 * Math.sin(st.a * D), ha = st.a - st.e;
+      const nx = sx + 9 * Math.cos(ha * D), ny = sy + 9 * Math.sin(ha * D), cx = sx + 24 * Math.cos(ha * D), cy = sy + 24 * Math.sin(ha * D);
+      torso.setAttribute("x1", hx); torso.setAttribute("y1", hy); torso.setAttribute("x2", sx.toFixed(1)); torso.setAttribute("y2", sy.toFixed(1));
+      neck.setAttribute("x1", sx.toFixed(1)); neck.setAttribute("y1", sy.toFixed(1)); neck.setAttribute("x2", nx.toFixed(1)); neck.setAttribute("y2", ny.toFixed(1));
+      hd.setAttribute("transform", "translate(" + cx.toFixed(1) + " " + cy.toFixed(1) + ") rotate(" + (ha + 90).toFixed(1) + ")");
+    }
+    const REST = "Du sitter på benken.";
+    cap.textContent = REST;
+    draw();
+    return {
+      go(a: number, e: number, label: string) {
+        const a0 = st.a, e0 = st.e, t0 = performance.now();
+        cap.textContent = label;
+        cancelAnimationFrame(st.raf);
+        (function f(now: number) {
+          const k = reduce ? 1 : Math.min(1, (now - t0) / 900), q = k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+          st.a = a0 + (a - a0) * q; st.e = e0 + (e - e0) * q; draw();
+          if (k < 1) st.raf = requestAnimationFrame(f);
+        })(t0);
+      },
+      reset() { st.a = 270; st.e = 0; draw(); cap.textContent = REST; },
+    };
+  }
+
+  function seg(parent: any, label: string, opts: [number, string][], val: number, on: (v: number) => void) {
+    const o = el("div", { class: "opt" }, parent);
+    el("span", {}, o, label);
+    const s = el("div", { class: "seg", role: "group", "aria-label": label }, o);
+    const bs: Record<string, any> = {};
+    opts.forEach((x) => {
+      const b = el("button", { type: "button", "aria-pressed": String(x[0] === val) }, s, x[1]);
+      bs[x[0]] = b;
+      b.addEventListener("click", () => { for (const k in bs) bs[k].setAttribute("aria-pressed", String(k === String(x[0]))); on(x[0]); });
+    });
+  }
+  function live(card: any) {
+    const d = el("div", { class: "live", "aria-live": "polite" }, card);
+    const l = el("span", { class: "lab" }, d, "Klar");
+    const p = el("p", {}, d, "Velg innstillinger og trykk «Start testen».");
+    return { set(a: string, b: string) { l.textContent = a; p.textContent = b; } };
+  }
+  const SIDE: Record<string, string> = { "1": "høyre", "-1": "venstre" };
+
+  // Bakre buegang
+  (function () {
+    const card = document.querySelector('[data-canal="bakre"]');
+    if (!card) return;
+    const fig: any = makeFig(card, "dh"), eye = makeEye(card);
+    let side = 1;
+    const opts = el("div", { class: "opts" }, card);
+    seg(opts, "Rammet øre", [[1, "Høyre"], [-1, "Venstre"]], 1, (v) => { side = +v; eye.stop(); fig.reset(); lv.set("Klar", "Trykk «Start testen»."); });
+    const row = el("div", { class: "runrow" }, card), b = el("button", { class: "chip", type: "button" }, row, "Start testen"), lv = live(card);
+    b.addEventListener("click", () => {
+      const s = SIDE[side];
+      fig.go(180, 25, "Hodet vridd 45° mot " + s + ", lagt bakover over kanten.");
+      eye.play({ v: 1, h: 0, t: side, amp: 1, lat: 1.6, dur: 6,
+        onTick(t: number, e: number) { if (t < 1.6) lv.set("Latens", "Rolige øyne de første sekundene mens krystallene begynner å rulle."); else if (e > 0.05) lv.set("Positiv test", "Oppadslående og vridd mot " + s + " øre. Tiltar og avtar."); },
+        onEnd() { lv.set("Ferdig", "Nystagmus ga seg i løpet av under ett minutt. Ved oppsetting kommer ofte svakere rykk motsatt vei."); } });
+    });
+  })();
+
+  // Horisontal buegang (pasientsiden viser kun geotrop variant)
+  (function () {
+    const card = document.querySelector('[data-canal="hor"]');
+    if (!card) return;
+    const fig: any = makeFig(card, "roll"), eye = makeEye(card);
+    let side = 1;
+    const opts = el("div", { class: "opts" }, card);
+    seg(opts, "Rammet øre", [[1, "Høyre"], [-1, "Venstre"]], 1, (v) => { side = +v; eye.stop(); fig.reset(); lv.set("Klar", "Velg hvilken side hodet snus mot."); });
+    const row = el("div", { class: "runrow" }, card);
+    const bh = el("button", { class: "chip", type: "button" }, row, "Hodet mot høyre");
+    const bv = el("button", { class: "chip", type: "button" }, row, "Hodet mot venstre");
+    const lv = live(card);
+    function run(pos: number) {
+      const beat = pos, strong = pos === side;
+      fig.go(pos, "Hodet snudd mot " + SIDE[pos] + ". Sett fra hodeenden.");
+      bh.setAttribute("aria-pressed", String(pos > 0));
+      bv.setAttribute("aria-pressed", String(pos < 0));
+      const txt = "Vannrett, slår mot gulvet (" + SIDE[beat] + " side). " + (strong ? "Sterkest av de to sidene." : "Svakere enn mot den andre siden.");
+      eye.play({ v: 0, h: beat, t: 0, amp: strong ? 1 : 0.5, lat: 1, dur: 7,
+        onTick(t: number, e: number) { if (e < 0.05 && t < 1.2) lv.set("Hodet snus mot " + SIDE[pos], "Venter på rykkene …"); else lv.set("Hodet snus mot " + SIDE[pos], txt); },
+        onEnd() { lv.set("Ferdig", "Sammenlign med den andre siden. Det rammede øret er som regel på siden med kraftigst rykk."); } });
+    }
+    bh.addEventListener("click", () => run(1));
+    bv.addEventListener("click", () => run(-1));
+  })();
+
+  // Øvre buegang
+  (function () {
+    const card = document.querySelector('[data-canal="ovre"]');
+    if (!card) return;
+    const fig: any = makeFig(card, "deep"), eye = makeEye(card);
+    let side = 1;
+    const opts = el("div", { class: "opts" }, card);
+    seg(opts, "Rammet øre", [[1, "Høyre"], [-1, "Venstre"]], 1, (v) => { side = +v; eye.stop(); fig.reset(); lv.set("Klar", "Trykk «Start testen»."); });
+    const row = el("div", { class: "runrow" }, card), b = el("button", { class: "chip", type: "button" }, row, "Start testen"), lv = live(card);
+    b.addEventListener("click", () => {
+      const s = SIDE[side];
+      fig.go(180, 40, "Hodet rett bakover, godt ned over kanten.");
+      eye.play({ v: -1, h: 0, t: side * 0.45, amp: 0.85, lat: 1.4, dur: 5.5,
+        onTick(t: number, e: number) { if (t < 1.4) lv.set("Latens", "Rolige øyne de første sekundene."); else if (e > 0.05) lv.set("Positiv test", "Nedadslående, med svak vridning mot " + s + " øre."); },
+        onEnd() { lv.set("Ferdig", "Nystagmus ga seg. Ren nedadslående nystagmus uten vridning eller trettbarhet må vurderes for annen årsak."); } });
+    });
+  })();
+})();
+</script>
+
+<style is:global>
+.bgg{--ivory:#f6f0e4;--white:#fff;--muted:rgba(22,56,117,.62);--shadow:0 8px 24px rgba(22,56,117,.07);color:var(--ink);background:var(--sky)}
+.bgg .c{max-width:1120px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+.bgg .narrow{max-width:720px}
+.bgg h1{font-size:clamp(2rem,4.6vw,3rem);line-height:1.1;text-wrap:balance}
+.bgg h2{font-size:clamp(1.5rem,3vw,2.1rem);line-height:1.18;margin-bottom:14px;text-wrap:balance}
+.bgg h3{line-height:1.3}
+.bgg p{font-size:1.08rem;line-height:1.65;color:var(--ink-soft);margin:0}
+.bgg p+p{margin-top:14px}
+.bgg b,.bgg strong{color:var(--navy)}
+.bgg .eyebrow{font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:14px;display:block}
+.bgg section{padding:76px 0}
+@media(max-width:700px){.bgg section{padding:52px 0}}
+.bgg .white{background:var(--white)}
+.bgg .btn{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:15px;padding:13px 22px;border-radius:999px;border:0;cursor:pointer;background:var(--navy-2);color:var(--white);text-decoration:none}
+.bgg .tlink{font-weight:700;color:var(--navy);border-bottom:2px solid var(--turquoise);padding-bottom:2px;text-decoration:none}
+.bgg button:focus-visible,.bgg a:focus-visible,.bgg summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+.bgg .hero{background:linear-gradient(var(--beige),var(--sky));padding:56px 0 0}
+.bgg .crumbs{font-size:13.5px;color:var(--muted);margin-bottom:24px}
+.bgg .crumbs a{color:var(--navy-2);font-weight:600;text-decoration:none}
+.bgg .hero .lead{margin:18px 0 0;max-width:660px}
+.bgg .facts{display:grid;grid-template-columns:repeat(3,1fr);background:var(--white);border-radius:20px;box-shadow:var(--shadow);margin-top:40px;transform:translateY(36px)}
+.bgg .facts div{padding:22px 24px;border-left:1px solid var(--line);min-width:0}
+.bgg .facts div:first-child{border-left:0}
+.bgg .facts b{display:block;font-family:var(--font-display);font-size:28px;line-height:1.1;font-variant-numeric:tabular-nums}
+.bgg .facts strong{display:block;color:var(--navy);font-size:15.5px;margin:2px 0}
+.bgg .facts span{font-size:14px;color:var(--ink-soft)}
+@media(max-width:700px){.bgg .facts{grid-template-columns:1fr}.bgg .facts div{border-left:0;border-top:1px solid var(--line)}.bgg .facts div:first-child{border-top:0}}
+.bgg .afterhero{padding-top:108px}
+
+.bgg .two{display:grid;grid-template-columns:1fr 1fr;gap:56px}
+@media(max-width:860px){.bgg .two{grid-template-columns:1fr;gap:18px}}
+.bgg .two>*{min-width:0}
+.bgg .pull{font-family:var(--font-display);font-size:23px;line-height:1.4;color:var(--navy);border-left:3px solid var(--turquoise);padding-left:20px;margin-top:16px}
+
+.bgg .jump{display:flex;flex-wrap:wrap;gap:8px;padding-bottom:8px;margin-top:-36px}
+.bgg .jump a{font-size:14.5px;font-weight:700;color:var(--navy);background:var(--white);box-shadow:var(--shadow);border-radius:999px;padding:9px 16px;text-decoration:none}
+.bgg .canalsec{scroll-margin-top:72px}
+.bgg .canal{display:grid;grid-template-columns:.9fr 1.1fr;gap:28px;margin-top:22px;align-items:start}
+@media(max-width:900px){.bgg .canal{grid-template-columns:1fr}}
+.bgg .canal>*{min-width:0}
+.bgg .card{background:var(--white);border-radius:22px;box-shadow:var(--shadow);padding:22px}
+.bgg .illu{background:var(--navy);border-radius:18px;overflow:hidden;aspect-ratio:1/1;max-width:280px}
+.bgg .illu img{width:100%;height:100%;object-fit:cover;display:block}
+.bgg .facts2{display:grid;gap:14px;margin:16px 0 0}
+.bgg .facts2 div{display:grid;grid-template-columns:118px 1fr;gap:12px;border-top:1px solid var(--line);padding-top:12px}
+.bgg .facts2 dt{font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--muted);padding-top:3px}
+.bgg .facts2 dd{font-size:16px;line-height:1.55;color:var(--ink-soft);margin:0}
+@media(max-width:480px){.bgg .facts2 div{grid-template-columns:1fr;gap:2px}}
+.bgg .links{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.bgg .links a{font-size:14px;font-weight:700;color:var(--navy-2);background:var(--sky);border-radius:999px;padding:7px 13px;text-decoration:none}
+.bgg .links a:hover{background:var(--beige)}
+
+.bgg .eyecard h4{font-family:var(--font-display);font-size:19px;color:var(--navy);font-weight:600;margin:0 0 4px}
+.bgg .eyecard .sub{font-size:14.5px;color:var(--ink-soft);margin-bottom:12px}
+.bgg .eyesvg{width:100%;max-width:420px;height:auto;display:block;margin:4px auto 0}
+.bgg .figsvg{width:100%;max-width:360px;height:auto;display:block;margin:0 auto 6px}
+.bgg .figcap{text-align:center;font-size:13px;color:var(--muted);margin-bottom:10px}
+.bgg .divider{border:0;border-top:1px solid var(--line);margin:8px 0 12px}
+.bgg .opts{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:12px}
+.bgg .opt{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.bgg .opt>span{font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted)}
+.bgg .seg{display:inline-flex;background:var(--sky);border-radius:999px;padding:3px;gap:3px}
+.bgg .seg button{font-family:inherit;font-size:14px;font-weight:700;color:var(--navy);background:none;border:0;border-radius:999px;padding:7px 13px;cursor:pointer}
+.bgg .seg button[aria-pressed="true"]{background:var(--navy-2);color:var(--white)}
+.bgg .runrow{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}
+.bgg .chip{font-family:inherit;font-size:14.5px;font-weight:600;color:var(--navy);background:var(--sky);border:1.5px solid transparent;border-radius:999px;padding:9px 15px;cursor:pointer}
+.bgg .chip[aria-pressed="true"]{background:var(--white);border-color:var(--turquoise)}
+.bgg .live{margin-top:14px;background:var(--sky);border-radius:14px;padding:12px 16px;min-height:76px}
+.bgg .live .lab{display:block;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--accent);margin-bottom:3px}
+.bgg .live p{font-size:15.5px;line-height:1.5;margin:0}
+.bgg .svgl{font-family:var(--font-body);font-size:12px;font-weight:700;fill:var(--navy)}
+
+.bgg .warn{background:var(--white);border:1.5px solid var(--navy-2);border-radius:22px;padding:24px 26px;display:flex;gap:18px;margin-top:20px}
+.bgg .warn .ic{flex:none;width:38px;height:38px;border-radius:50%;border:1.5px solid var(--navy-2);color:var(--navy-2);display:grid;place-items:center;font-weight:700;font-size:19px;font-family:var(--font-display)}
+.bgg .warn h3{font-size:19px;margin-bottom:6px}
+.bgg .warn p{font-size:16px}
+.bgg .pro{margin-top:26px;border:1.5px solid var(--navy-2);border-radius:18px;background:var(--white);overflow:hidden}
+.bgg .pro summary{list-style:none;cursor:pointer;padding:17px 52px 17px 20px;position:relative;display:flex;align-items:center;gap:12px;font-weight:700;color:var(--navy);font-size:16px}
+.bgg .pro summary::-webkit-details-marker{display:none}
+.bgg .pro summary .t{font-size:11px;letter-spacing:.1em;text-transform:uppercase;background:var(--navy-2);color:var(--white);border-radius:999px;padding:4px 10px;flex:none}
+.bgg .pro summary::after{content:"+";position:absolute;right:20px;top:11px;font-size:26px;font-weight:400;color:var(--navy-2)}
+.bgg .pro[open] summary::after{content:"–"}
+.bgg .pro .body{padding:4px 20px 20px;border-top:1px solid var(--line)}
+.bgg .pro .body p,.bgg .pro li{font-size:15.5px;line-height:1.6;color:var(--ink-soft)}
+.bgg .pro .body p{margin-top:12px}
+.bgg .pro ul{list-style:none;display:grid;gap:8px;margin:12px 0 0;padding:0}
+.bgg .pro li{position:relative;padding-left:22px}
+.bgg .pro li::before{content:"";position:absolute;left:0;top:8px;width:9px;height:9px;border-radius:50%;background:var(--turquoise)}
+
+.bgg .faq{margin-top:20px;border-top:1px solid var(--line)}
+.bgg .faq details{border-bottom:1px solid var(--line)}
+.bgg .faq summary{list-style:none;cursor:pointer;padding:19px 40px 19px 0;font-family:var(--font-display);font-weight:500;font-size:18px;color:var(--navy);position:relative}
+.bgg .faq summary::-webkit-details-marker{display:none}
+.bgg .faq summary::after{content:"+";position:absolute;right:6px;top:14px;font-size:24px;color:var(--accent);font-weight:400}
+.bgg .faq details[open] summary::after{content:"–"}
+.bgg .faq details p{font-size:16.5px;padding-bottom:20px}
+.bgg .navyS{background:var(--navy);text-align:center}
+.bgg .navyS h2{color:var(--white)}
+.bgg .navyS p{color:rgba(255,255,255,.78);max-width:600px;margin:0 auto 24px}
+.bgg .navyS .eyebrow{color:var(--turquoise)}
+.bgg .btn.onnavy{background:var(--white);color:var(--navy)}
+</style>

@@ -37,6 +37,7 @@ const canalCards = [
     title: "Bakre buegang",
     desc: "Undersøkes ofte med Dix-Hallpike eller sideleietest.",
     image: "/buegang-bakre.webp",
+    href: "/svimmelhet/krystallsyke/buegangene/#bakre",
     alt: "Illustrasjon av det indre øret der bakre buegang er uthevet",
   },
   {
@@ -44,14 +45,16 @@ const canalCards = [
     title: "Horisontal buegang",
     desc: "Kan gi kraftig svimmelhet ved vending i sengen. Undersøkes med liggende rulletest.",
     image: "/buegang-horisontal.webp",
+    href: "/svimmelhet/krystallsyke/buegangene/#horisontal",
     alt: "Illustrasjon av det indre øret der horisontal buegang er uthevet",
   },
   {
     tag: "Sjeldnere",
-    title: "Fremre buegang",
+    title: "Øvre buegang",
     desc: "Kan være vanskeligere å skille fra andre nystagmusmønstre.",
     image: "/buegang-fremre.webp",
-    alt: "Illustrasjon av det indre øret der fremre buegang er uthevet",
+    href: "/svimmelhet/krystallsyke/buegangene/#ovre",
+    alt: "Illustrasjon av det indre øret der øvre buegang er uthevet",
   },
 ];
 
@@ -161,24 +164,33 @@ const faqLd = {
     <div class="fact-strip-spacer"></div>
   </div>
 
-  <!-- FORDYP DEG: undersidene i temaklyngen. Ett bredt kort så lenge det
-       bare finnes én underside; bytt til kortrad når flere er publisert. -->
+  <!-- FORDYP DEG: undersidene i temaklyngen, i leserens rekkefølge.
+       Legg til nye kort når undersidene publiseres. -->
   <section class="deep-section" aria-labelledby="fordyp-tittel">
     <div class="container">
       <span class="eyebrow">Fordyp deg</span>
       <h2 id="fordyp-tittel">Les mer om krystallsyke</h2>
       <p class="section-lead">Vil du forstå mer? Her går vi i dybden, med interaktive modeller du kan utforske selv.</p>
-      <a href="/svimmelhet/krystallsyke/hva-skjer-i-oret/" class="deep-feature">
-        <div class="deep-feature-text">
-          <span class="deep-kicker">Interaktiv modell</span>
-          <h3>Hva skjer i øret ved krystallsyke?</h3>
-          <p>Se krystallene løsne og bevege seg i buegangen når du snur hodet, og forstå hvorfor det snurrer.</p>
-          <span class="deep-go">Utforsk modellen →</span>
-        </div>
-        <div class="deep-feature-img">
-          <img src="/buegang-bakre.webp" alt="" width="600" height="600" loading="lazy" />
-        </div>
-      </a>
+      <div class="deep-grid">
+        <a href="/svimmelhet/krystallsyke/hva-skjer-i-oret/" class="deep-card">
+          <div class="deep-card-img"><img src="/buegang-bakre.webp" alt="" width="600" height="600" loading="lazy" /></div>
+          <div class="deep-card-text">
+            <span class="deep-kicker">Interaktiv modell</span>
+            <h3>Hva skjer i øret?</h3>
+            <p>Se krystallene løsne og bevege seg i buegangen når du snur hodet, og forstå hvorfor det snurrer.</p>
+            <span class="deep-go">Utforsk modellen →</span>
+          </div>
+        </a>
+        <a href="/svimmelhet/krystallsyke/buegangene/" class="deep-card">
+          <div class="deep-card-img"><img src="/buegang-horisontal.webp" alt="" width="600" height="600" loading="lazy" /></div>
+          <div class="deep-card-text">
+            <span class="deep-kicker">Tre typer</span>
+            <h3>Buegangene</h3>
+            <p>Bakre, horisontal og øvre buegang: hva som utløser svimmelheten, hvordan det testes og hvilken manøver som hjelper.</p>
+            <span class="deep-go">Les mer →</span>
+          </div>
+        </a>
+      </div>
     </div>
   </section>
 
@@ -265,16 +277,17 @@ const faqLd = {
 
       <div class="canal-grid">
         {canalCards.map((card) => (
-          <div class="canal-card">
+          <a href={card.href} class="canal-card">
             <img src={card.image} alt={card.alt} width="600" height="600" loading="lazy" decoding="async" class="canal-img" />
             <div>
               <span class="canal-tag">{card.tag}</span>
               <h3>{card.title}</h3>
               <p>{card.desc}</p>
             </div>
-          </div>
+          </a>
         ))}
       </div>
+      <a href="/svimmelhet/krystallsyke/buegangene/" class="canal-more">Se hvordan hver buegang testes og behandles →</a>
     </div>
   </section>
 
@@ -318,7 +331,7 @@ const faqLd = {
       <h2>Målrettet – ikke tilfeldig</h2>
       <p class="section-lead mt">En reposisjoneringsmanøver fører hodet gjennom bestemte stillinger for å flytte partiklene ut av buegangen. Behandlingen må tilpasses hvilken buegang og variant som er funnet.</p>
       <p class="pull-quote">«Epley er svært nyttig ved riktig variant – men er ikke løsningen på all krystallsyke.»</p>
-      <p class="section-lead">Epley og Semont kan være aktuelle ved varianter i bakre buegang. Gufoni eller barbecue-roll kan være aktuelt ved horisontale varianter, mens fremre buegang krever en tilpasset manøver. Mange opplever tydelig bedring etter én eller noen få behandlinger, mens enkelte trenger gjentatte eller andre manøvrer.</p>
+      <p class="section-lead">Epley og Semont kan være aktuelle ved varianter i bakre buegang. Gufoni eller barbecue-roll kan være aktuelt ved horisontale varianter, mens øvre buegang krever en tilpasset manøver. Mange opplever tydelig bedring etter én eller noen få behandlinger, mens enkelte trenger gjentatte eller andre manøvrer.</p>
 
       <div class="self-treatment">
         <h3>Kan jeg gjøre Epleys manøver selv?</h3>
@@ -646,24 +659,25 @@ const faqLd = {
   /* Fordyp deg */
   .deep-section { padding: 56px 0 24px; }
   .deep-section .section-lead { margin-bottom: 24px; }
-  .deep-feature {
-    display: grid; grid-template-columns: 1.3fr 1fr; overflow: hidden;
+  .deep-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+  @media (max-width: 760px) { .deep-grid { grid-template-columns: 1fr; } }
+  .deep-card {
+    display: grid; grid-template-columns: 120px 1fr; overflow: hidden;
     background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius);
     box-shadow: 0 12px 30px rgba(22, 56, 117, 0.07); text-decoration: none;
     transition: transform 0.15s ease, box-shadow 0.15s ease;
   }
-  .deep-feature:hover { transform: translateY(-2px); box-shadow: 0 16px 36px rgba(22, 56, 117, 0.12); }
-  .deep-feature-text { padding: 32px; display: flex; flex-direction: column; gap: 10px; justify-content: center; min-width: 0; }
-  .deep-feature-text h3 { font-size: 1.35rem; margin: 0; }
-  .deep-feature-text p { margin: 0; color: var(--ink-soft); max-width: 46ch; }
+  .deep-card:hover { transform: translateY(-2px); box-shadow: 0 16px 36px rgba(22, 56, 117, 0.12); }
+  .deep-card-img { background: var(--navy); display: flex; align-items: center; justify-content: center; }
+  .deep-card-img img { width: 100%; height: auto; display: block; }
+  .deep-card-text { padding: 20px 22px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .deep-card-text h3 { font-size: 1.15rem; margin: 0; }
+  .deep-card-text p { margin: 0; color: var(--ink-soft); font-size: 0.92rem; }
   .deep-kicker { font-size: 0.74rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--turquoise); }
-  .deep-go { font-weight: 700; font-size: 0.92rem; color: var(--navy-2); margin-top: 4px; }
-  .deep-feature-img { background: var(--navy); display: flex; align-items: center; justify-content: center; min-height: 220px; }
-  .deep-feature-img img { width: 100%; max-width: 320px; height: auto; display: block; }
-  @media (max-width: 760px) {
-    .deep-feature { grid-template-columns: 1fr; }
-    .deep-feature-text { padding: 24px 20px; }
-    .deep-feature-img { min-height: 0; }
-    .deep-feature-img img { max-width: 240px; }
-  }
+  .deep-go { font-weight: 700; font-size: 0.9rem; color: var(--navy-2); margin-top: 2px; }
+  @media (max-width: 420px) { .deep-card { grid-template-columns: 88px 1fr; } .deep-card-text { padding: 16px; } }
+  .canal-card { text-decoration: none; transition: background 0.15s ease; }
+  .canal-card:hover { background: rgba(255, 255, 255, 0.12); }
+  .canal-more { display: inline-block; margin-top: 22px; font-weight: 700; color: var(--turquoise); text-decoration: none; }
+  .canal-more:hover { text-decoration: underline; }
 </style>
