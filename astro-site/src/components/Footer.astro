@@ -44,7 +44,7 @@ const omLinks = visibleLinks("Om");
         <a href="mailto:mariekiropraktor@gmail.com">mariekiropraktor@gmail.com</a>
         <a href="/kontakt/">Garderbakken 1, Fetsund</a>
       </div>
-      <div class="footer-bottom">© {year} Krystallsykehjelpen</div>
+      <div class="footer-bottom">© {year} Krystallsykehjelpen · <a href="/personvern/" class="footer-legal">Personvern</a></div>
     </div>
   </div>
 </footer>
@@ -87,6 +87,8 @@ const omLinks = visibleLinks("Om");
     font-size: 0.82rem;
     color: #9db0d1;
   }
+  .site-footer .footer-bottom .footer-legal { display: inline; margin: 0; font-size: inherit; color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+  .site-footer .footer-bottom .footer-legal:hover { color: #fff; }
   @media (max-width: 720px) {
     .footer-grid { grid-template-columns: 1fr 1fr; }
   }

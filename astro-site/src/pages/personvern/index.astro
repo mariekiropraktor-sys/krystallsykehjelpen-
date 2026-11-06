@@ -1,0 +1,78 @@
+---
+// Personvernerklæring. Hardkodet juridisk tekst (ikke Sanity) – endres sjelden.
+// Husk å oppdatere «Sist oppdatert» når teksten endres.
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout
+  title="Personvernerklæring | Krystallsykehjelpen"
+  description="Slik behandler Krystallsykehjelpen personopplysninger når du sender en forespørsel, kontakter oss eller bruker nettsiden."
+  activePath="/personvern/"
+  hideMarie
+>
+  <section class="hero">
+    <div class="container">
+      <span class="eyebrow">Om</span>
+      <h1>Personvernerklæring</h1>
+      <p class="hero-lead">Sist oppdatert: 6. november 2026</p>
+    </div>
+  </section>
+
+  <section class="legal">
+    <div class="container legal-body">
+      <h2>Hvem er ansvarlig?</h2>
+      <p>Krystallsykehjelpen drives av kiropraktor Marie Hermansen, Garderbakken 1, 1900 Fetsund. Marie er behandlingsansvarlig for personopplysningene som samles inn via denne nettsiden. Har du spørsmål om personvern, kan du kontakte meg på <a href="mailto:mariekiropraktor@gmail.com">mariekiropraktor@gmail.com</a> eller <a href="tel:+4746384492">+47 46384492</a>.</p>
+
+      <h2>Hvilke opplysninger samler vi inn?</h2>
+      <p>Vi samler bare inn opplysninger du selv gir oss når du sender en forespørsel om hjemmebesøk eller videokonsultasjon, eller bruker kontaktskjemaet. Det kan være:</p>
+      <ul>
+        <li>navn, telefonnummer og eventuelt e-postadresse</li>
+        <li>adresse (ved hjemmebesøk)</li>
+        <li>svar på noen korte spørsmål om svimmelheten din, for eksempel om den kommer ved endring av hodestilling</li>
+        <li>meldingen du skriver til oss</li>
+      </ul>
+      <p>Skjemaene er laget for at du ikke skal skrive inn mer helseinformasjon enn nødvendig. Detaljer om helsen din tar vi heller over telefon eller i konsultasjonen.</p>
+
+      <h2>Hvorfor behandler vi opplysningene?</h2>
+      <p>Vi bruker opplysningene kun for å svare på henvendelsen din, vurdere om tjenesten passer for deg, og avtale tid. Grunnlaget er ditt samtykke når du sender skjemaet, og at det er nødvendig for å kunne gi deg tjenesten du ber om. De korte svarene om svimmelhet regnes som helseopplysninger, og dem behandler vi kun fordi du uttrykkelig har samtykket til det.</p>
+      <p>Opplysningene brukes ikke til markedsføring og deles ikke med andre enn tjenestene som er nødvendige for å drive nettsiden (se under).</p>
+
+      <h2>Hvem behandler opplysningene på våre vegne?</h2>
+      <ul>
+        <li><strong>Web3Forms</strong> sender innholdet i skjemaene videre til vår e-post.</li>
+        <li><strong>Google (Gmail)</strong> lagrer e-posten med henvendelsen din.</li>
+        <li><strong>Vercel</strong> drifter nettsiden.</li>
+        <li><strong>Pasientsky</strong> brukes når du bestiller time på klinikken. Pasientsky har egen personvernerklæring.</li>
+      </ul>
+
+      <h2>Hvor lenge lagres opplysningene?</h2>
+      <p>Henvendelser som ikke fører til en konsultasjon, slettes når de ikke lenger er nødvendige, og senest innen [SJEKK: f.eks. 6 måneder]. Blir du pasient, føres opplysningene inn i pasientjournalen, som oppbevares etter reglene i pasientjournalloven og helsepersonelloven.</p>
+
+      <h2>Informasjonskapsler (cookies)</h2>
+      <p>Nettsiden bruker ikke informasjonskapsler eller analyseverktøy til sporing eller markedsføring.</p>
+
+      <h2>Dine rettigheter</h2>
+      <p>Du har rett til å be om innsyn i, retting av og sletting av opplysningene vi har om deg, og du kan når som helst trekke tilbake samtykket ditt. Ta kontakt på <a href="mailto:mariekiropraktor@gmail.com">mariekiropraktor@gmail.com</a>.</p>
+      <p>Mener du at vi behandler opplysningene dine i strid med regelverket, kan du klage til Datatilsynet (<a href="https://www.datatilsynet.no" rel="noopener">datatilsynet.no</a>).</p>
+
+      <h2>Informasjonen på nettsiden</h2>
+      <p>Innholdet på Krystallsykehjelpen er generell informasjon og erstatter ikke en individuell vurdering. Ved akutte eller alvorlige symptomer, ring 113. Legevakt: 116 117.</p>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .hero { background: var(--sky); padding: 64px 0 56px; }
+  .eyebrow { font-size: 0.82rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--navy-2); font-weight: 700; margin-bottom: 10px; display: inline-block; }
+  .hero-lead { font-size: 1.02rem; line-height: 1.65; color: var(--ink-soft); margin: 0; max-width: 56ch; }
+
+  .legal { background: var(--paper); padding: 56px 0 72px; }
+  .legal-body { max-width: 720px; }
+  .legal-body h2 { font-size: clamp(1.25rem, 2.2vw, 1.5rem); margin: 36px 0 12px; }
+  .legal-body h2:first-child { margin-top: 0; }
+  .legal-body p, .legal-body li { font-size: 1.02rem; line-height: 1.7; color: var(--ink-soft); }
+  .legal-body ul { margin: 0 0 1em; padding-left: 0; list-style: none; }
+  .legal-body li { position: relative; padding-left: 22px; margin-bottom: 6px; }
+  .legal-body li::before { content: ""; position: absolute; left: 2px; top: 0.62em; width: 8px; height: 8px; border-radius: 50%; background: var(--turquoise); }
+  .legal-body a { color: var(--navy-2); }
+</style>
