@@ -118,7 +118,7 @@ const heroImageUrl = diagnosis ? urlForImage(diagnosis.heroImage, 1000) : undefi
 ---
 
 <Layout
-  title={diagnosis ? `${diagnosis.seoTitle || diagnosis.title} | Krystallsykehjelpen` : "Svimmelhet | Krystallsykehjelpen"}
+  title={diagnosis ? `${(diagnosis.seoTitle || diagnosis.title).replace(/\s*\|\s*Krystallsykehjelpen\s*$/, "")} | Krystallsykehjelpen` : "Svimmelhet | Krystallsykehjelpen"}
   description={diagnosis?.seoDescription ?? "Informasjon om svimmelhet hos Krystallsykehjelpen."}
   activePath={`/svimmelhet/${slug}/`}
   hideMarie
