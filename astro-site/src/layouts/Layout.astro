@@ -4,6 +4,8 @@ import Footer from "../components/Footer.astro";
 import BestillValg from "../components/BestillValg.astro";
 import MarieStripe from "../components/MarieStripe.astro";
 import "../styles/global.css";
+// Vercel Web Analytics: teller besøk uten informasjonskapsler (trenger ikke samtykke)
+import Analytics from "@vercel/analytics/astro";
 
 export interface Props {
   title: string;
@@ -69,5 +71,6 @@ const ogImage = new URL(image ?? DEFAULT_OG_IMAGE, Astro.site).href;
   {!hideMarie && <MarieStripe bg={marieBg} />}
   <Footer />
   <BestillValg />
+  <Analytics />
 </body>
 </html>
