@@ -58,13 +58,6 @@ const canalCards = [
   },
 ];
 
-const diagSteps = [
-  { title: "Sykehistorie", desc: "Hva utløser svimmelheten?" },
-  { title: "Posisjonstester", desc: "Dix-Hallpike og liggende rulletest" },
-  { title: "Tolkning", desc: "Side, buegang og variant" },
-  { title: "Ny test", desc: "Kontroll av responsen etter manøveren" },
-];
-
 const remainingSymptomCauses = [
   "fortsatt aktiv BPPV",
   "en annen vestibulær tilstand",
@@ -190,6 +183,15 @@ const faqLd = {
             <span class="deep-go">Les mer →</span>
           </div>
         </a>
+        <a href="/svimmelhet/krystallsyke/undersokelse/" class="deep-card">
+          <div class="deep-card-img"><img src="/buegang-fremre.webp" alt="" width="600" height="600" loading="lazy" /></div>
+          <div class="deep-card-text">
+            <span class="deep-kicker">Hos behandleren</span>
+            <h3>Undersøkelsen</h3>
+            <p>Slik foregår timen steg for steg: samtale, tester med VNG-briller og behandling i samme time.</p>
+            <span class="deep-go">Les mer →</span>
+          </div>
+        </a>
       </div>
     </div>
   </section>
@@ -301,26 +303,13 @@ const faqLd = {
     </div>
   </section>
 
-  <!-- 9. DIAGNOSTIKK -->
+  <!-- 9. DIAGNOSTIKK (detaljene bor på /undersokelse/) -->
   <section class="sky-section" id="undersokelse">
     <div class="container">
-      <div class="two-col two-col-center">
-        <div>
-          <span class="eyebrow">Undersøkelse</span>
-          <h2>Øyebevegelsene viser vei</h2>
-          <p class="mt">Posisjonstester brukes for å fremkalle et mønster som passer med en bestemt side og buegang.</p>
-          <p>VNG-briller kan gjøre det lettere å se, forstørre og dokumentere nystagmus. Brillene er et nyttig hjelpemiddel — det avgjørende er korrekt testing og klinisk tolkning av øyebevegelsene.</p>
-          <a href="#behandling" class="link-arrow">Slik behandles krystallsyke →</a>
-        </div>
-        <div class="diag-steps">
-          {diagSteps.map((step, i) => (
-            <div class="diag-step">
-              <div class="diag-num">{i + 1}</div>
-              <div><h3>{step.title}</h3><p>{step.desc}</p></div>
-            </div>
-          ))}
-        </div>
-      </div>
+      <span class="eyebrow">Undersøkelse</span>
+      <h2>Øyebevegelsene viser vei</h2>
+      <p class="section-lead mt">Posisjonstester med VNG-briller fremkaller et mønster i øynene som viser hvilket øre og hvilken buegang det gjelder. På klinikken tar første time 40 minutter, og du får som regel behandling i samme time.</p>
+      <a href="/svimmelhet/krystallsyke/undersokelse/" class="link-arrow">Slik foregår undersøkelsen →</a>
     </div>
   </section>
 
@@ -587,19 +576,6 @@ const faqLd = {
 
   /* DIAGNOSTIKK */
   .sky-section { background: var(--sky); }
-  .diag-steps { background: #fff; border-radius: 28px; box-shadow: 0 12px 32px rgba(22, 56, 117, 0.08); padding: 12px 32px; }
-  .diag-step { display: flex; gap: 22px; padding: 26px 0; border-bottom: 1px solid var(--line); }
-  .diag-step:last-child { border-bottom: none; }
-  @media (max-width: 900px) {
-    .diag-step { gap: 14px; padding: 5px 0; }
-  }
-  .diag-num {
-    width: 40px; height: 40px; border-radius: 50%; background: var(--sky); color: var(--navy-2);
-    font-family: var(--font-display); font-weight: 600; display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0; font-size: 1.05rem;
-  }
-  .diag-step h3 { font-size: 1.1rem; margin-bottom: 4px; }
-  .diag-step p { margin: 0; font-size: 0.95rem; color: var(--ink-soft); }
 
   /* SELVBEHANDLING */
   .self-treatment { margin-top: 48px; border-top: 1px solid var(--line); padding-top: 44px; }
@@ -659,8 +635,8 @@ const faqLd = {
   /* Fordyp deg */
   .deep-section { padding: 56px 0 24px; }
   .deep-section .section-lead { margin-bottom: 24px; }
-  .deep-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
-  @media (max-width: 760px) { .deep-grid { grid-template-columns: 1fr; } }
+  .deep-grid { display: grid; grid-template-columns: 1fr; gap: 18px; }
+  @media (min-width: 961px) { .deep-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .deep-card { grid-template-columns: 1fr; } .deep-card-img { aspect-ratio: 16 / 9; overflow: hidden; } .deep-card-img img { width: auto; height: 100%; } }
   .deep-card {
     display: grid; grid-template-columns: 120px 1fr; overflow: hidden;
     background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius);

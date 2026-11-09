@@ -1,0 +1,339 @@
+---
+import Layout from "../../../../layouts/Layout.astro";
+
+// Underside i krystallsyke-klyngen (se Krystallsyke-temaklynge-plan.md i
+// prosjektet). Eier: hvordan undersøkelsen foregår for pasienten.
+// Mønstrene per buegang bor på /buegangene/ – lenk dit, ikke gjenta dem.
+// Bevisst uten «For fagfolk»-boks og uten minuttangivelser per steg (Maries valg).
+// Stilene er samlet under .uns-klassen så de ikke lekker ut.
+
+const base = "https://www.krystallsykehjelpen.no";
+
+const steps = [
+  {
+    title: "Samtalen",
+    text: "Vi snakker om svimmelheten din: når den startet, hva som utløser den, hvor lenge et anfall varer, og om du har andre plager som hodepine, hørselsendringer eller kvalme. Svarene gir en god pekepinn før vi tester.",
+  },
+  {
+    title: "Undersøkelsen",
+    key: true,
+    text: "Undersøkelsen tilpasses det du forteller og det vi finner underveis. Den består blant annet av:",
+    list: [
+      "tester i sittende, stående og gående, for eksempel av øyebevegelser og balanse",
+      "en nevrologisk undersøkelse, for å utelukke andre årsaker til svimmelheten",
+      "undersøkelse av muskler og ledd i nakke og kjeve",
+      "posisjonstester med VNG-briller, der du legges ned i bestemte stillinger mens vi ser på øynene dine",
+    ],
+    feel: "Har du krystallsyke, kan det snurre kraftig i noen sekunder i én av stillingene. Det går over av seg selv mens du ligger stille, og du blir holdt hele tiden.",
+  },
+  {
+    title: "Svaret",
+    text: "Svaret bygger på helheten: det du har fortalt om svimmelheten, hvordan den kjennes under testene, øyebevegelsene og funnene fra resten av undersøkelsen. Sammen viser de om det er krystallsyke, og i så fall hvilket øre og hvilken buegang det gjelder. Du får forklart hva vi fant, og hva det betyr for behandlingen.",
+    link: { href: "/svimmelhet/krystallsyke/buegangene/", label: "Se mønstrene for hver buegang" },
+  },
+  {
+    title: "Behandlingen",
+    key: true,
+    text: "Behandlingen tilpasses det vi finner. Er det krystallsyke, behandler vi med en gang, med en manøver som passer buegangen og siden. Hodet føres rolig gjennom noen bestemte stillinger, slik at krystallene flytter seg ut av buegangen. Noen ganger får du også øvelser å gjøre hjemme.",
+    feel: "Det kan snurre igjen underveis. Det er et tegn på at krystallene beveger seg.",
+  },
+  {
+    title: "Kontroll og veien videre",
+    text: "Hva som skjer videre, avhenger av hva vi finner, og om det er andre plager som også bør følges opp. De aller fleste med akutt krystallsyke blir bra etter én til tre behandlinger. Eldre trenger ofte noen flere, og noen har i tillegg nytte av behandling av muskler og ledd eller vestibulær rehabilitering.",
+  },
+];
+
+const faq = [
+  { q: "Gjør undersøkelsen vondt?", a: "Nei. Posisjonstestene kan gjøre deg kortvarig svimmel, men undersøkelsen gjør ikke vondt. Si fra hvis du har vondt i nakken eller ryggen, så tilpasser vi den." },
+  { q: "Hva om testene ikke viser noe?", a: "Da er krystallsyke mindre sannsynlig akkurat nå. Vi ser på andre mulige årsaker, og du får råd om hva som er riktig neste steg." },
+  { q: "Kan jeg kjøre selv etterpå?", a: "Vi anbefaler at du har med noen som kan kjøre. Mange kjenner seg ustø en stund etter timen. Er du usikker, ring oss før du kommer." },
+  { q: "Trenger jeg henvisning?", a: "Nei, du kan bestille time direkte." },
+];
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Hjem", item: `${base}/` },
+    { "@type": "ListItem", position: 2, name: "Svimmelhet", item: `${base}/svimmelhet/` },
+    { "@type": "ListItem", position: 3, name: "Krystallsyke", item: `${base}/svimmelhet/krystallsyke/` },
+    { "@type": "ListItem", position: 4, name: "Undersøkelse", item: `${base}/svimmelhet/krystallsyke/undersokelse/` },
+  ],
+};
+const faqLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faq.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+};
+const pageLd = {
+  "@context": "https://schema.org",
+  "@type": "MedicalWebPage",
+  name: "Slik foregår undersøkelsen for krystallsyke",
+  url: `${base}/svimmelhet/krystallsyke/undersokelse/`,
+  inLanguage: "nb-NO",
+  about: { "@type": "MedicalCondition", name: "Benign paroksysmal posisjonsvertigo (krystallsyke)", alternateName: ["BPPV", "Krystallsyke"] },
+  author: { "@type": "Person", name: "Marie Hermansen", jobTitle: "Kiropraktor" },
+};
+---
+
+<Layout
+  title="Undersøkelse for krystallsyke: slik foregår timen | Krystallsykehjelpen"
+  description="Hva skjer når du blir undersøkt for krystallsyke? Samtale, undersøkelse med posisjonstester og VNG-briller, svar og behandling i samme time, og hva du kan kjenne etterpå."
+  activePath="/svimmelhet/krystallsyke/undersokelse/"
+>
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbLd)} />
+  <script type="application/ld+json" set:html={JSON.stringify(faqLd)} />
+  <script type="application/ld+json" set:html={JSON.stringify(pageLd)} />
+
+  <div class="uns">
+
+<section class="hero">
+  <div class="c">
+    <nav class="crumbs"><a href="/">Forside</a> / <a href="/svimmelhet/">Svimmelhet</a> / <a href="/svimmelhet/krystallsyke/">Krystallsyke</a> / Undersøkelse</nav>
+    <span class="eyebrow">Krystallsyke · Hos behandleren</span>
+    <h1>Slik foregår undersøkelsen</h1>
+    <p class="lead">Det kan kjennes skummelt å bli undersøkt når du vet at testene kan gjøre deg svimmel. Her går vi gjennom timen steg for steg, så du vet hva som skjer, hva du kan kjenne, og hvorfor det er verdt det.</p>
+    <div class="facts">
+      <div><b>40 min</b><strong>Første time</strong><span>Samtale, tester og behandling</span></div>
+      <div><b>Samme time</b><strong>Behandling</strong><span>Som regel får du manøveren med en gang</span></div>
+      <div><b>VNG-briller</b><strong>Ser øynene dine</strong><span>Gjør små øyebevegelser tydelige</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="afterhero">
+  <div class="c">
+    <span class="eyebrow">Før du kommer</span>
+    <h2>Du trenger ikke forberede deg</h2>
+    <p class="narrow">Kom som du er. Det eneste vi anbefaler, er å planlegge hjemturen.</p>
+    <div class="prep">
+      <div class="item"><span class="k">Hjemturen</span><h3>Ha med noen som kan kjøre</h3><p>Testene og behandlingen kan gjøre deg svimmel og ustø en stund etterpå. Er du usikker, ring oss før timen.</p></div>
+      <div class="item"><span class="k">Forberedelser</span><h3>Ingenting å gjøre på forhånd</h3><p>Du trenger ikke faste, slutte med medisiner eller ta med noe spesielt.</p></div>
+      <div class="item"><span class="k">Vondt i nakken?</span><h3>Si fra ved timen</h3><p>Har du nakke- eller ryggplager, kan testene tilpasses.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="white">
+  <div class="c">
+    <span class="eyebrow">Timen steg for steg</span>
+    <h2>Dette skjer i løpet av timen</h2>
+    <p class="narrow">Timen tar omtrent 40 minutter, og undersøkelsen tilpasses deg.</p>
+    <ol class="timeline">
+      {steps.map((s) => (
+        <li class={s.key ? "step key" : "step"}>
+          <span class="dot" aria-hidden="true"></span>
+          <div class="step-body">
+            <h3>{s.title}</h3>
+            <p>{s.text}</p>
+            {s.list && <ul class="step-list">{s.list.map((li) => <li>{li}</li>)}</ul>}
+            {s.feel && <p class="feel"><b>Dette kan du kjenne</b>{s.feel}</p>}
+            {s.link && <p><a class="tlink" href={s.link.href}>{s.link.label}</a></p>}
+          </div>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<section>
+  <div class="c two">
+    <div>
+      <span class="eyebrow">VNG-briller</span>
+      <h2>Brillene som gjør det usynlige synlig</h2>
+      <p>Øyebevegelsene ved krystallsyke kan være små og korte. VNG-brillene har kameraer som filmer øynene i mørke, slik at øynene ikke kan feste blikket på noe. Da blir rykkene tydeligere, og de kan forstørres og tas opp.</p>
+      <p class="pull">Brillene er et hjelpemiddel. Det avgjørende er at testene gjøres riktig og at øyebevegelsene tolkes riktig.</p>
+    </div>
+    <div class="vng">
+      <svg viewBox="0 0 320 150" role="img" aria-label="Øye med og uten VNG-briller">
+        <defs><clipPath id="uns-lid"><path d="M-70 0 Q0 -44 70 0 Q0 44 -70 0 Z" /></clipPath></defs>
+        <rect x="20" y="20" width="280" height="110" rx="40" fill="#0e2650" id="uns-goggle" opacity="0" />
+        <g transform="translate(160 75)">
+          <path d="M-70 0 Q0 -44 70 0 Q0 44 -70 0 Z" fill="#fff" stroke="#5fc1d6" stroke-width="3" />
+          <g clip-path="url(#uns-lid)"><g id="uns-iris"><circle r="22" fill="#256478" /><circle r="9" fill="#163875" /><circle cy="-15" r="3.4" fill="#fff" /></g></g>
+        </g>
+      </svg>
+      <p id="uns-cap" aria-live="polite">Uten briller: øyet kan feste blikket, og rykkene blir små.</p>
+      <div class="toggle"><button type="button" id="uns-btn" aria-pressed="false">Sett på VNG-brillene</button></div>
+    </div>
+  </div>
+</section>
+
+<section class="white">
+  <div class="c">
+    <span class="eyebrow">Etter timen</span>
+    <h2>De første timene og dagene</h2>
+    <div class="after">
+      <div class="box">
+        <h3>Vanlig etter undersøkelse og behandling</h3>
+        <ul>
+          <li>Du kan kjenne deg ustø, «rar i hodet» eller litt kvalm resten av dagen.</li>
+          <li>Noen kjenner seg verre rett etter behandlingen. Det er vanlig og går som regel over.</li>
+          <li>Du kan bevege deg som normalt. Du trenger ikke sove sittende eller unngå bestemte stillinger.</li>
+        </ul>
+      </div>
+      <div class="callbox">
+        <span class="eyebrow">Usikker?</span>
+        <h3>Ring, så finner vi ut av det sammen</h3>
+        <a class="num" href="tel:+4746384492">+47 463 84 492</a>
+        <p>Lurer du på om du kan kjøre selv, eller hvordan du har det etterpå, er det bare å ringe.</p>
+      </div>
+    </div>
+
+    <div class="warn">
+      <div class="ic" aria-hidden="true">!</div>
+      <div>
+        <h3>Når du skal kontakte lege i stedet</h3>
+        <p>Får du svimmelhet som varer konstant, kommer med hørselstap, eller ikke henger sammen med bevegelser av hodet, kontakt lege eller legevakt (116 117). Ring 113 ved lammelser, ansiktsskjevhet, talevansker, dobbeltsyn, besvimelse eller plutselig kraftig hodepine.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="c narrow">
+    <span class="eyebrow">Spørsmål og svar</span>
+    <h2>Det mange lurer på</h2>
+    <div class="faq">
+      {faq.map((f, i) => (
+        <details open={i === 0}><summary>{f.q}</summary><p>{f.a}</p></details>
+      ))}
+    </div>
+  </div>
+</section>
+
+<section class="navyS">
+  <div class="c">
+    <span class="eyebrow">Bestill time</span>
+    <h2>Klar for å finne ut hva som skjer?</h2>
+    <p>En undersøkelse på klinikken i Fetsund tar 40 minutter, og du får som regel behandling i samme time.</p>
+    <a class="btn onnavy" href="/fa-hjelp/#bestill">Bestill time →</a>
+  </div>
+</section>
+
+  </div>
+</Layout>
+
+<script>
+(function () {
+  const btn = document.getElementById("uns-btn");
+  const iris = document.getElementById("uns-iris");
+  const gog = document.getElementById("uns-goggle");
+  const cap = document.getElementById("uns-cap");
+  if (!btn || !iris || !gog || !cap) return;
+  const reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let on = false;
+  const t0 = performance.now();
+  function frame(now: number) {
+    const t = (now - t0) / 1000, ph = (t * 1.6) % 1, w = ph < 0.8 ? ph / 0.8 : 1 - (ph - 0.8) / 0.2, k = 1 - 2 * w, A = on ? 10 : 2.5;
+    iris!.setAttribute("transform", "translate(0 " + (-A * k).toFixed(1) + ") rotate(" + (-A * 1.8 * k).toFixed(1) + ")");
+    requestAnimationFrame(frame);
+  }
+  if (!reduce) requestAnimationFrame(frame);
+  btn.addEventListener("click", () => {
+    on = !on;
+    btn.setAttribute("aria-pressed", String(on));
+    gog.setAttribute("opacity", on ? "1" : "0");
+    btn.textContent = on ? "Ta av brillene" : "Sett på VNG-brillene";
+    cap.textContent = on
+      ? "Med VNG-briller: øyet kan ikke feste blikket i mørket, og rykkene blir tydelige."
+      : "Uten briller: øyet kan feste blikket, og rykkene blir små.";
+  });
+})();
+</script>
+
+<style is:global>
+.uns{--white:#fff;--muted:rgba(22,56,117,.62);--shadow:0 8px 24px rgba(22,56,117,.07);color:var(--ink);background:var(--sky)}
+.uns .c{max-width:1120px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+.uns .narrow{max-width:720px}
+.uns h1{font-size:clamp(2rem,4.6vw,3rem);line-height:1.1;text-wrap:balance}
+.uns h2{font-size:clamp(1.5rem,3vw,2.1rem);line-height:1.18;margin-bottom:14px;text-wrap:balance}
+.uns h3{font-size:19px;line-height:1.3;margin:0}
+.uns p{font-size:1.08rem;line-height:1.65;color:var(--ink-soft);margin:0}
+.uns p+p{margin-top:14px}
+.uns b,.uns strong{color:var(--navy)}
+.uns .eyebrow{font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:14px;display:block}
+.uns section{padding:76px 0}
+@media(max-width:700px){.uns section{padding:52px 0}}
+.uns .white{background:var(--white)}
+.uns .btn{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:15px;padding:13px 22px;border-radius:999px;border:0;background:var(--navy-2);color:var(--white);text-decoration:none}
+.uns .tlink{font-weight:700;font-size:15px;color:var(--navy);border-bottom:2px solid var(--turquoise);padding-bottom:2px;text-decoration:none}
+.uns button:focus-visible,.uns a:focus-visible,.uns summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+.uns .hero{background:linear-gradient(var(--beige),var(--sky));padding:56px 0 0}
+.uns .crumbs{font-size:13.5px;color:var(--muted);margin-bottom:24px}
+.uns .crumbs a{color:var(--navy-2);font-weight:600;text-decoration:none}
+.uns .hero .lead{margin:18px 0 0;max-width:660px}
+.uns .facts{display:grid;grid-template-columns:repeat(3,1fr);background:var(--white);border-radius:20px;box-shadow:var(--shadow);margin-top:40px;transform:translateY(36px)}
+.uns .facts div{padding:22px 24px;border-left:1px solid var(--line);min-width:0}
+.uns .facts div:first-child{border-left:0}
+.uns .facts b{display:block;font-family:var(--font-display);font-size:28px;line-height:1.1;font-variant-numeric:tabular-nums}
+.uns .facts strong{display:block;color:var(--navy);font-size:15.5px;margin:2px 0}
+.uns .facts span{font-size:14px;color:var(--ink-soft)}
+@media(max-width:700px){.uns .facts{grid-template-columns:1fr}.uns .facts div{border-left:0;border-top:1px solid var(--line)}.uns .facts div:first-child{border-top:0}}
+.uns .afterhero{padding-top:108px}
+
+.uns .prep{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:24px}
+@media(max-width:820px){.uns .prep{grid-template-columns:1fr}}
+.uns .prep .item{background:var(--white);border-radius:18px;box-shadow:var(--shadow);padding:22px;display:grid;gap:6px;align-content:start}
+.uns .prep .k{font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--accent)}
+.uns .prep h3{font-size:18px}
+.uns .prep p{font-size:15.5px}
+
+.uns .timeline{list-style:none;margin:30px 0 0;padding:0}
+.uns .step{display:grid;grid-template-columns:28px 1fr;gap:20px;position:relative;padding-bottom:24px}
+.uns .step:last-child{padding-bottom:0}
+.uns .step::before{content:"";position:absolute;left:13px;top:30px;bottom:0;width:2px;background:var(--line)}
+.uns .step:last-child::before{display:none}
+.uns .dot{width:28px;height:28px;border-radius:50%;background:var(--sky);border:2px solid var(--line);margin-top:20px;position:relative;z-index:1}
+.uns .step.key .dot{background:var(--navy-2);border-color:var(--navy-2)}
+.uns .step-body{min-width:0;background:var(--white);border:1px solid var(--line);border-radius:18px;padding:20px 22px}
+.uns .step-body h3{margin-bottom:6px}
+.uns .step-body p{font-size:16px}
+.uns .step-list{list-style:none;display:grid;gap:6px;margin:10px 0 0;padding:0}
+.uns .step-list li{position:relative;padding-left:20px;font-size:16px;line-height:1.55;color:var(--ink-soft)}
+.uns .step-list li::before{content:"";position:absolute;left:0;top:8px;width:8px;height:8px;border-radius:50%;background:var(--turquoise)}
+.uns .feel{margin-top:12px;background:var(--sky);border-radius:12px;padding:10px 14px;font-size:14.5px!important;color:var(--ink)!important;line-height:1.5}
+.uns .feel b{color:var(--accent);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:2px}
+@media(max-width:560px){.uns .step{grid-template-columns:22px 1fr;gap:12px}.uns .dot{width:22px;height:22px}.uns .step::before{left:10px;top:42px}}
+
+.uns .two{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+@media(max-width:860px){.uns .two{grid-template-columns:1fr;gap:24px}}
+.uns .two>*{min-width:0}
+.uns .pull{font-family:var(--font-display);font-size:22px;line-height:1.4;color:var(--navy);border-left:3px solid var(--turquoise);padding-left:20px;margin-top:16px}
+.uns .vng{background:var(--navy);border-radius:22px;padding:28px;display:grid;gap:14px}
+.uns .vng svg{width:100%;max-width:420px;height:auto;display:block;margin:0 auto}
+.uns .vng p{color:rgba(255,255,255,.8);font-size:14.5px;text-align:center}
+.uns .vng .toggle{display:flex;justify-content:center}
+.uns .vng button{font-family:inherit;font-size:14px;font-weight:700;color:var(--navy);background:var(--white);border:0;border-radius:999px;padding:9px 16px;cursor:pointer}
+
+.uns .after{display:grid;grid-template-columns:1.1fr .9fr;gap:24px;margin-top:24px}
+@media(max-width:860px){.uns .after{grid-template-columns:1fr}}
+.uns .after>*{min-width:0}
+.uns .box{background:var(--white);border:1px solid var(--line);border-radius:22px;padding:24px 26px}
+.uns .box ul{list-style:none;display:grid;gap:10px;margin:12px 0 0;padding:0}
+.uns .box li{position:relative;padding-left:22px;font-size:16px;line-height:1.55;color:var(--ink-soft)}
+.uns .box li::before{content:"";position:absolute;left:0;top:8px;width:9px;height:9px;border-radius:50%;background:var(--turquoise)}
+.uns .callbox{background:var(--beige);border-radius:22px;padding:24px 26px;display:grid;gap:10px;align-content:start}
+.uns .callbox .eyebrow{margin:0}
+.uns .callbox .num{font-family:var(--font-display);font-size:24px;color:var(--navy);font-weight:600;text-decoration:none}
+.uns .callbox p{font-size:15.5px}
+
+.uns .warn{background:var(--white);border:1.5px solid var(--navy-2);border-radius:22px;padding:24px 26px;display:flex;gap:18px;margin-top:24px}
+.uns .warn .ic{flex:none;width:38px;height:38px;border-radius:50%;border:1.5px solid var(--navy-2);color:var(--navy-2);display:grid;place-items:center;font-weight:700;font-size:19px;font-family:var(--font-display)}
+.uns .warn h3{margin-bottom:6px}
+.uns .warn p{font-size:16px}
+
+.uns .faq{margin-top:20px;border-top:1px solid var(--line)}
+.uns .faq details{border-bottom:1px solid var(--line)}
+.uns .faq summary{list-style:none;cursor:pointer;padding:19px 40px 19px 0;font-family:var(--font-display);font-weight:500;font-size:18px;color:var(--navy);position:relative}
+.uns .faq summary::-webkit-details-marker{display:none}
+.uns .faq summary::after{content:"+";position:absolute;right:6px;top:14px;font-size:24px;color:var(--accent);font-weight:400}
+.uns .faq details[open] summary::after{content:"–"}
+.uns .faq details p{font-size:16.5px;padding-bottom:20px}
+.uns .navyS{background:var(--navy);text-align:center}
+.uns .navyS h2{color:var(--white)}
+.uns .navyS p{color:rgba(255,255,255,.78);max-width:600px;margin:0 auto 24px}
+.uns .navyS .eyebrow{color:var(--turquoise)}
+.uns .btn.onnavy{background:var(--white);color:var(--navy)}
+</style>
