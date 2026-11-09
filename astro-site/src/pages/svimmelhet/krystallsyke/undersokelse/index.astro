@@ -15,14 +15,20 @@ const steps = [
     text: "Vi snakker om svimmelheten din: når den startet, hva som utløser den, hvor lenge et anfall varer, og om du har andre plager som hodepine, hørselsendringer eller kvalme. Svarene gir en god pekepinn før vi tester.",
   },
   {
-    title: "Posisjonstestene",
+    title: "Undersøkelsen",
     key: true,
-    text: "Du får på deg VNG-brillene. Først sitter du på benken, så legges du bakover med hodet vridd til den ene siden (Dix-Hallpike). Vi gjør det samme mot den andre siden. Deretter ligger du på ryggen mens hodet snus til hver side (liggende rulletest).",
+    text: "Undersøkelsen tilpasses det du forteller og det vi finner underveis. Den består blant annet av:",
+    list: [
+      "tester i sittende, for eksempel av øyebevegelser og balanse",
+      "en nevrologisk undersøkelse, for å utelukke andre årsaker til svimmelheten",
+      "undersøkelse av muskler og ledd i nakke og kjeve",
+      "posisjonstester med VNG-briller, der du legges ned i bestemte stillinger mens vi ser på øynene dine",
+    ],
     feel: "Har du krystallsyke, kan det snurre kraftig i noen sekunder i én av stillingene. Det går over av seg selv mens du ligger stille, og du blir holdt hele tiden.",
   },
   {
     title: "Svaret",
-    text: "Øyebevegelsene viser hvilket øre og hvilken buegang krystallene ligger i. Du får forklart hva vi fant, og hva det betyr for behandlingen.",
+    text: "Svaret bygger på helheten: det du har fortalt om svimmelheten, hvordan den kjennes under testene, øyebevegelsene og funnene fra resten av undersøkelsen. Sammen viser de om det er krystallsyke, og i så fall hvilket øre og hvilken buegang det gjelder. Du får forklart hva vi fant, og hva det betyr for behandlingen.",
     link: { href: "/svimmelhet/krystallsyke/buegangene/", label: "Se mønstrene for hver buegang" },
   },
   {
@@ -38,7 +44,7 @@ const steps = [
 ];
 
 const faq = [
-  { q: "Gjør testene vondt?", a: "Nei. De kan gjøre deg kortvarig svimmel, men de gjør ikke vondt. Si fra hvis du har vondt i nakken eller ryggen, så tilpasser vi testene." },
+  { q: "Gjør undersøkelsen vondt?", a: "Nei. Posisjonstestene kan gjøre deg kortvarig svimmel, men undersøkelsen gjør ikke vondt. Si fra hvis du har vondt i nakken eller ryggen, så tilpasser vi den." },
   { q: "Hva om testene ikke viser noe?", a: "Da er krystallsyke mindre sannsynlig akkurat nå. Vi ser på andre mulige årsaker, og du får råd om hva som er riktig neste steg." },
   { q: "Kan jeg kjøre selv etterpå?", a: "Vi anbefaler at du har med noen som kan kjøre. Mange kjenner seg ustø en stund etter timen. Er du usikker, ring oss før du kommer." },
   { q: "Trenger jeg henvisning?", a: "Nei, du kan bestille time direkte." },
@@ -72,7 +78,7 @@ const pageLd = {
 
 <Layout
   title="Undersøkelse for krystallsyke: slik foregår timen | Krystallsykehjelpen"
-  description="Hva skjer når du blir undersøkt for krystallsyke? Samtale, Dix-Hallpike og rulletest med VNG-briller, svar og behandling i samme time, og hva du kan kjenne etterpå."
+  description="Hva skjer når du blir undersøkt for krystallsyke? Samtale, undersøkelse med posisjonstester og VNG-briller, svar og behandling i samme time, og hva du kan kjenne etterpå."
   activePath="/svimmelhet/krystallsyke/undersokelse/"
 >
   <script type="application/ld+json" set:html={JSON.stringify(breadcrumbLd)} />
@@ -112,7 +118,7 @@ const pageLd = {
   <div class="c">
     <span class="eyebrow">Timen steg for steg</span>
     <h2>Dette skjer i løpet av timen</h2>
-    <p class="narrow">Rekkefølgen er den samme hver gang, og hele timen tar omtrent 40 minutter.</p>
+    <p class="narrow">Timen tar omtrent 40 minutter, og undersøkelsen tilpasses deg.</p>
     <ol class="timeline">
       {steps.map((s) => (
         <li class={s.key ? "step key" : "step"}>
@@ -120,6 +126,7 @@ const pageLd = {
           <div class="step-body">
             <h3>{s.title}</h3>
             <p>{s.text}</p>
+            {s.list && <ul class="step-list">{s.list.map((li) => <li>{li}</li>)}</ul>}
             {s.feel && <p class="feel"><b>Dette kan du kjenne</b>{s.feel}</p>}
             {s.link && <p><a class="tlink" href={s.link.href}>{s.link.label}</a></p>}
           </div>
@@ -283,6 +290,9 @@ const pageLd = {
 .uns .step-body{min-width:0;background:var(--white);border:1px solid var(--line);border-radius:18px;padding:20px 22px}
 .uns .step-body h3{margin-bottom:6px}
 .uns .step-body p{font-size:16px}
+.uns .step-list{list-style:none;display:grid;gap:6px;margin:10px 0 0;padding:0}
+.uns .step-list li{position:relative;padding-left:20px;font-size:16px;line-height:1.55;color:var(--ink-soft)}
+.uns .step-list li::before{content:"";position:absolute;left:0;top:8px;width:8px;height:8px;border-radius:50%;background:var(--turquoise)}
 .uns .feel{margin-top:12px;background:var(--sky);border-radius:12px;padding:10px 14px;font-size:14.5px!important;color:var(--ink)!important;line-height:1.5}
 .uns .feel b{color:var(--accent);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:2px}
 @media(max-width:560px){.uns .step{grid-template-columns:22px 1fr;gap:12px}.uns .dot{width:22px;height:22px}.uns .step::before{left:10px;top:42px}}
