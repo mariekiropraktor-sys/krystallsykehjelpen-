@@ -80,14 +80,6 @@ export const topLevelLinks: { label: string; href: string }[] = [
   { label: "Spørsmål og svar", href: "/faq/" },
 ];
 
-// Footer viser samme faner (kun enabled lenker), pluss et par
-// footer-spesifikke lenker under "Behandling" (booking + Få hjelp) som ikke
-// hører hjemme i menypanelet.
-export const footerBehandlingExtras: NavItem[] = [
-  { kind: "link", label: "Bestill time", href: "/fa-hjelp/#bestill" }, // åpner valgvinduet (BestillValg.astro)
-  { kind: "link", label: "Få hjelp", href: "/fa-hjelp/" },
-];
-
 // Bygger navigasjonsfanene dynamisk: slår på "Utvalgte former for svimmelhet →"
 // kun når svimmelhetPage er publisert med visible:true, og setter inn
 // publiserte diagnosesider (utenom krystallsyke, som har egen fane) rett
