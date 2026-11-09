@@ -1,55 +1,67 @@
 ---
-import { getNavigationTabs, topLevelLinks, footerBehandlingExtras } from "../data/navigation";
+// Footer: en kort oppsummering, ikke en kopi av menyen (godkjent 2026-11-09).
+// Krystallsyke-undersidene og de enkelte tjenestene ligger i menyen og på
+// sidene selv. Diagnosesidene hentes fra Svimmelhet-fanen, så nye publiserte
+// diagnoser dukker opp her automatisk.
+import { getNavigationTabs } from "../data/navigation";
 
 const year = new Date().getFullYear();
 const navigationTabs = await getNavigationTabs();
 
-function visibleLinks(tabLabel) {
-  const tab = navigationTabs.find((t) => t.label === tabLabel);
-  return (tab?.items ?? []).filter((item) => item.kind === "link" && item.enabled !== false);
-}
+const diagnosisLinks = (navigationTabs.find((t) => t.label === "Svimmelhet")?.items ?? []).filter(
+  (item) => item.kind === "link" && item.enabled !== false && item.href !== "/svimmelhet/",
+);
 
-const krystallsykeLinks = visibleLinks("Krystallsyke");
-const svimmelhetLinks = visibleLinks("Svimmelhet");
-const hjelpDegSelvLinks = visibleLinks("Hjelp deg selv");
-const behandlingLinks = [...visibleLinks("Få behandling"), ...footerBehandlingExtras];
-const omLinks = visibleLinks("Om");
+const columns = [
+  {
+    title: "Svimmelhet",
+    links: [{ label: "Krystallsyke", href: "/svimmelhet/krystallsyke/" }, ...diagnosisLinks.map((l) => ({ label: l.label, href: l.href }))],
+  },
+  {
+    title: "Hjelp og behandling",
+    links: [
+      { label: "Krystallsykehjelpen hjemme", href: "/hjemme/" },
+      { label: "Øvelsesbibliotek", href: "/ovelsesbibliotek/" },
+      { label: "Finn behandler", href: "/finn-behandler/" },
+      { label: "Priser", href: "/priser/" },
+    ],
+  },
+  {
+    title: "Om",
+    links: [
+      { label: "Møt Marie", href: "/mott-marie/" },
+      { label: "Om Krystallsykehjelpen", href: "/om-krystallsykehjelpen/" },
+      { label: "Artikler", href: "/blogg/" },
+      { label: "Spørsmål og svar", href: "/faq/" },
+      { label: "Kontakt", href: "/kontakt/" },
+    ],
+  },
+];
 ---
 
 <footer class="site-footer">
   <div class="container">
     <div class="footer-grid">
-      <div>
-        <h4>Krystallsyke</h4>
-        {krystallsykeLinks.map((link) => <a href={link.href}>{link.label}</a>)}
+      <div class="footer-brand">
+        <span class="footer-name">Krystallsykehjelpen</span>
+        <p>Trygg kunnskap om krystallsyke og svimmelhet, skrevet av kiropraktor Marie Hermansen.</p>
+        <div class="footer-contact">
+          <a href="tel:+4746384492">+47 463 84 492</a>
+          <a href="mailto:mariekiropraktor@gmail.com">mariekiropraktor@gmail.com</a>
+          <a href="/kontakt/">Garderbakken 1, Fetsund</a>
+        </div>
+        <a href="/fa-hjelp/#bestill" class="footer-btn">Bestill time</a>
       </div>
-      <div>
-        <h4>Svimmelhet</h4>
-        {svimmelhetLinks.map((link) => <a href={link.href}>{link.label}</a>)}
-      </div>
-      <div>
-        <h4>Hjelp deg selv</h4>
-        {hjelpDegSelvLinks.map((link) => <a href={link.href}>{link.label}</a>)}
-      </div>
-      <div>
-        <h4>Få behandling</h4>
-        {behandlingLinks.map((link) => <a href={link.href}>{link.label}</a>)}
-      </div>
-      <div>
-        <h4>Om</h4>
-        {omLinks.map((link) => <a href={link.href}>{link.label}</a>)}
-      </div>
-      <div class="footer-top-links">
-        {topLevelLinks.map((link) => <h4><a href={link.href}>{link.label}</a></h4>)}
-      </div>
+      {columns.map((col) => (
+        <nav aria-label={col.title}>
+          <h4>{col.title}</h4>
+          {col.links.map((link) => <a href={link.href}>{link.label}</a>)}
+        </nav>
+      ))}
     </div>
-    <div class="footer-bottom-row">
-      <div class="footer-contact">
-        <a href="tel:+4746384492">+47 46384492</a>
-        <a href="mailto:mariekiropraktor@gmail.com">mariekiropraktor@gmail.com</a>
-        <a href="/kontakt/">Garderbakken 1, Fetsund</a>
-      </div>
-      <div class="footer-bottom">© {year} Krystallsykehjelpen · <a href="/personvern/" class="footer-legal">Personvern</a></div>
+    <div class="footer-bottom">
+      <span>© {year} Krystallsykehjelpen</span>
+      <a href="/personvern/" class="footer-legal">Personvern</a>
     </div>
   </div>
 </footer>
@@ -63,10 +75,11 @@ const omLinks = visibleLinks("Om");
   }
   .footer-grid {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 32px;
-    margin-bottom: 32px;
+    grid-template-columns: 1.4fr repeat(3, 1fr);
+    gap: 40px;
+    margin-bottom: 36px;
   }
+  .footer-grid > * { min-width: 0; }
   .site-footer h4 {
     color: #fff;
     font-family: var(--font-display);
@@ -79,25 +92,33 @@ const omLinks = visibleLinks("Om");
     display: block;
     margin-bottom: 8px;
     font-size: 0.92rem;
+    overflow-wrap: anywhere;
   }
   .site-footer a:hover { color: #fff; }
-  /* Egne sider vises som overskrifter, ikke som en egen kategori */
-  /* Egne sider vises som overskrifter på samme linje som de andre kolonnene */
-  .site-footer .footer-top-links h4 { margin-bottom: 12px; }
-  .site-footer .footer-top-links a { color: #fff; font-family: var(--font-display); font-size: 1rem; margin: 0; }
-  .footer-contact { display: flex; flex-direction: column; margin-bottom: 20px; }
+  .footer-brand { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+  .footer-name { font-family: var(--font-display); font-size: 1.3rem; font-weight: 600; color: #fff; }
+  .footer-brand p { margin: 0; font-size: 0.92rem; line-height: 1.55; color: #cbd8ef; max-width: 32ch; }
+  .footer-contact { margin-top: 6px; }
+  .footer-contact a { margin-bottom: 4px; }
+  .site-footer .footer-btn {
+    margin: 10px 0 0; background: #fff; color: var(--navy); font-weight: 700;
+    padding: 10px 18px; border-radius: 999px;
+  }
+  .site-footer .footer-btn:hover { background: var(--sky); color: var(--navy); }
   .footer-bottom {
     border-top: 1px solid rgba(255, 255, 255, 0.14);
-    padding-top: 20px;
+    padding-top: 18px;
     font-size: 0.82rem;
     color: #9db0d1;
+    display: flex; flex-wrap: wrap; gap: 6px 18px; justify-content: space-between;
   }
   .site-footer .footer-bottom .footer-legal { display: inline; margin: 0; font-size: inherit; color: inherit; text-decoration: underline; text-underline-offset: 2px; }
   .site-footer .footer-bottom .footer-legal:hover { color: #fff; }
-  @media (max-width: 1000px) {
-    .footer-grid { grid-template-columns: repeat(3, 1fr); }
+  @media (max-width: 900px) {
+    .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+    .footer-brand { grid-column: 1 / -1; }
   }
-  @media (max-width: 720px) {
-    .footer-grid { grid-template-columns: 1fr 1fr; }
+  @media (max-width: 480px) {
+    .footer-grid { gap: 24px 20px; }
   }
 </style>
