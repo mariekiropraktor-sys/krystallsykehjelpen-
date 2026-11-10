@@ -44,19 +44,21 @@ const columns = [
     <div class="footer-grid">
       <div class="footer-brand">
         <span class="footer-name">Krystallsykehjelpen</span>
-        <p>Trygg kunnskap om krystallsyke og svimmelhet, skrevet av kiropraktor Marie Hermansen.</p>
+        <p class="footer-tagline">Trygg kunnskap om krystallsyke og svimmelhet, skrevet av kiropraktor Marie Hermansen.</p>
         <div class="footer-contact">
           <a href="tel:+4746384492">+47 463 84 492</a>
-          <a href="mailto:mariekiropraktor@gmail.com">mariekiropraktor@gmail.com</a>
-          <a href="/kontakt/">Garderbakken 1, Fetsund</a>
+          <a href="mailto:mariekiropraktor@gmail.com" class="footer-desktop-only">mariekiropraktor@gmail.com</a>
+          <a href="/kontakt/" class="footer-desktop-only">Garderbakken 1, Fetsund</a>
         </div>
         <a href="/fa-hjelp/#bestill" class="footer-btn">Bestill time</a>
       </div>
       {columns.map((col) => (
-        <nav aria-label={col.title}>
-          <h4>{col.title}</h4>
-          {col.links.map((link) => <a href={link.href}>{link.label}</a>)}
-        </nav>
+        <details class="footer-col" open>
+          <summary><h4>{col.title}</h4></summary>
+          <nav aria-label={col.title}>
+            {col.links.map((link) => <a href={link.href}>{link.label}</a>)}
+          </nav>
+        </details>
       ))}
     </div>
     <div class="footer-bottom">
@@ -65,6 +67,18 @@ const columns = [
     </div>
   </div>
 </footer>
+
+<script>
+  // Mobil: lenkegruppene er lukkede nedtrekk. PC: alltid åpne.
+  const mq = window.matchMedia("(max-width: 720px)");
+  function syncFooter() {
+    document.querySelectorAll(".footer-col").forEach((d) => {
+      (d as HTMLDetailsElement).open = !mq.matches;
+    });
+  }
+  syncFooter();
+  mq.addEventListener("change", syncFooter);
+</script>
 
 <style>
   .site-footer {
@@ -114,11 +128,30 @@ const columns = [
   }
   .site-footer .footer-bottom .footer-legal { display: inline; margin: 0; font-size: inherit; color: inherit; text-decoration: underline; text-underline-offset: 2px; }
   .site-footer .footer-bottom .footer-legal:hover { color: #fff; }
-  @media (max-width: 900px) {
-    .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+  /* Nedtrekk: på PC ser de ut som vanlige kolonner */
+  .footer-col summary { list-style: none; cursor: default; pointer-events: none; }
+  .footer-col summary::-webkit-details-marker { display: none; }
+  @media (max-width: 900px) and (min-width: 721px) {
+    .footer-grid { grid-template-columns: repeat(3, 1fr); gap: 32px; }
     .footer-brand { grid-column: 1 / -1; }
   }
-  @media (max-width: 480px) {
-    .footer-grid { gap: 24px 20px; }
+  @media (max-width: 720px) {
+    .site-footer { padding: 32px 0 20px; }
+    .footer-grid { grid-template-columns: 1fr; gap: 0; margin-bottom: 20px; }
+    .footer-brand { gap: 6px; margin-bottom: 18px; }
+    .footer-tagline, .footer-desktop-only { display: none; }
+    .footer-contact { margin-top: 0; }
+    .site-footer .footer-btn { margin-top: 6px; }
+    .footer-col { border-top: 1px solid rgba(255, 255, 255, 0.14); }
+    .footer-col:last-child { border-bottom: 1px solid rgba(255, 255, 255, 0.14); }
+    .footer-col summary {
+      pointer-events: auto; cursor: pointer; padding: 14px 0;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .footer-col summary h4 { margin: 0; }
+    .footer-col summary::after { content: "+"; color: #cbd8ef; font-size: 1.3rem; line-height: 1; }
+    .footer-col[open] summary::after { content: "–"; }
+    .footer-col nav { padding: 0 0 10px; }
+    .footer-col summary:focus-visible { outline: 2px solid var(--turquoise); outline-offset: 2px; }
   }
 </style>
