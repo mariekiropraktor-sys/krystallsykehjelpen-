@@ -10,8 +10,8 @@ import Layout from "../../../../layouts/Layout.astro";
 
 const base = "https://www.krystallsykehjelpen.no";
 const url = `${base}/svimmelhet/krystallsyke/symptomer/`;
-const heroImage =
-  "https://cdn.sanity.io/images/b1cmdslc/production/a6a05870e17610aa784874134c348bf213a8ccf6-1536x1024.png?w=1100&auto=format";
+const heroImage = "/symptomer-hero-1400.webp";
+const ogImage = "/symptomer-og.jpg";
 
 const phases = [
   { title: "Noen sekunders pause", text: "Du beveger hodet, og det skjer ingenting med en gang." },
@@ -136,7 +136,7 @@ const pageLd = {
   title="Symptomer på krystallsyke: kjenner du deg igjen? | Krystallsykehjelpen"
   description="Rommet snurrer når du snur deg i sengen eller ser opp? Se hvordan et typisk anfall av krystallsyke (BPPV) forløper, hva som utløser det, og hva som tyder på noe annet."
   activePath="/svimmelhet/krystallsyke/symptomer/"
-  image={heroImage}
+  image={ogImage}
 >
   <script type="application/ld+json" set:html={JSON.stringify(breadcrumbLd)} />
   <script type="application/ld+json" set:html={JSON.stringify(faqLd)} />
@@ -157,7 +157,7 @@ const pageLd = {
           <span>Faglig skrevet av <a href="/mott-marie/"><strong>Marie Hermansen</strong></a>, kiropraktor<br />Særlig kompetanse innen krystallsyke og svimmelhet</span>
         </div>
       </div>
-      <div class="heroimg"><img src={heroImage} alt="" width="1100" height="733" /></div>
+      <div class="heroimg"><img src={heroImage} srcset="/symptomer-hero-800.webp 800w, /symptomer-hero-1400.webp 1400w" sizes="(max-width: 860px) 100vw, 520px" alt="Kvinne i gangen som støtter seg mot veggen fordi hun plutselig blir svimmel" width="1400" height="788" fetchpriority="high" /></div>
     </div>
     <div class="facts">
       <div><b>Sekunder</b><strong>Hvert anfall</strong><span>Som regel under ett minutt</span></div>
@@ -492,7 +492,7 @@ const pageLd = {
 .sym .byline span{font-size:14.5px;color:var(--ink-soft);line-height:1.45}
 .sym .byline a{text-decoration:none}
 .sym .heroimg{border-radius:26px;overflow:hidden;aspect-ratio:3/2;background:var(--ivory);box-shadow:var(--shadow)}
-.sym .heroimg img{width:100%;height:100%;object-fit:cover;display:block}
+.sym .heroimg img{width:100%;height:100%;object-fit:cover;object-position:62% 35%;display:block}
 .sym .facts{display:grid;grid-template-columns:repeat(3,1fr);background:var(--white);border-radius:20px;box-shadow:var(--shadow);margin-top:40px;transform:translateY(36px)}
 .sym .facts div{padding:22px 24px;border-left:1px solid var(--line);min-width:0}
 .sym .facts div:first-child{border-left:0}
