@@ -24,13 +24,6 @@ const factItems = [
   { title: "Kan behandles", desc: "Med en tilpasset manøver" },
 ];
 
-const symptomCards = [
-  { title: "Når du snur deg i sengen", desc: "Korte, kraftige anfall — ofte tydeligst mot én side." },
-  { title: "Når du legger deg eller reiser deg", desc: "Svimmelheten kommer gjerne noen sekunder etter bevegelsen." },
-  { title: "Når du ser opp eller bøyer deg", desc: "Bestemte hodeposisjoner kan utløse den samme snurringen." },
-  { title: "Ustøhet og kvalme etterpå", desc: "Mange kjenner seg utrygge eller «sjøsyke» mellom anfallene." },
-];
-
 const canalCards = [
   {
     tag: "Vanligst",
@@ -165,6 +158,15 @@ const faqLd = {
       <h2 id="fordyp-tittel">Les mer om krystallsyke</h2>
       <p class="section-lead">Vil du forstå mer? Her går vi i dybden, med interaktive modeller du kan utforske selv.</p>
       <div class="deep-grid">
+        <a href="/svimmelhet/krystallsyke/symptomer/" class="deep-card">
+          <div class="deep-card-img"><img src="/buegang-bakre.webp" alt="" width="600" height="600" loading="lazy" /></div>
+          <div class="deep-card-text">
+            <span class="deep-kicker">Kjenner du deg igjen?</span>
+            <h3>Symptomer</h3>
+            <p>Slik forløper et typisk anfall, hva som utløser det, og hva som tyder på at det kan være noe annet.</p>
+            <span class="deep-go">Les mer →</span>
+          </div>
+        </a>
         <a href="/svimmelhet/krystallsyke/hva-skjer-i-oret/" class="deep-card">
           <div class="deep-card-img"><img src="/buegang-bakre.webp" alt="" width="600" height="600" loading="lazy" /></div>
           <div class="deep-card-text">
@@ -237,21 +239,13 @@ const faqLd = {
     </div>
   </section>
 
-  <!-- 5. SYMPTOMER -->
+  <!-- 5. SYMPTOMER (detaljene bor på /symptomer/) -->
   <section class="section-beige" id="symptomer">
     <div class="container">
       <span class="eyebrow">Vanlige kjennetegn</span>
       <h2>Slik oppleves krystallsyke</h2>
-      <div class="symptom-grid">
-        {symptomCards.map((card, i) => (
-          <div class="symptom-card">
-            <div class="symptom-num">{i + 1}</div>
-            <h3>{card.title}</h3>
-            <p>{card.desc}</p>
-          </div>
-        ))}
-      </div>
-      <p class="symptom-note">Selve snurreanfallet er vanligvis kort, ofte under ett minutt, mens kvalme og ustøhet kan vare noe lenger etterpå.</p>
+      <p class="section-lead">Typisk er korte anfall av snurrende svimmelhet når du snur deg i sengen, legger deg ned, ser opp eller bøyer deg. Snurringen kommer noen sekunder etter bevegelsen og varer som regel under ett minutt, mens kvalme og ustøhet kan sitte i lenger.</p>
+      <a href="/svimmelhet/krystallsyke/symptomer/" class="link-arrow">Kjenner du deg igjen? Se symptomene i detalj →</a>
     </div>
   </section>
 
