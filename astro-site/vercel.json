@@ -79,6 +79,16 @@
       "source": "/tjenester/",
       "destination": "/fa-hjelp/",
       "permanent": true
+    },
+    {
+      "source": "/blogg/er-dette-krystallsyke",
+      "destination": "/svimmelhet/krystallsyke/symptomer/",
+      "permanent": true
+    },
+    {
+      "source": "/blogg/er-dette-krystallsyke/",
+      "destination": "/svimmelhet/krystallsyke/symptomer/",
+      "permanent": true
     }
   ]
 }

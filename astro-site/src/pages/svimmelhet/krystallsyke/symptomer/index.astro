@@ -1,0 +1,612 @@
+---
+import Layout from "../../../../layouts/Layout.astro";
+
+// Underside i krystallsyke-klyngen (se Krystallsyke-temaklynge-plan.md i
+// prosjektet). Eier: hvordan krystallsyke kjennes. Erstatter bloggen
+// «Kjenner du deg igjen? Er dette krystallsyke?» (301 i vercel.json).
+// Mønstrene per buegang bor på /buegangene/, undersøkelsen på /undersokelse/
+// – lenk dit, ikke gjenta dem. Selvsjekken anbefaler aldri side eller manøver
+// (Maries sikkerhetsregler). Stilene er samlet under .sym-klassen.
+
+const base = "https://www.krystallsykehjelpen.no";
+const url = `${base}/svimmelhet/krystallsyke/symptomer/`;
+const heroImage =
+  "https://cdn.sanity.io/images/b1cmdslc/production/a6a05870e17610aa784874134c348bf213a8ccf6-1536x1024.png?w=1100&auto=format";
+
+const phases = [
+  { title: "Noen sekunders pause", text: "Du beveger hodet, og det skjer ingenting med en gang." },
+  { title: "Snurringen tar til", text: "Bygger seg opp til en tydelig topp. Mange griper tak i noe." },
+  { title: "Avtar av seg selv", text: "Som regel borte innen ett minutt, også om du blir liggende." },
+  { title: "Ettervirkning", text: "Kvalme, ørhet og ustøhet kan sitte i en stund etterpå." },
+];
+
+// Enkle strektegninger (SVG) av hver situasjon. Turkis pil = bevegelsen.
+const situations = [
+  {
+    title: "Å snu seg i sengen",
+    text: "Det klassiske: du ruller over på siden og rommet går rundt. Ofte verst til den ene siden.",
+    canal: "Bakre eller horisontal buegang",
+    svg: `<rect x="30" y="72" width="160" height="10" rx="5" fill="#e5eeec"/><rect x="38" y="58" width="34" height="14" rx="7" fill="#fff" stroke="#163875" stroke-width="2"/><path d="M78 64 H170" stroke="#163875" stroke-width="12" stroke-linecap="round"/><circle cx="60" cy="50" r="13" fill="#f6f0e4" stroke="#163875" stroke-width="2.5"/><path d="M42 26 A26 26 0 0 1 80 28" fill="none" stroke="#5fc1d6" stroke-width="3" stroke-linecap="round"/><path d="M80 28 l-9 -2 M80 28 l-2 -9" stroke="#5fc1d6" stroke-width="3" stroke-linecap="round"/>`,
+  },
+  {
+    title: "Å legge seg ned",
+    text: "Idet hodet treffer puta. Mange merker det først om kvelden eller når de legger seg på ryggen.",
+    canal: "Oftest bakre buegang",
+    svg: `<rect x="30" y="80" width="160" height="10" rx="5" fill="#e5eeec"/><path d="M120 76 H178" stroke="#163875" stroke-width="12" stroke-linecap="round"/><path d="M120 76 L78 58" stroke="#163875" stroke-width="13" stroke-linecap="round"/><circle cx="62" cy="52" r="13" fill="#f6f0e4" stroke="#163875" stroke-width="2.5"/><path d="M70 22 Q48 26 40 44" fill="none" stroke="#5fc1d6" stroke-width="3" stroke-linecap="round"/><path d="M40 44 l1 -9 M40 44 l8 -4" stroke="#5fc1d6" stroke-width="3" stroke-linecap="round"/>`,
+  },
+  {
+    title: "Å sette seg opp",
+    text: "Om morgenen, når du reiser deg fra liggende. Krystallene har ofte samlet seg i løpet av natten.",
+    canal: "Oftest bakre buegang",
+    svg: `<rect x="30" y="86" width="160" height="10" rx="5" fill="#e5eeec"/><path d="M110 82 H170" stroke="#163875" stroke-width="12" stroke-linecap="round"/><path d="M110 82 L96 42" stroke="#163875" stroke-width="13" stroke-linecap="round"/><circle cx="92" cy="26" r="13" fill="#f6f0e4" stroke="#163875" stroke-width="2.5"/><path d="M58 70 Q56 40 70 22" fill="none" stroke="#5fc1d6" stroke-width="3" stroke-linecap="round"/><path d="M70 22 l-9 3 M70 22 l1 9" stroke="#5fc1d6" stroke-width="3" stroke-linecap="round"/>`,
+  },
+  {
+    title: "Å se opp",
+    text: "Henge opp gardiner, hente noe fra et høyt skap, se på stjernehimmelen.",
+    canal: "Oftest bakre buegang",
+    svg: `<path d="M110 104 V54" stroke="#163875" stroke-width="13" stroke-linecap="round"/><circle cx="104" cy="34" r="13" fill="#f6f0e4" stroke="#163875" stroke-width="2.5"/><path d="M114 26 L122 19" stroke="#163875" stroke-width="2.5" stroke-linecap="round"/><rect x="132" y="8" width="54" height="8" rx="4" fill="#e5eeec"/><path d="M128 52 A30 30 0 0 0 120 12" fill="none" stroke="#5fc1d6" stroke-width="3" stroke-linecap="round"/><path d="M120 12 l1 9 M120 12 l8 3" stroke="#5fc1d6" stroke-width="3" stroke-linecap="round"/>`,
+  },
+  {
+    title: "Å bøye seg frem",
+    text: "Knyte skolissene, plukke opp noe fra gulvet, vaske gulv eller luke i hagen.",
+    canal: "Bakre eller øvre buegang",
+    svg: `<path d="M110 104 V70" stroke="#163875" stroke-width="13" stroke-linecap="round"/><path d="M110 70 L80 54" stroke="#163875" stroke-width="13" stroke-linecap="round"/><circle cx="66" cy="62" r="13" fill="#f6f0e4" stroke="#163875" stroke-width="2.5"/><rect x="40" y="96" width="34" height="8" rx="4" fill="#e5eeec"/><path d="M46 30 Q30 46 40 74" fill="none" stroke="#5fc1d6" stroke-width="3" stroke-linecap="round"/><path d="M40 74 l-1 -9 M40 74 l7 -6" stroke="#5fc1d6" stroke-width="3" stroke-linecap="round"/>`,
+  },
+  {
+    title: "Hos frisøren eller tannlegen",
+    text: "Når stolen vippes bakover og hodet legges ned i vasken eller nakkestøtten.",
+    canal: "Oftest bakre buegang",
+    svg: `<path d="M60 92 H160 M150 92 V104 M70 92 V104" stroke="#e5eeec" stroke-width="8" stroke-linecap="round"/><path d="M150 84 L92 70" stroke="#163875" stroke-width="13" stroke-linecap="round"/><circle cx="74" cy="72" r="13" fill="#f6f0e4" stroke="#163875" stroke-width="2.5"/><rect x="44" y="76" width="24" height="9" rx="4" fill="#e5eeec"/><path d="M84 40 Q64 40 54 54" fill="none" stroke="#5fc1d6" stroke-width="3" stroke-linecap="round"/><path d="M54 54 l1 -9 M54 54 l9 -2" stroke="#5fc1d6" stroke-width="3" stroke-linecap="round"/>`,
+  },
+];
+
+const questions = [
+  "Svimmelheten kommer når jeg endrer stilling med hodet: legger meg, snur meg i sengen, ser opp eller bøyer meg.",
+  "Hvert anfall varer kort, fra noen sekunder til under ett minutt.",
+  "Det kjennes som om rommet snurrer eller går rundt.",
+  "Det roer seg når jeg holder hodet i ro.",
+  "Mellom anfallene er jeg stort sett i form, kanskje litt ustø eller kvalm.",
+];
+
+const more = [
+  { title: "Kvalme og oppkast", text: "Særlig når den horisontale buegangen er rammet, eller når anfallene kommer tett. Noen kaster opp." },
+  { title: "Ustøhet og gyngefølelse", text: "En følelse av å gå på en båt etter anfallene, selv om du ikke snurrer. Kan vare dager." },
+  { title: "Tung eller tåkete i hodet", text: "Mange beskriver at de er slitne, ukonsentrerte eller ikke helt til stede i perioder med krystallsyke." },
+  { title: "Stiv nakke", text: "Når du unngår å bevege hodet for å slippe anfall, blir nakken fort stiv og øm. Det er en følge, ikke årsaken." },
+  { title: "Verst om morgenen", text: "Etter en natt i ro kan krystallene samle seg. De første bevegelsene når du står opp, er ofte de verste." },
+  { title: "Redsel for neste anfall", text: "Det er helt vanlig å bli engstelig og forsiktig. Usikkerheten blir ofte mindre straks du vet hva det er." },
+];
+
+const diffs = [
+  { kicker: "Denne siden", title: "Krystallsyke", me: true, dur: "Sekunder, under ett minutt per anfall", trig: "Bestemte stillinger med hodet", other: "Stort sett i form mellom anfallene" },
+  { kicker: "Vestibulær migrene", title: "Lengre episoder", dur: "Minutter til timer, noen ganger dager", trig: "Kan komme av seg selv. Også bevegelse, stress, søvnmangel, lys", other: "Ofte migrene i sykehistorien, lys- og lydømfintlighet", link: { href: "/blogg/krystallsyke-eller-vestibular-migrene/", label: "Slik skiller du dem" } },
+  { kicker: "Betennelse på balansenerven", title: "Vestibularisnevritt", dur: "Sammenhengende i dager, bedres gradvis over uker", trig: "Kommer plutselig, uten at du har gjort noe spesielt", other: "Konstant svimmelhet, kvalme og ustø gange, verre ved bevegelse" },
+  { kicker: "Ménières sykdom", title: "Anfall med ørepreg", dur: "Fra 20 minutter til flere timer", trig: "Kommer av seg selv, ikke av stilling", other: "Nedsatt hørsel, øresus og trykk i øret under anfallene" },
+  { kicker: "Blodtrykksfall", title: "Ør når du reiser deg", dur: "Sekunder", trig: "Å reise seg opp. Ikke å legge seg ned eller snu seg i sengen", other: "Svartner for øynene, ørhet heller enn snurring" },
+  { kicker: "PPPD", title: "Vedvarende ustøhet", dur: "De fleste dager, i måneder", trig: "Verre av å stå og gå, travle omgivelser, skjerm og butikker", other: "Gynging og ustøhet, sjelden snurring. Kan komme etter krystallsyke", link: { href: "/blogg/svimmel-i-butikker-eller-av-skjerm/", label: "Svimmel i butikker eller av skjerm?" } },
+];
+
+const next = [
+  { kicker: "Få det avklart", title: "Hvordan undersøkelsen foregår", text: "Posisjonstester og øyebevegelser viser om det er krystallsyke, i hvilket øre og hvilken buegang.", go: "Les om undersøkelsen →", href: "/svimmelhet/krystallsyke/undersokelse/" },
+  { kicker: "Forstå det", title: "Hva skjer i øret?", text: "Se hvordan små krystaller havner på feil sted og lurer balanseorganet.", go: "Se modellen →", href: "/svimmelhet/krystallsyke/hva-skjer-i-oret/" },
+  { kicker: "Hjelp deg selv", title: "Krystallsykehjelpen hjemme", text: "Trygg veiledning steg for steg, enten du har fått påvist krystallsyke eller er usikker.", go: "Kom i gang →", href: "/hjemme/" },
+];
+
+const faq = [
+  { q: "Kan krystallsyke gi svimmelhet hele dagen?", a: "Selve snurringen varer kort. Men kvalmen, ustøheten og ørheten etter anfallene kan henge i, og når anfallene kommer tett, kan det føles som om du er svimmel hele tiden. Er du like svimmel når du sitter helt i ro, bør det vurderes om det er noe annet." },
+  { q: "Hvorfor kom det plutselig, uten grunn?", a: "Ofte finnes det ingen tydelig årsak. Krystallene løsner av seg selv, og risikoen øker med alderen. Hodeskader, lange perioder i sengeleie og andre sykdommer i øret kan også utløse det." },
+  { q: "Kan begge ørene være rammet?", a: "Det skjer, men det er sjeldnere. Det er mest vanlig etter hodeskader. En undersøkelse viser hvilke sider og buegange som er involvert." },
+  { q: "Kan jeg kjøre bil?", a: "Ikke mens du har anfall. Å snu hodet for å se bakover eller i sidespeilet kan utløse svimmelhet. Vent til du har vært uten anfall en stund, og spør behandleren din om du er usikker." },
+  { q: "Går det over av seg selv?", a: "Ofte gjør det det, men det kan ta uker. Med riktig manøver blir de fleste bedre langt raskere, gjerne etter én til tre behandlinger." },
+];
+
+const sources = [
+  { label: "von Brevern M, Bertholon P, Brandt T, et al. Benign paroxysmal positional vertigo: Diagnostic criteria. J Vestib Res. 2015;25(3-4):105–117.", url: "https://pubmed.ncbi.nlm.nih.gov/26756126/" },
+  { label: "Bhattacharyya N, Gubbels SP, Schwartz SR, et al. Clinical Practice Guideline: Benign Paroxysmal Positional Vertigo (Update). Otolaryngol Head Neck Surg. 2017;156(3_suppl):S1–S47.", url: "https://pubmed.ncbi.nlm.nih.gov/28248609/" },
+  { label: "von Brevern M, Radtke A, Lezius F, et al. Epidemiology of benign paroxysmal positional vertigo: a population based study. J Neurol Neurosurg Psychiatry. 2007;78(7):710–715.", url: "https://pubmed.ncbi.nlm.nih.gov/17135456/" },
+];
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Hjem", item: `${base}/` },
+    { "@type": "ListItem", position: 2, name: "Svimmelhet", item: `${base}/svimmelhet/` },
+    { "@type": "ListItem", position: 3, name: "Krystallsyke", item: `${base}/svimmelhet/krystallsyke/` },
+    { "@type": "ListItem", position: 4, name: "Symptomer", item: url },
+  ],
+};
+const faqLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faq.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+};
+const pageLd = {
+  "@context": "https://schema.org",
+  "@type": "MedicalWebPage",
+  name: "Symptomer på krystallsyke: kjenner du deg igjen?",
+  url,
+  inLanguage: "nb-NO",
+  about: { "@type": "MedicalCondition", name: "Benign paroksysmal posisjonsvertigo (krystallsyke)", alternateName: ["BPPV", "Krystallsyke"] },
+  author: { "@type": "Person", name: "Marie Hermansen", jobTitle: "Kiropraktor" },
+};
+---
+
+<Layout
+  title="Symptomer på krystallsyke: kjenner du deg igjen? | Krystallsykehjelpen"
+  description="Rommet snurrer når du snur deg i sengen eller ser opp? Se hvordan et typisk anfall av krystallsyke (BPPV) forløper, hva som utløser det, og hva som tyder på noe annet."
+  activePath="/svimmelhet/krystallsyke/symptomer/"
+  image={heroImage}
+>
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbLd)} />
+  <script type="application/ld+json" set:html={JSON.stringify(faqLd)} />
+  <script type="application/ld+json" set:html={JSON.stringify(pageLd)} />
+
+  <div class="sym">
+
+<section class="hero">
+  <div class="c">
+    <nav class="crumbs"><a href="/">Forside</a> / <a href="/svimmelhet/">Svimmelhet</a> / <a href="/svimmelhet/krystallsyke/">Krystallsyke</a> / Symptomer</nav>
+    <div class="herogrid">
+      <div>
+        <span class="eyebrow">Krystallsyke · Symptomer</span>
+        <h1>Kjenner du deg igjen? <em>Slik kjennes krystallsyke</em></h1>
+        <p class="lead">Rommet snurrer når du snur deg i sengen, legger deg ned eller ser opp. Så roer det seg igjen. Her ser du hvordan et typisk anfall forløper, hva som utløser det, og hva som tyder på at det kan være noe annet.</p>
+        <div class="byline">
+          <img src="/marie-hermansen-240.webp" alt="" width="60" height="60" />
+          <span>Faglig skrevet av <a href="/mott-marie/"><strong>Marie Hermansen</strong></a>, kiropraktor<br />Særlig kompetanse innen krystallsyke og svimmelhet</span>
+        </div>
+      </div>
+      <div class="heroimg"><img src={heroImage} alt="" width="1100" height="733" /></div>
+    </div>
+    <div class="facts">
+      <div><b>Sekunder</b><strong>Hvert anfall</strong><span>Som regel under ett minutt</span></div>
+      <div><b>2–3 av 100</b><strong>Får det i løpet av livet</strong><span>Den vanligste årsaken til svimmelhet fra øret</span></div>
+      <div><b>1–3</b><strong>Behandlinger</strong><span>er nok for de fleste med akutt krystallsyke</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="afterhero">
+  <div class="c narrow">
+    <div class="summary">
+      <span class="eyebrow">Kort fortalt</span>
+      <p>Krystallsyke gir korte anfall av snurrende svimmelhet når hodet flyttes i bestemte retninger. Anfallet starter noen sekunder etter bevegelsen, topper seg og gir seg som regel innen ett minutt. Mange kjenner seg kvalme eller ustø en stund etterpå. Symptomene gir en god pekepinn, men det er en undersøkelse av øyebevegelsene som avgjør om det er krystallsyke, og i hvilken buegang.</p>
+    </div>
+    <nav class="jump" aria-label="Hopp til">
+      <a href="#anfall">Et typisk anfall</a><a href="#utlosere">Hva utløser det</a><a href="#selvsjekk">Kjenner du deg igjen?</a><a href="#annet">Noe annet?</a><a href="#faresignaler">Faresignaler</a>
+    </nav>
+  </div>
+</section>
+
+<section class="white anchor" id="anfall">
+  <div class="c">
+    <div class="two">
+      <div>
+        <span class="eyebrow">Et typisk anfall</span>
+        <h2>Kort, kraftig, og så over</h2>
+        <p class="pull">Det typiske er ikke hvor sterk svimmelheten er, men mønsteret: samme bevegelse, samme reaksjon, og ro når hodet er i ro.</p>
+      </div>
+      <div>
+        <p>Mange beskriver det som å sitte i en karusell som plutselig settes i gang. Snurringen kommer ikke i samme øyeblikk som du beveger deg, men noen sekunder etter. Den bygger seg opp, når en topp og avtar av seg selv, selv om du blir liggende i samme stilling.</p>
+        <p>Etterpå kan du kjenne deg kvalm, ør eller ustø. Den følelsen kan henge igjen i timer, og noen tror derfor at de er svimle hele tiden. Det er nyttig å skille mellom selve anfallet og ettervirkningen når du beskriver plagene for den som undersøker deg.</p>
+      </div>
+    </div>
+
+    <div class="curvecard" id="sym-curve">
+      <svg class="curve" viewBox="0 0 900 300" role="img" aria-label="Kurve over et typisk anfall: rolig i noen sekunder etter bevegelsen, så en kraftig topp som avtar innen ett minutt, og en lav ettervirkning etterpå">
+        <defs>
+          <linearGradient id="sym-fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5fc1d6" stop-opacity=".32" /><stop offset="1" stop-color="#5fc1d6" stop-opacity="0" /></linearGradient>
+        </defs>
+        <line x1="40" y1="240" x2="870" y2="240" stroke="#dbe5e3" stroke-width="2" />
+        <line x1="40" y1="40" x2="40" y2="240" stroke="#dbe5e3" stroke-width="2" />
+        <text class="ax" x="40" y="268">BEVEGELSE</text>
+        <text class="ax" x="870" y="268" text-anchor="end">TID →</text>
+        <line x1="70" y1="60" x2="70" y2="240" stroke="#1e4c96" stroke-width="1.5" stroke-dasharray="4 5" />
+        <path d="M70 238 L140 238 C175 238 185 70 230 62 C285 54 320 150 380 205 C420 235 450 220 520 222 C640 225 760 232 860 236 L860 240 L70 240 Z" fill="url(#sym-fill)" />
+        <path class="line" d="M70 238 L140 238 C175 238 185 70 230 62 C285 54 320 150 380 205 C420 235 450 220 520 222 C640 225 760 232 860 236" fill="none" stroke="#163875" stroke-width="3.5" stroke-linecap="round" />
+        <circle cx="105" cy="238" r="6" fill="#fff" stroke="#256478" stroke-width="2.5" />
+        <circle cx="232" cy="62" r="6" fill="#fff" stroke="#256478" stroke-width="2.5" />
+        <circle cx="380" cy="205" r="6" fill="#fff" stroke="#256478" stroke-width="2.5" />
+        <circle cx="640" cy="225" r="6" fill="#fff" stroke="#256478" stroke-width="2.5" />
+        <text class="lbl" x="105" y="212" text-anchor="middle">1</text>
+        <text class="lbl" x="232" y="40" text-anchor="middle">2</text>
+        <text class="lbl" x="398" y="186">3</text>
+        <text class="lbl" x="640" y="205" text-anchor="middle">4</text>
+        <text class="sm" x="262" y="80">Rommet snurrer</text>
+        <text class="sm" x="410" y="150">Avtar av seg selv</text>
+        <text class="sm" x="560" y="196">Kvalm, ør, ustø</text>
+        <line x1="70" y1="248" x2="400" y2="248" stroke="#256478" stroke-width="2" />
+        <text class="sm keep" x="235" y="285" text-anchor="middle">under ett minutt</text>
+        <line x1="420" y1="248" x2="860" y2="248" stroke="#5fc1d6" stroke-width="2" stroke-dasharray="6 6" />
+        <text class="sm keep" x="640" y="285" text-anchor="middle">minutter til timer</text>
+      </svg>
+      <ol class="phases">
+        {phases.map((p, i) => (
+          <li><strong><i>{i + 1}</i>{p.title}</strong><span>{p.text}</span></li>
+        ))}
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section class="anchor" id="utlosere">
+  <div class="c">
+    <span class="eyebrow">Hva utløser det</span>
+    <h2>Seks situasjoner mange kjenner igjen</h2>
+    <p class="narrow">Det er ikke bevegelsen i seg selv, men hodets stilling i forhold til tyngdekraften som setter i gang anfallet. Derfor kommer det ofte i sengen, og ved å se opp eller bøye seg.</p>
+    <div class="sitgrid">
+      {situations.map((s) => (
+        <div class="sit">
+          <svg viewBox="0 0 220 110" aria-hidden="true" set:html={s.svg} />
+          <h3>{s.title}</h3>
+          <p>{s.text}</p>
+          <span class="k">{s.canal}</span>
+        </div>
+      ))}
+    </div>
+    <p class="after"><a class="tlink" href="/svimmelhet/krystallsyke/buegangene/">Se hvorfor buegangen avgjør hva som utløser svimmelheten</a></p>
+  </div>
+</section>
+
+<section class="white anchor" id="selvsjekk">
+  <div class="c">
+    <span class="eyebrow">Selvsjekk</span>
+    <h2>Kjenner du deg igjen?</h2>
+    <p class="narrow">Svar så godt du kan. Dette er ikke en diagnose, men kan hjelpe deg å sortere det du kjenner på før du snakker med en behandler. Usikker? Velg «Vet ikke».</p>
+    <div class="check" id="sym-check">
+      {questions.map((q, i) => (
+        <div class="q" data-q={String(i + 1)}>
+          <p>{q}</p>
+          <div class="seg" role="group" aria-label="Svar">
+            <button type="button" data-v="ja" aria-pressed="false">Ja</button>
+            <button type="button" data-v="nei" aria-pressed="false">Nei</button>
+            <button type="button" data-v="vet" aria-pressed="false">Vet ikke</button>
+          </div>
+        </div>
+      ))}
+      <div class="q alarm" data-q="6">
+        <p>Jeg har i tillegg dobbeltsyn, talevansker, nummenhet, lammelser, kraftig hodepine eller store problemer med å gå.</p>
+        <div class="seg" role="group" aria-label="Svar">
+          <button type="button" data-v="ja" aria-pressed="false">Ja</button>
+          <button type="button" data-v="nei" aria-pressed="false">Nei</button>
+          <button type="button" data-v="vet" aria-pressed="false">Vet ikke</button>
+        </div>
+      </div>
+      <div class="result" id="sym-result" aria-live="polite">
+        <span class="lab">Ditt mønster</span>
+        <p>Svar på spørsmålene over, så ser du hva mønsteret ditt peker mot.</p>
+      </div>
+      <p class="small">Svarene lagres ikke og sendes ikke noe sted.</p>
+    </div>
+  </div>
+</section>
+
+<section class="beige">
+  <div class="c">
+    <span class="eyebrow">Mer enn snurring</span>
+    <h2>Plager mange ikke kobler til krystallsyke</h2>
+    <p class="narrow">Snurringen er det tydeligste tegnet, men det er sjelden det eneste. Disse plagene er vanlige, og de gir seg som regel når krystallene er behandlet.</p>
+    <div class="more">
+      {more.map((m) => (
+        <div><h3>{m.title}</h3><p>{m.text}</p></div>
+      ))}
+    </div>
+    <p class="after">Hos eldre er snurringen ofte mindre tydelig, og ustøhet eller fall kan være det viktigste tegnet. <a class="tlink" href="/blogg/krystallsyke-eldre-symptomer/">Les om krystallsyke hos eldre</a></p>
+  </div>
+</section>
+
+<section class="anchor" id="annet">
+  <div class="c">
+    <span class="eyebrow">Krystallsyke eller noe annet?</span>
+    <h2>Varighet og utløser gir de beste sporene</h2>
+    <p class="narrow">Flere tilstander kan gi svimmelhet ved bevegelse. Disse er de vanligste å forveksle med krystallsyke.</p>
+    <div class="diffs">
+      {diffs.map((d) => (
+        <div class={d.me ? "dcard me" : "dcard"}>
+          <span class="k">{d.kicker}</span>
+          <h3>{d.title}</h3>
+          <dl>
+            <div><dt>Varighet</dt><dd>{d.dur}</dd></div>
+            <div><dt>Utløses av</dt><dd>{d.trig}</dd></div>
+            <div><dt>Ellers</dt><dd>{d.other}</dd></div>
+          </dl>
+          {d.link && <a class="tlink" href={d.link.href}>{d.link.label}</a>}
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<section class="white anchor" id="faresignaler">
+  <div class="c narrow">
+    <span class="eyebrow">Viktig å vite</span>
+    <h2>Når bør du søke hjelp samme dag?</h2>
+    <p>Krystallsyke er ubehagelig, men ufarlig. Noen symptomer skal likevel alltid vurderes av lege.</p>
+    <div class="warn">
+      <div class="ic" aria-hidden="true">!</div>
+      <div>
+        <h3>Ring 113 eller kontakt legevakt (116 117) ved</h3>
+        <ul>
+          <li>Plutselig, kraftig hodepine som er annerledes enn du har hatt før</li>
+          <li>Talevansker, dobbeltsyn, synsutfall, nummenhet eller lammelser i ansikt, arm eller bein</li>
+          <li>Store problemer med å stå eller gå</li>
+          <li>Svimmelhet som varer sammenhengende i timer, uten at du beveger hodet</li>
+          <li>Besvimelse, eller svimmelhet etter en hodeskade</li>
+        </ul>
+        <p>Er du usikker, er det alltid bedre å ta kontakt enn å vente.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="c">
+    <span class="eyebrow">Hva nå?</span>
+    <h2>Kjenner du deg igjen? Dette er neste steg</h2>
+    <div class="next">
+      {next.map((n) => (
+        <a href={n.href}><span class="k">{n.kicker}</span><h3>{n.title}</h3><p>{n.text}</p><span class="go">{n.go}</span></a>
+      ))}
+    </div>
+  </div>
+</section>
+
+<section class="white">
+  <div class="c narrow">
+    <span class="eyebrow">Spørsmål og svar</span>
+    <h2>Det mange lurer på</h2>
+    <div class="faq">
+      {faq.map((f, i) => (
+        <details open={i === 0}><summary>{f.q}</summary><p>{f.a}</p></details>
+      ))}
+    </div>
+    <div class="src">
+      <h3>Faglige kilder</h3>
+      <ol>
+        {sources.map((s) => <li><a href={s.url} rel="noopener" target="_blank">{s.label}</a></li>)}
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section class="navyS">
+  <div class="c">
+    <span class="eyebrow">Få hjelp</span>
+    <h2>Høres dette kjent ut?</h2>
+    <p>En undersøkelse avklarer om det er krystallsyke, og de fleste kan behandles allerede første time.</p>
+    <a class="btn onnavy" href="/fa-hjelp/">Få hjelp →</a>
+  </div>
+</section>
+
+  </div>
+</Layout>
+
+<script>
+(function () {
+  // Tegn kurven når den kommer til syne
+  const card = document.getElementById("sym-curve");
+  if (card) {
+    if ("IntersectionObserver" in window) {
+      const io = new IntersectionObserver((e) => {
+        if (e[0].isIntersecting) { card.classList.add("on"); io.disconnect(); }
+      }, { threshold: 0.35 });
+      io.observe(card);
+    } else card.classList.add("on");
+  }
+
+  // Selvsjekk. Logikk (godkjent av Marie 2026-11-15):
+  // spm. 6 = ja → alltid faresignal-svar. Spm. 1 og 2 = ja og minst 4 av 5 ja
+  // → «ligner typisk krystallsyke». Minst 2 «vet ikke» → tips om å observere.
+  // Anbefaler aldri side eller manøver.
+  const check = document.getElementById("sym-check");
+  const R = document.getElementById("sym-result");
+  if (!check || !R) return;
+  const ans: Record<string, string> = {};
+  const set = (cls: string, h: string | null, p: string, acts = "") => {
+    R.className = "result" + (cls ? " " + cls : "");
+    R.innerHTML =
+      '<span class="lab">' + (cls === "alarm" ? "Søk hjelp i dag" : "Ditt mønster") + "</span>" +
+      (h ? "<h3>" + h + "</h3>" : "") + "<p>" + p + "</p>" +
+      (acts ? '<div class="acts">' + acts + "</div>" : "");
+  };
+  const help = '<a class="btn" href="/fa-hjelp/">Få hjelp</a>';
+  const render = () => {
+    if (ans["6"] === "ja") {
+      set("alarm", "Dette bør vurderes av lege samme dag",
+        "Slike symptomer i tillegg til svimmelhet kan ha en annen årsak enn krystallsyke. Ring 113 ved plutselige symptomer, ellers legevakt på 116 117.",
+        '<a class="btn" href="#faresignaler">Se faresignalene</a>');
+      return;
+    }
+    const keys = ["1", "2", "3", "4", "5"];
+    const answered = keys.filter((k) => ans[k]).length;
+    if (answered < 5) { set("", null, "Du har svart på " + answered + " av 5. Svar på resten, så ser du hva mønsteret peker mot."); return; }
+    const ja = keys.filter((k) => ans[k] === "ja").length;
+    const vet = keys.filter((k) => ans[k] === "vet").length;
+    if (ans["1"] === "ja" && ans["2"] === "ja" && ja >= 4) {
+      set("", "Det du beskriver ligner typisk krystallsyke",
+        "Det er et godt tegn, fordi krystallsyke som regel kan behandles effektivt. En undersøkelse avklarer hvilket øre og hvilken buegang det gjelder, slik at du får riktig manøver.",
+        help + '<a class="btn ghost" href="/hjemme/">Krystallsykehjelpen hjemme</a>');
+      return;
+    }
+    if (vet >= 2) {
+      set("", "Vanskelig å si ennå",
+        "Legg merke til hva som skjer neste gang: Hvilken bevegelse utløste det, og omtrent hvor mange sekunder varte snurringen? Skriv det gjerne ned. Det er svært nyttig for den som skal undersøke deg.",
+        '<a class="btn ghost" href="#utlosere">Se typiske utløsere</a>');
+      return;
+    }
+    if (ans["1"] === "ja") {
+      set("", "Noe ligner, noe passer mindre godt",
+        "Svimmelhet ved stillingsendring kan være krystallsyke selv om ikke alt stemmer, men det kan også ha andre årsaker. Det er verdt å få det undersøkt.",
+        help + '<a class="btn ghost" href="#annet">Andre årsaker</a>');
+      return;
+    }
+    set("", "Mønsteret passer mindre godt med typisk krystallsyke",
+      "Svimmelhet kan ha mange årsaker. Se oversikten over andre tilstander, og ta kontakt med lege eller behandler hvis plagene fortsetter.",
+      '<a class="btn ghost" href="#annet">Andre årsaker</a>' + help);
+  };
+  check.querySelectorAll<HTMLElement>(".q").forEach((q) => {
+    const n = q.dataset.q || "";
+    const btns = q.querySelectorAll<HTMLButtonElement>("button");
+    btns.forEach((b) => b.addEventListener("click", () => {
+      btns.forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+      ans[n] = b.dataset.v || "";
+      render();
+    }));
+  });
+})();
+</script>
+
+<style is:global>
+.sym{--white:#fff;--ivory:#f6f0e4;--muted:rgba(22,56,117,.62);--shadow:0 8px 24px rgba(22,56,117,.07);color:var(--ink);background:var(--sky)}
+.sym .c{max-width:1120px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+.sym .narrow{max-width:720px}
+.sym h1{font-size:clamp(2rem,4.6vw,3.1rem);line-height:1.08;text-wrap:balance}
+.sym h1 em{font-style:italic;font-weight:500;color:var(--accent)}
+.sym h2{font-size:clamp(1.5rem,3vw,2.1rem);line-height:1.18;margin-bottom:14px;text-wrap:balance}
+.sym h3{font-size:19px;line-height:1.3;margin:0}
+.sym p{font-size:1.08rem;line-height:1.65;color:var(--ink-soft);margin:0}
+.sym p+p{margin-top:14px}
+.sym b,.sym strong{color:var(--navy)}
+.sym .eyebrow{font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:14px;display:block}
+.sym section{padding:76px 0}
+@media(max-width:700px){.sym section{padding:52px 0}}
+.sym .anchor{scroll-margin-top:72px}
+.sym .white{background:var(--white)}
+.sym .beige{background:var(--beige)}
+.sym .btn{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:15px;padding:12px 20px;border-radius:999px;border:0;background:var(--navy-2);color:var(--white);text-decoration:none}
+.sym .btn.ghost{background:transparent;color:var(--navy);border:1.5px solid var(--navy)}
+.sym .tlink{font-weight:700;font-size:15px;color:var(--navy);border-bottom:2px solid var(--turquoise);padding-bottom:2px;text-decoration:none}
+.sym .after{margin-top:22px}
+.sym button:focus-visible,.sym a:focus-visible,.sym summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+.sym .hero{background:linear-gradient(var(--beige),var(--sky));padding:48px 0 0}
+.sym .crumbs{font-size:13.5px;color:var(--muted);margin-bottom:24px}
+.sym .crumbs a{color:var(--navy-2);font-weight:600;text-decoration:none}
+.sym .herogrid{display:grid;grid-template-columns:1.1fr .9fr;gap:44px;align-items:center}
+@media(max-width:860px){.sym .herogrid{grid-template-columns:1fr;gap:26px}.sym .heroimg{order:-1}}
+.sym .herogrid>*{min-width:0}
+.sym .hero .lead{margin:18px 0 0;max-width:600px}
+.sym .byline{display:flex;align-items:center;gap:14px;margin-top:22px}
+.sym .byline img{width:60px;height:60px;border-radius:50%;object-fit:cover;flex:none}
+.sym .byline span{font-size:14.5px;color:var(--ink-soft);line-height:1.45}
+.sym .byline a{text-decoration:none}
+.sym .heroimg{border-radius:26px;overflow:hidden;aspect-ratio:3/2;background:var(--ivory);box-shadow:var(--shadow)}
+.sym .heroimg img{width:100%;height:100%;object-fit:cover;display:block}
+.sym .facts{display:grid;grid-template-columns:repeat(3,1fr);background:var(--white);border-radius:20px;box-shadow:var(--shadow);margin-top:40px;transform:translateY(36px)}
+.sym .facts div{padding:22px 24px;border-left:1px solid var(--line);min-width:0}
+.sym .facts div:first-child{border-left:0}
+.sym .facts b{display:block;font-family:var(--font-display);font-size:28px;line-height:1.1;font-variant-numeric:tabular-nums}
+.sym .facts strong{display:block;color:var(--navy);font-size:15.5px;margin:2px 0}
+.sym .facts span{font-size:14px;color:var(--ink-soft)}
+@media(max-width:700px){.sym .facts{grid-template-columns:1fr}.sym .facts div{border-left:0;border-top:1px solid var(--line)}.sym .facts div:first-child{border-top:0}}
+.sym .afterhero{padding-top:108px}
+
+.sym .summary{background:var(--white);border-radius:22px;box-shadow:var(--shadow);padding:24px 26px;border-left:4px solid var(--turquoise)}
+.sym .summary .eyebrow{margin-bottom:8px}
+.sym .summary p{font-size:17px}
+.sym .jump{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.sym .jump a{font-size:14.5px;font-weight:700;color:var(--navy);background:var(--white);box-shadow:var(--shadow);border-radius:999px;padding:9px 16px;text-decoration:none}
+
+.sym .two{display:grid;grid-template-columns:1fr 1fr;gap:56px}
+@media(max-width:860px){.sym .two{grid-template-columns:1fr;gap:18px}}
+.sym .two>*{min-width:0}
+.sym .pull{font-family:var(--font-display);font-size:23px;line-height:1.4;color:var(--navy);border-left:3px solid var(--turquoise);padding-left:20px;margin-top:16px}
+
+.sym .curvecard{background:var(--white);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow);padding:24px 22px 18px;margin-top:30px}
+.sym .curve{width:100%;height:auto;display:block}
+.sym .curve .lbl{font-family:var(--font-body);font-size:13px;font-weight:700;fill:var(--navy)}
+.sym .curve .sm{font-family:var(--font-body);font-size:12px;fill:var(--ink-soft)}
+.sym .curve .ax{font-family:var(--font-body);font-size:11px;letter-spacing:.08em;fill:var(--muted);font-weight:700}
+.sym .curve .line{stroke-dasharray:1400;stroke-dashoffset:1400;transition:stroke-dashoffset 2.6s cubic-bezier(.4,.1,.2,1)}
+.sym .curvecard.on .line{stroke-dashoffset:0}
+@media(max-width:640px){.sym .curve .sm:not(.keep){display:none}.sym .curve .sm.keep{font-size:20px}}
+.sym .phases{list-style:none;padding:16px 0 0;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:16px 0 0;border-top:1px solid var(--line)}
+@media(max-width:860px){.sym .phases{grid-template-columns:1fr 1fr}}
+@media(max-width:420px){.sym .phases{grid-template-columns:1fr}}
+.sym .phases li{min-width:0}
+.sym .phases strong{display:block;font-size:15px;margin-bottom:3px}
+.sym .phases span{font-size:14.5px;line-height:1.5;color:var(--ink-soft)}
+.sym .phases i{font-style:normal;display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--sky);color:var(--navy-2);font-size:12px;font-weight:700;margin-right:6px}
+
+.sym .sitgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:28px}
+@media(max-width:860px){.sym .sitgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.sym .sitgrid{grid-template-columns:1fr}}
+.sym .sit{background:var(--white);border-radius:22px;box-shadow:var(--shadow);padding:18px 20px 20px}
+.sym .sit svg{width:100%;height:110px;display:block;background:var(--sky);border-radius:14px;margin-bottom:14px}
+.sym .sit h3{font-size:18px;margin-bottom:4px}
+.sym .sit p{font-size:15.5px;line-height:1.5}
+.sym .sit .k,.sym .dcard .k,.sym .next .k{display:inline-block;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--accent)}
+.sym .sit .k{margin-top:10px}
+
+.sym .check{background:var(--white);border:1px solid var(--line);border-radius:26px;box-shadow:var(--shadow);padding:10px 26px 26px;margin-top:28px;max-width:820px}
+@media(max-width:560px){.sym .check{padding:6px 18px 20px}}
+.sym .q{display:grid;grid-template-columns:1fr auto;gap:12px 20px;align-items:center;padding:16px 0;border-bottom:1px solid var(--line)}
+.sym .q p{font-size:16.5px;line-height:1.5;color:var(--ink)}
+.sym .q.alarm p{color:var(--navy-2);font-weight:600}
+@media(max-width:620px){.sym .q{grid-template-columns:1fr}}
+.sym .seg{display:inline-flex;background:var(--sky);border-radius:999px;padding:3px;gap:3px;justify-self:start}
+.sym .seg button{font-family:inherit;font-size:14px;font-weight:700;color:var(--navy);background:none;border:0;border-radius:999px;padding:8px 14px;cursor:pointer;min-width:52px}
+.sym .seg button[aria-pressed="true"]{background:var(--navy-2);color:var(--white)}
+.sym .result{margin-top:20px;background:var(--sky);border-radius:18px;padding:18px 20px;min-height:92px}
+.sym .result .lab{display:block;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--accent);margin-bottom:4px}
+.sym .result h3{font-size:20px;margin-bottom:6px}
+.sym .result p{font-size:16px}
+.sym .result .acts{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.sym .result.alarm{background:var(--white);border:1.5px solid var(--navy-2)}
+.sym .small{font-size:14px;color:var(--muted);margin-top:14px}
+
+.sym .more{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:26px}
+@media(max-width:760px){.sym .more{grid-template-columns:1fr}}
+.sym .more div{background:var(--white);border-radius:20px;padding:20px 22px;box-shadow:var(--shadow)}
+.sym .more h3{font-size:18px;margin-bottom:6px;display:flex;gap:10px;align-items:baseline}
+.sym .more h3::before{content:"";flex:none;width:9px;height:9px;border-radius:50%;background:var(--turquoise);transform:translateY(-2px)}
+.sym .more p{font-size:15.5px;line-height:1.55}
+
+.sym .diffs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:28px}
+@media(max-width:960px){.sym .diffs{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.sym .diffs{grid-template-columns:1fr}}
+.sym .dcard{background:var(--white);border-radius:22px;box-shadow:var(--shadow);padding:20px 22px;border-top:4px solid var(--line)}
+.sym .dcard.me{border-top-color:var(--turquoise)}
+.sym .dcard h3{font-size:19px;margin:4px 0 10px}
+.sym .dcard dl{display:grid;gap:9px;margin:0}
+.sym .dcard dt{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--muted)}
+.sym .dcard dd{font-size:15px;line-height:1.5;color:var(--ink-soft);margin:1px 0 0}
+.sym .dcard .tlink{display:inline-block;margin-top:12px;font-size:14.5px}
+
+.sym .warn{background:var(--white);border:1.5px solid var(--navy-2);border-radius:22px;padding:24px 26px;display:flex;gap:18px;margin-top:28px}
+.sym .warn .ic{flex:none;width:38px;height:38px;border-radius:50%;border:1.5px solid var(--navy-2);color:var(--navy-2);display:grid;place-items:center;font-weight:700;font-size:19px;font-family:var(--font-display)}
+.sym .warn h3{margin-bottom:8px}
+.sym .warn p{font-size:16px}
+.sym .warn ul{list-style:none;display:grid;gap:6px;margin:10px 0 12px;padding:0}
+.sym .warn li{position:relative;padding-left:20px;font-size:16px;line-height:1.5;color:var(--ink-soft)}
+.sym .warn li::before{content:"";position:absolute;left:0;top:8px;width:8px;height:8px;border-radius:50%;background:var(--navy-2)}
+@media(max-width:520px){.sym .warn{flex-direction:column;gap:12px;padding:20px}}
+
+.sym .next{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:26px}
+@media(max-width:860px){.sym .next{grid-template-columns:1fr}}
+.sym .next a{background:var(--white);border-radius:22px;box-shadow:var(--shadow);padding:22px;display:block;text-decoration:none;transition:transform .2s}
+.sym .next a:hover{transform:translateY(-2px)}
+.sym .next h3{font-size:19px;margin:6px 0}
+.sym .next p{font-size:15.5px;line-height:1.5}
+.sym .next .go{display:inline-block;margin-top:12px;font-weight:700;color:var(--navy);font-size:14.5px}
+
+.sym .faq{margin-top:20px;border-top:1px solid var(--line)}
+.sym .faq details{border-bottom:1px solid var(--line)}
+.sym .faq summary{list-style:none;cursor:pointer;padding:19px 40px 19px 0;font-family:var(--font-display);font-weight:500;font-size:18px;color:var(--navy);position:relative}
+.sym .faq summary::-webkit-details-marker{display:none}
+.sym .faq summary::after{content:"+";position:absolute;right:6px;top:14px;font-size:24px;color:var(--accent);font-weight:400}
+.sym .faq details[open] summary::after{content:"–"}
+.sym .faq details p{font-size:16.5px;padding-bottom:20px}
+.sym .src{margin-top:34px}
+.sym .src h3{font-size:16px;margin-bottom:8px}
+.sym .src ol{margin:0 0 0 18px;padding:0;display:grid;gap:6px}
+.sym .src li{font-size:14px;line-height:1.5;color:var(--ink-soft)}
+.sym .src a{color:inherit;text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
+.sym .navyS{background:var(--navy);text-align:center}
+.sym .navyS h2{color:var(--white)}
+.sym .navyS p{color:rgba(255,255,255,.78);max-width:600px;margin:0 auto 24px}
+.sym .navyS .eyebrow{color:var(--turquoise)}
+.sym .btn.onnavy{background:var(--white);color:var(--navy)}
+@media (prefers-reduced-motion:reduce){.sym .curve .line{transition:none;stroke-dashoffset:0}.sym .next a{transition:none}}
+</style>
