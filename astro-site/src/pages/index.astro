@@ -59,18 +59,24 @@ const journeyCards = [
   <!-- 1. Hero – logo sentrert, minimalistisk -->
   <section class="hero">
     <div class="container hero-inner">
-      <picture class="hero-art">
-        <source srcset="/hero-indre-ore.webp" type="image/webp" />
+      <!-- Illustrasjonen er delt i tre lag (bokeh, prikkring, labyrint) som
+           settes sammen til nøyaktig samme bilde som før. Scriptet nederst i
+           filen lar ringen gå sakte rundt og bremse opp når man scroller
+           («verden roer seg»). Med «reduser bevegelse» står alt stille. -->
+      <div class="hero-art" id="hero-art">
+        <img src="/hero-indre-ore-bokeh.webp" alt="" width="900" height="881" loading="eager" class="hero-layer hero-layer-bokeh" data-layer="bokeh" />
+        <img src="/hero-indre-ore-ring.webp" alt="" width="900" height="881" loading="eager" class="hero-layer hero-layer-ring" data-layer="ring" />
         <img
-          src="/hero-indre-ore.png"
+          src="/hero-indre-ore-labyrint.webp"
           alt="Illustrasjon av det indre øret med buegangene og sneglehuset"
           width="900"
           height="881"
           loading="eager"
           fetchpriority="high"
-          class="hero-illustration"
+          class="hero-layer hero-layer-lab"
+          data-layer="lab"
         />
-      </picture>
+      </div>
       <div class="hero-text">
         <span class="eyebrow">Krystallsyke og svimmelhet</span>
         <h1>Trygg kunnskap når verden <em>plutselig snurrer</em></h1>
@@ -197,6 +203,81 @@ const journeyCards = [
 
 </Layout>
 
+
+<script>
+  // «Verden roer seg»: prikkringen går sakte rundt (ca. én runde på 50 s),
+  // bokeh-laget driver litt og labyrinten vugger svakt. Jo lenger ned man
+  // scroller, jo mer bremser alt opp – helt stille før illustrasjonen er ute
+  // av skjermen. Respekterer «reduser bevegelse» (da står alt stille).
+  const art = document.getElementById("hero-art");
+  const ring = art?.querySelector<HTMLElement>('[data-layer="ring"]');
+  const bokeh = art?.querySelector<HTMLElement>('[data-layer="bokeh"]');
+  const lab = art?.querySelector<HTMLElement>('[data-layer="lab"]');
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  if (art && ring && bokeh && lab) {
+    const OMEGA0 = 7; // grader per sekund i ro-posisjon
+    let angle = 0;
+    let last = performance.now();
+    let visible = true;
+    let raf = 0;
+
+    // Fremdrift 0→1: ferdig «roet ned» når 60 % av illustrasjonen er scrollet forbi toppen.
+    const progress = () => {
+      const end = art.offsetTop + art.offsetHeight * 0.6;
+      return Math.min(1, Math.max(0, window.scrollY / end));
+    };
+
+    const frame = (now: number) => {
+      const dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      const p = progress();
+      const calm = 1 - Math.pow(1 - p, 2);
+      const live = 1 - calm;
+      const t = now / 1000;
+
+      angle = (angle + OMEGA0 * live * live * dt) % 360;
+      ring.style.transform = `rotate(${angle.toFixed(3)}deg)`;
+      const bx = Math.sin(t * 0.12) * 1.1 * live;
+      const by = Math.cos(t * 0.09 + 1.3) * 1.1 * live;
+      bokeh.style.transform = `translate(${bx.toFixed(3)}%, ${by.toFixed(3)}%)`;
+      lab.style.transform = `rotate(${(Math.sin(t * 0.35) * 2.2 * live).toFixed(3)}deg)`;
+      art.style.transform = `translate3d(0, ${(window.scrollY * 0.12).toFixed(1)}px, 0)`;
+
+      raf = visible && !reduce.matches ? requestAnimationFrame(frame) : 0;
+    };
+
+    const reset = () => {
+      [ring, bokeh, lab, art].forEach((el) => (el.style.transform = ""));
+    };
+
+    const start = () => {
+      if (reduce.matches) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+        reset();
+        return;
+      }
+      if (!raf && visible) {
+        last = performance.now();
+        raf = requestAnimationFrame(frame);
+      }
+    };
+
+    // Stopp animasjonen når heroen er ute av syne eller fanen er skjult (sparer batteri).
+    new IntersectionObserver((entries) => {
+      visible = entries[0].isIntersecting && !document.hidden;
+      start();
+    }).observe(art);
+    document.addEventListener("visibilitychange", () => {
+      visible = !document.hidden;
+      start();
+    });
+    reduce.addEventListener?.("change", start);
+    start();
+  }
+</script>
+
 <style>
   /* ---------- Hero ---------- */
   /* Hero: tekst til venstre og illustrasjon til høyre på desktop;
@@ -205,7 +286,13 @@ const journeyCards = [
   .hero-inner { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 48px; align-items: center; }
   .hero-text { min-width: 0; position: relative; z-index: 1; }
   .hero-art { display: block; justify-self: center; width: 100%; max-width: 440px; position: relative; z-index: 1; }
-  .hero-illustration { display: block; width: 100%; height: auto; }
+  /* Lagdelt illustrasjon: alle tre lag har samme lerret (900×881) og ligger oppå hverandre. */
+  .hero-art { aspect-ratio: 900 / 881; }
+  .hero-layer { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  /* Rotasjonspunkt = sentrum av prikkringen i originalbildet (458, 462 av 900×881). */
+  .hero-layer-ring { transform-origin: 50.9% 52.44%; }
+  .hero-layer-lab { transform-origin: 52% 54%; }
+  .hero-layer, .hero-art { will-change: transform; }
   @media (max-width: 860px) {
     .hero { text-align: center; }
     .hero-inner { grid-template-columns: 1fr; gap: 28px; max-width: 760px; }
