@@ -38,7 +38,7 @@ export const navigationTabs: NavTab[] = [
       { kind: "link", label: "Hva skjer i øret", href: "/svimmelhet/krystallsyke/hva-skjer-i-oret/", sub: true },
       { kind: "link", label: "Buegangene", href: "/svimmelhet/krystallsyke/buegangene/", sub: true },
       { kind: "link", label: "Undersøkelse", href: "/svimmelhet/krystallsyke/undersokelse/", sub: true },
-      { kind: "link", label: "Slik behandles krystallsyke", href: "/svimmelhet/krystallsyke/behandling/", sub: true },
+      { kind: "link", label: "Behandling av krystallsyke", href: "/svimmelhet/krystallsyke/behandling/", sub: true },
     ],
   },
   {
